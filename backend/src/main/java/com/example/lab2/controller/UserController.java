@@ -6,17 +6,15 @@ import com.example.lab2.exception.RegisterException;
 import com.example.lab2.request.auth.LoginRequest;
 import com.example.lab2.request.auth.RegisterRequest;
 import com.example.lab2.response.GeneralResponse;
-import com.example.lab2.service.UserService;
+import com.example.lab2.service.UserDetailsServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
@@ -26,7 +24,6 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 
 @RestController
@@ -34,15 +31,15 @@ import java.util.Optional;
 @CrossOrigin(allowCredentials = "true", originPatterns = "*")
 public class UserController {
     @Autowired
-    private UserService userService;
+    private UserDetailsServiceImpl userDetailsServiceImpl;
     Logger logger = LoggerFactory.getLogger(UserController.class);
 
     //当前端使用application/json来传递数据的时候，后端只能使用 @RequestBody 以及 Java bean或者 map 的方式来接收数据。
     //@GetMapping : ResponseBody注解
-    @PostMapping("/login")
+    //@PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request, HttpSession session) {// 待修改 因为get发送数据的方式不是json
         logger.debug("LoginForm: " + request.toString());
-        User user = userService.login(request.getUsername(), request.getPassword());
+        User user = userDetailsServiceImpl.login(request.getUsername(), request.getPassword());
         session.setAttribute("user", user);
         return ResponseEntity.ok(new GeneralResponse("欢迎" + user.getUsername()));
     }
@@ -60,7 +57,7 @@ public class UserController {
         //得到user对象
         User user = request.createUserObject();
         try {
-            userService.save(user);
+            userDetailsServiceImpl.save(user);
         } catch (DataIntegrityViolationException | SQLIntegrityConstraintViolationException e) {
             throw new RegisterException("注册失败，你的用户名可能与他人的重了。请换个用户名再试");
         }

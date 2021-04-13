@@ -88,8 +88,7 @@ public class RegisterRequest {
     public User createUserObject() {
 
         //先默认创建为学生，权限的事情以后再说。
-        //密码是用户填入的密码的md，加盐的事情以后再说。
-        return new User(username, DigestUtils.md5DigestAsHex(this.passWord.getBytes(StandardCharsets.UTF_8)), email, "student", 100);
+        return new User(username, passWord, email, "student", 100);
     }
 
 
