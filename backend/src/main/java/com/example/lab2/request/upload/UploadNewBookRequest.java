@@ -1,10 +1,7 @@
 package com.example.lab2.request.upload;
 
-import com.example.lab2.entity.Book;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import com.example.lab2.entity.BookType;
 import lombok.*;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
@@ -12,7 +9,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 @Getter
 @Setter
@@ -48,8 +44,8 @@ public class UploadNewBookRequest {
      *
      * @return book对象
      */
-    public Book getBook() {
-        Book b = new Book();
+    public BookType getBook() {
+        BookType b = new BookType();
         b.setIsbn(isbn);
         b.setName(name);
         b.setAuthor(author);
@@ -60,8 +56,8 @@ public class UploadNewBookRequest {
         } catch (ParseException parseException) {
             b.setPublicationDate(null);
         }
-        b.setStatus(Book.AVAILABLE);
-        b.setCampusID(campusID);
+        //b.setStatus(BookType.AVAILABLE);
+        //b.setCampusID(campusID);
         return b;
     }
 

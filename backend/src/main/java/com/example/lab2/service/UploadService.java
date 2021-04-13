@@ -1,7 +1,7 @@
 package com.example.lab2.service;
 
-import com.example.lab2.dao.BookRepository;
-import com.example.lab2.entity.Book;
+import com.example.lab2.dao.BookTypeRepository;
+import com.example.lab2.entity.BookType;
 import com.example.lab2.exception.UploadException;
 import com.example.lab2.response.GeneralResponse;
 import com.example.lab2.request.upload.UploadNewBookRequest;
@@ -20,8 +20,8 @@ import java.util.UUID;
 public class UploadService {
 
     @Autowired
-    BookRepository bookRepo;
-    static BookRepository bookRepository;
+    BookTypeRepository bookRepo;
+    static BookTypeRepository bookTypeRepository;
 
 
     @Value("${images.whereisbookcovers}")
@@ -41,13 +41,13 @@ public class UploadService {
         String fileName = UUID.randomUUID().toString();
 
         //得到book对象
-        Book book = uploadNewBookRequest.getBook();
-        book.setImagePath(whereisbookcovers + "/" + fileName);
+        BookType bookType = uploadNewBookRequest.getBook();
+        bookType.setImagePath(whereisbookcovers + "/" + fileName);
 
         //尝试更新数据库及写入文件
         try {
             uploadService.updateDatabaseAndSaveFile(
-                    uploadNewBookRequest.getBookcoverimage(), book
+                    uploadNewBookRequest.getBookcoverimage(), bookType
             );
         } catch (IOException e) {
             throw new UploadException("上传失败");
@@ -61,19 +61,19 @@ public class UploadService {
      * 将book信息更新数据库，并将multipartFile的文件写入。如果写入失败会回滚
      *
      * @param multipartFile 文件
-     * @param book          书本信息
+     * @param bookType          书本信息
      */
     @Transactional(rollbackFor = Exception.class)
-    public void updateDatabaseAndSaveFile(MultipartFile multipartFile, Book book) throws IOException {
-        bookRepository.save(book);
-        multipartFile.transferTo(new File(book.getImagePath()));
+    public void updateDatabaseAndSaveFile(MultipartFile multipartFile, BookType bookType) throws IOException {
+        bookTypeRepository.save(bookType);
+        multipartFile.transferTo(new File(bookType.getImagePath()));
 
     }
 
 
     @PostConstruct
     public void init() {
-        bookRepository = bookRepo;
+        bookTypeRepository = bookRepo;
         whereisbookcovers = whereis;
         uploadService = new UploadService();
 

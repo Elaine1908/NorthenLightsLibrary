@@ -9,7 +9,7 @@ import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class UploadNewBookRequestTest {
+class UploadNewBookTypeRequestTest {
 
     @Test
     void getIsbn() throws ParseException {

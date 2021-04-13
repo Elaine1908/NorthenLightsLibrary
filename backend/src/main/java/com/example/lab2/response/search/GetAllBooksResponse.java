@@ -1,9 +1,7 @@
 package com.example.lab2.response.search;
 
 import com.example.lab2.dto.BookDTO;
-import com.example.lab2.entity.Book;
 import com.example.lab2.response.GeneralResponse;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 

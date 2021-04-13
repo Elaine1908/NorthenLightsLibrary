@@ -13,15 +13,15 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Campus {
+public class Library {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long campusID;
+    private long libraryID;
 
     @Column(unique = true)
-    private String campusName;
+    private String libraryName;
 
-    public Campus(String campusName) {
-        this.campusName = campusName;
+    public Library(String libraryName) {
+        this.libraryName = libraryName;
     }
 }

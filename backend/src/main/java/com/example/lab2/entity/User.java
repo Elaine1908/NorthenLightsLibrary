@@ -20,6 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 public class User implements UserDetails {
 
+    public static final String SUPERADMIN = "superadmin";
     public static final String ADMIN = "admin";
     public static final String TEACHER = "teacher";
     public static final String STUDENT = "student";

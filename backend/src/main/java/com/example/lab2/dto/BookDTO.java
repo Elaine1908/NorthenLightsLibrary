@@ -1,12 +1,9 @@
 package com.example.lab2.dto;
 
-import com.example.lab2.entity.Book;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

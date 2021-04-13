@@ -64,24 +64,6 @@ public class UserController {
         return ResponseEntity.ok(new GeneralResponse("注册成功！"));
     }
 
-    /**
-     * 尝试自动登陆。如果session里面有user对象，就给前端返回user对象的用户名，否则返回403 Forbidden
-     *
-     * @param session session
-     * @return 200/403
-     */
-    @PostMapping("/autologin")
-    public ResponseEntity<UserTDO> tryAutoLogin(HttpSession session) {
-        UserTDO userTDO = new UserTDO();
-        User user = (User) session.getAttribute("user");
-        if (user != null) {
-            userTDO.setUsername(user.getUsername());
-            return ResponseEntity.ok(userTDO);
-        }
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
-
-    }
-
 
     /**
      * This is a function to test your connectivity. (健康测试时，可能会用到它）.
