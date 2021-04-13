@@ -1,21 +1,27 @@
 package com.example.lab2.filter;
 
+import com.alibaba.fastjson.support.jaxrs.FastJsonProvider;
 import com.example.lab2.entity.User;
+import com.example.lab2.request.auth.LoginRequest;
 import com.example.lab2.utils.JwtUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.SneakyThrows;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * 用户登陆时会经过这个过滤器
@@ -44,6 +50,7 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
 
         try {
             User user = new ObjectMapper().readValue(request.getInputStream(), User.class);
+            request.setAttribute("libraryID", user.getLibraryID());
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             user.getUsername(),
@@ -55,13 +62,18 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
             throw new RuntimeException(e);
         }
 
-
     }
 
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         User user = (User) authResult.getPrincipal();
+
+        //如果用户是管理员，还要设置他的上班地点
+        if (user.getRole().equals(User.ADMIN) || user.getRole().equals(User.SUPERADMIN)) {
+            user.setLibraryID((Long) request.getAttribute("libraryID"));
+        }
+
         String token = JwtUtils.generateJwt(user);
         response.addHeader("token", token);
     }

@@ -37,18 +37,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         userRepository.save(user);
     }
 
-    public User login(String username, String password) {
-        User user = userRepository.getUserByUsername(username);
-        if (user == null) {//用户没有注册
-            throw new LoginException("用户名或密码错误");
-        }
-        String user_pass_md5 = user.getPassword();
-        String input_pass_md5 = DigestUtils.md5DigestAsHex(password.getBytes(StandardCharsets.UTF_8));
-        if (!user_pass_md5.equals(input_pass_md5)) {
-            throw new LoginException("用户名或密码错误");
-        }
-        return user;
-    }
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {

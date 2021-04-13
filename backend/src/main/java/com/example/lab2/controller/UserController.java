@@ -7,6 +7,7 @@ import com.example.lab2.request.auth.LoginRequest;
 import com.example.lab2.request.auth.RegisterRequest;
 import com.example.lab2.response.GeneralResponse;
 import com.example.lab2.service.UserDetailsServiceImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,15 +35,6 @@ public class UserController {
     private UserDetailsServiceImpl userDetailsServiceImpl;
     Logger logger = LoggerFactory.getLogger(UserController.class);
 
-    //当前端使用application/json来传递数据的时候，后端只能使用 @RequestBody 以及 Java bean或者 map 的方式来接收数据。
-    //@GetMapping : ResponseBody注解
-    //@PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest request, HttpSession session) {// 待修改 因为get发送数据的方式不是json
-        logger.debug("LoginForm: " + request.toString());
-        User user = userDetailsServiceImpl.login(request.getUsername(), request.getPassword());
-        session.setAttribute("user", user);
-        return ResponseEntity.ok(new GeneralResponse("欢迎" + user.getUsername()));
-    }
 
     @PostMapping("/register")
     public ResponseEntity<GeneralResponse> tryRegister(@RequestBody @Valid RegisterRequest request, BindingResult bindingResult) {
@@ -62,6 +54,9 @@ public class UserController {
             throw new RegisterException("注册失败，你的用户名可能与他人的重了。请换个用户名再试");
         }
         return ResponseEntity.ok(new GeneralResponse("注册成功！"));
+
+
+
     }
 
 

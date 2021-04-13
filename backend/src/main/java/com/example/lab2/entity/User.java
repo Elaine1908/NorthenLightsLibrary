@@ -48,6 +48,9 @@ public class User implements UserDetails {
     @Transient
     private List<? extends GrantedAuthority> authorities;
 
+    @Transient
+    private Long libraryID;//管理员用。判断他这次在哪里上班
+
     public User(String username, String password, @Email String email, String role, int credit) {
         this.username = username;
         this.password = password;

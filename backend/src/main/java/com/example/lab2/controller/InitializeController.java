@@ -22,10 +22,10 @@ public class InitializeController {
     @PostConstruct
     public ResponseEntity<String> hello() {
 
-        Library c1 = new Library("邯郸校区");
-        Library c2 = new Library("枫林校区");
-        Library c3 = new Library("张江校区");
-        Library c4 = new Library("江湾校区");
+        Library c1 = new Library("邯郸校区图书馆");
+        Library c2 = new Library("枫林校区图书馆");
+        Library c3 = new Library("张江校区图书馆");
+        Library c4 = new Library("江湾校区图书馆");
         try {
             libraryRepository.save(c1);
             libraryRepository.save(c2);

@@ -24,6 +24,7 @@ public class JwtUtils {
                 .signWith(algo, secret)
                 .claim("username", user.getUsername())
                 .claim("role", user.getRole())
+                .claim("libraryID", user.getLibraryID())
                 .setExpiration(new Date(System.currentTimeMillis() + shelfLife))
                 .compact();
 

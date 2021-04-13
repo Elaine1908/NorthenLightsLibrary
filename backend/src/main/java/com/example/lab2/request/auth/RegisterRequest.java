@@ -22,7 +22,7 @@ import java.nio.charset.StandardCharsets;
 @Valid
 @Data
 public class RegisterRequest {
-    @Pattern(regexp = "[a-zA-Z-][a-zA-Z0-9-_]{5,31}", message = "用户名只能包含字⺟，数字或两种特殊字符（-_）且只能以字⺟或-开头")
+    @Pattern(regexp = "[0-9]{2}(30|21|11)[0-9]{3}[0-9]{4}", message = "用户名必须是有效的学号！")
     @NotNull(message = "用户名不能为空")
     private String username;//用户名
 
@@ -33,9 +33,7 @@ public class RegisterRequest {
     @NotNull(message = "确认密码不能为空")
     private String passWordAgain;
 
-    @Email(message = "邮箱格式不正确。邮箱必须符合雷·汤姆林森创⽴的标准E-mail格式，即⽤户标识符+ @ + 域名")
-    @NotNull(message = "邮箱不能为空")
-    private String email;
+    private static String emailSuffix = "@fudan.edu.cn";
 
     /**
      * 检查两次密码是否输入一致，密码是否包含了字母，数字，特殊字符的至少两种
@@ -88,7 +86,7 @@ public class RegisterRequest {
     public User createUserObject() {
 
         //先默认创建为学生，权限的事情以后再说。
-        return new User(username, passWord, email, "student", 100);
+        return new User(username, passWord, username + emailSuffix, "student", 100);
     }
 
 
