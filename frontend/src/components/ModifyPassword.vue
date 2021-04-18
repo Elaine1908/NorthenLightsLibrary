@@ -10,7 +10,7 @@
       label="新密码"
       prop="newPassword">
       <el-input
-        type="input"
+        type="password"
         v-model="modifyForm.newPassword"
         auto-complete="off"
         placeholder="新密码"></el-input>
@@ -19,7 +19,7 @@
       label="确认密码"
       prop="newPasswordAgain">
         <el-input
-          type="input"
+          type="password"
           v-model="modifyForm.newPasswordAgain"
           auto-complete="off"
           placeholder="确认密码"></el-input>
