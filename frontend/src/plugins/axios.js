@@ -20,6 +20,10 @@ const _axios = axios.create(config);
 _axios.interceptors.request.use(
   function(config) {
     // Do something before request is sent
+    if(store.state.token) {
+      // 判断是否有token，若存在，每个http header加上token
+      config.headers.Authorization = 'Bearer ${store.state.token}';
+    }
     return config;
   },
   function(error) {

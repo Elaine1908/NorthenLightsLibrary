@@ -19,6 +19,11 @@ const routes = [
         path: 'login',
         name: 'Login',
         component: () => import('@/components/Login')
+      },
+      {
+        path: 'modifyPassword',
+        name: 'ModifyPassword',
+        component: () => import('@/components/ModifyPassword')
       }
     ]
 
