@@ -94,7 +94,8 @@ export default {
       this.$refs.modifyForm.validate((valid) => {
         if (valid) {
           this.$axios.post('/auth/changePassword', {
-            newPassword: this.modifyForm.newPassword
+            newPassword: this.modifyForm.newPassword,
+            username: this.$store.state.username
           }).then(data => {
             if (data.status === 200) {
               this.$router.push({
@@ -113,6 +114,12 @@ export default {
     },
     resetForm() {
       this.$refs.modifyForm.resetFields();
+    }
+  },
+  mounted() {
+    if (!this.$store.state.login) {
+      alert('你没登录，不能修改密码')
+      this.$router.push('/login')
     }
   }
 }

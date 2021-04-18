@@ -156,24 +156,19 @@ export default {
           {required: true, message: '请上传图片', trigger: 'change', type: 'object'}
         ],
         name: [
-          {validator: validateBookName, trigger: 'blur'},
-          {required: true}
+          {required: true, validator: validateBookName, trigger: 'blur'},
         ],
         isbn: [
-          {validator: validateISBN, trigger: 'blur'},
-          {required: true}
+          {validator: validateISBN, trigger: 'blur', required: true},
         ],
         publishDate: [
-          {validator: validatePublicationDate, trigger: 'blur'},
-          {required: true}
+          {validator: validatePublicationDate, trigger: 'blur', required: true},
         ],
         author: [
-          {validator: validateAuthor, trigger: 'blur'},
-          {required: true}
+          {validator: validateAuthor, trigger: 'blur', required: true},
         ],
         campusID: [
-          {validator: validateCampusID, trigger: 'blur', type: 'number'},
-          {required: true}
+          {validator: validateCampusID, trigger: 'blur', type: 'number', required: true},
         ],
         description: [
           {required: true, message: '请填写简介', trigger: 'blur'}
@@ -182,17 +177,6 @@ export default {
     };
   },
   methods: {
-    checkLogIn() {
-      if (!this.$store.state.login) {
-        alert('你还没登录呢')
-        this.$router.push('/login')
-      }
-    },
-    created() {
-      if (document.readyState === 'complete') this.checkLogIn()
-      else document.addEventListener('load', () => this.checkLogIn())
-    },
-
     imgSaveToUrl(event, fileList) {
       // 获取上传图片的本地URL，用于上传前的本地预览
       var URL = null;
@@ -248,6 +232,12 @@ export default {
           alert('请填写完所有内容！')
         }
       })
+    }
+  },
+  mounted() {
+    if (!this.$store.state.login) {
+      alert('你没登录，不能上传')
+      this.$router.push('/login');
     }
   }
 }

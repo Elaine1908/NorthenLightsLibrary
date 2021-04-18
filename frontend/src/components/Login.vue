@@ -47,6 +47,7 @@
                   @click="resetForm('ruleForm')"
           >重置</el-button>
         </el-form-item>
+        <span class="reminder">还没有账号？先<a @click="linkToRegister">注册</a></span>
       </el-form>
 
     </div>
@@ -101,9 +102,22 @@
       },
       resetForm(formName) {
         this.$refs[formName].resetFields();
+      },
+      linkToRegister() {
+        this.$router.push('/register')
       }
     }
   }
 </script>
 <style>
+a {
+  text-decoration: none;
+  color: lightskyblue;
+  font-weight: bold;
+  cursor: pointer;
+}
+.reminder {
+  font-size: smaller;
+  color: gray;
+}
 </style>

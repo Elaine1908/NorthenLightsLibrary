@@ -15,7 +15,8 @@
           type="input"
           v-model="ruleForm.username"
           autocomplete="off"
-          placeholder="账号"
+          placeholder="学/工号"
+          @change="autoFill()"
           required
       ></el-input>
     </el-form-item>
@@ -61,6 +62,7 @@
       >重置
       </el-button>
     </el-form-item>
+    <span class="reminder">已有账号？<a @click="linkToLogin">登录</a></span>
   </el-form>
 </template>
 
@@ -103,13 +105,9 @@ export default {
       }
     };
     var validUsername = (rule, value, callback) => {
-      let pat = /^[\w-]+[-_\w0-9]*$/
-      if (value === '') {
-        callback(new Error('请输入用户名'));
-      } else if (!pat.test(value)) {
-        callback(new Error('用户名只能包含字⺟，数字或两种 特殊字符（-_）且只能以字⺟或-开头'))
-      } else if (value.length < 6 || value.length > 32) {
-        callback(new Error('用户名长度只能为6-32长度的字符'))
+      let pat = /^\d{11}$/
+      if (!pat.test(value)) {
+        callback(new Error('请注意学/工号的正确格式'))
       } else {
         callback();
       }
@@ -124,6 +122,7 @@ export default {
         callback();
       }
     }
+    // let emailValue = this.ruleForm.username === undefined ? '' : (this.ruleForm.username + '@fudan.edu.cn')
     return {
       ruleForm: {
         passWord: '',
@@ -133,22 +132,19 @@ export default {
       },
       rules: {
         passWord: [
-          {validator: validatePass, trigger: 'blur'},
-          {required: true}
+          {validator: validatePass, trigger: 'blur', required: true},
         ],
         checkPass: [
-          {validator: validatePass2, trigger: 'blur'},
-          {required: true}
+          {validator: validatePass2, trigger: 'blur', required: true},
         ],
         username: [
-          {validator: validUsername, trigger: 'blur'},
-          {required: true}
+          {validator: validUsername, trigger: 'blur', required: true, message: '请输入您的学/工号'},
         ],
         email: [
-          {validator: validEmail, trigger: 'blur'},
-          {required: true}
+          {validator: validEmail, trigger: 'blur', required: true},
         ]
-      }
+      },
+      emailValue: '123'
     };
   },
   methods: {
@@ -177,11 +173,26 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
+    },
+    autoFill() {
+      this.ruleForm.email = this.ruleForm.username === '' ? '' : (this.ruleForm.username + '@fudan.edu.cn')
+    },
+    linkToLogin() {
+      this.$router.push('/logIn')
     }
   }
 }
 </script>
 
 <style>
-
+a {
+  text-decoration: none;
+  color: lightskyblue;
+  font-weight: bold;
+  cursor: pointer;
+}
+.reminder {
+  font-size: smaller;
+  color: gray;
+}
 </style>

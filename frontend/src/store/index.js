@@ -7,7 +7,9 @@ export default new Vuex.Store({
   state: {
     // 保存登录状态
     login: false,
-    username:'我的账户'
+    username:'我的账户',
+    identity: 0,
+    campusID: 0
   },
   // mutations: 专门书写方法,用来更新 state 中的值
   mutations: {

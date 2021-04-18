@@ -1,9 +1,6 @@
 <template>
     <div class="container">
         <div class="link">
-            <router-link to="/register">注册</router-link> |
-            <router-link to="/login">登录</router-link> |
-            <router-link to="/modifyPassword">修改密码</router-link>
         </div>
         <router-view class="form"/>
     </div>
@@ -34,6 +31,6 @@
         font-weight: bold;
     }
     .router-link-active {
-        color: deepskyblue;
+      color: deepskyblue;
     }
 </style>
