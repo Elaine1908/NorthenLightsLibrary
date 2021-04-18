@@ -1,5 +1,6 @@
 package com.example.lab2.exceptionhandler.auth;
 
+import com.example.lab2.controller.SuperAdminController;
 import com.example.lab2.controller.UserController;
 import com.example.lab2.exception.RegisterException;
 import com.example.lab2.response.GeneralResponse;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 
-@ControllerAdvice(assignableTypes = UserController.class)
+@ControllerAdvice(assignableTypes = {UserController.class, SuperAdminController.class})
 public class RegisterExceptionHandler {
 
     /**

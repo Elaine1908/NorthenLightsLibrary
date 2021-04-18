@@ -61,6 +61,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
+                .antMatchers("/superadmin/**").hasAnyAuthority("superadmin")
                 .antMatchers("/auth/login", "/auth/register").permitAll()
                 .antMatchers("/student").hasAnyAuthority("student").and()
                 .addFilter(new JwtLoginFilter(authenticationManager())).csrf().disable()

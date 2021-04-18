@@ -25,6 +25,8 @@ public class User implements UserDetails {
     public static final String TEACHER = "teacher";
     public static final String STUDENT = "student";
 
+    public static final int MAX_CREDIT = 100;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long user_id;//用户id，数据库中的主键

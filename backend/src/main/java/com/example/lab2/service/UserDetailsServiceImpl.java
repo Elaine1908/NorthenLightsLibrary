@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
+import javax.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
@@ -24,17 +25,23 @@ import java.util.Optional;
 public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
+    private static UserRepository userRepositoryStatic;
 
-    public Optional<User> selectUserByName(String name) {
-        return userRepository.findByName(name);
+    @PostConstruct
+    public void init() {
+        userRepositoryStatic = userRepository;
     }
 
-    public User getUser(String username, String password) {
-        return userRepository.getUserByUsernameAndPassword(username, password);
+    public static Optional<User> selectUserByName(String name) {
+        return userRepositoryStatic.findByName(name);
     }
 
-    public void save(User user) throws SQLIntegrityConstraintViolationException {
-        userRepository.save(user);
+    public static User getUser(String username, String password) {
+        return userRepositoryStatic.getUserByUsernameAndPassword(username, password);
+    }
+
+    public static void save(User user) throws SQLIntegrityConstraintViolationException {
+        userRepositoryStatic.save(user);
     }
 
 
