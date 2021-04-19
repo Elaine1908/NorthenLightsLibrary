@@ -11,6 +11,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.sql.SQLIntegrityConstraintViolationException;
 
 import static org.junit.Assert.*;
@@ -20,6 +21,9 @@ import static org.junit.Assert.*;
 @SpringBootTest
 public class UserDetailsServiceImplTest {
 
+    @Resource(name = "userService")
+    UserDetailsServiceImpl userDetailsService;
+
     @Test
     @Transactional()
     public void selectUserByName() throws SQLIntegrityConstraintViolationException {
@@ -28,7 +32,7 @@ public class UserDetailsServiceImplTest {
 
         UserDetailsServiceImpl.save(user);
 
-        User selectedUser = UserDetailsServiceImpl.selectUserByName("luanqibazao").get();
+        User selectedUser = userDetailsService.selectUserByName("luanqibazao").get();
 
         assertEquals(selectedUser.getUsername(), "luanqibazao");
         assertEquals(selectedUser.getPassword(), "luanqibazao");
@@ -45,7 +49,7 @@ public class UserDetailsServiceImplTest {
 
         UserDetailsServiceImpl.save(user);
 
-        User selectedUser = UserDetailsServiceImpl.selectUserByName("luanqibazao").get();
+        User selectedUser = userDetailsService.selectUserByName("luanqibazao").get();
 
         assertEquals(selectedUser.getUsername(), "luanqibazao");
         assertEquals(selectedUser.getPassword(), "luanqibazao");
@@ -68,7 +72,7 @@ public class UserDetailsServiceImplTest {
 
         UserDetailsServiceImpl.save(user);
 
-        User selectedUser = UserDetailsServiceImpl.selectUserByName("luanqibazao").get();
+        User selectedUser = userDetailsService.selectUserByName("luanqibazao").get();
 
         assertEquals(selectedUser.getUsername(), "luanqibazao");
         assertEquals(selectedUser.getPassword(), "luanqibazao");
@@ -84,9 +88,9 @@ public class UserDetailsServiceImplTest {
         AddAdminRequest addAdminRequest = new AddAdminRequest("adminusername", "adminpassword", "email@email.com");
 
         //正常添加
-        UserDetailsServiceImpl.addAdmin(addAdminRequest);
+        userDetailsService.addAdmin(addAdminRequest);
 
-        User user = UserDetailsServiceImpl.selectUserByName("adminusername").get();
+        User user = userDetailsService.selectUserByName("adminusername").get();
 
         assertEquals(user.getUsername(), "adminusername");
         assertEquals(user.getPassword(), "adminpassword");
@@ -95,7 +99,7 @@ public class UserDetailsServiceImplTest {
 
         //用户名重复添加
         assertThrows(RegisterException.class, () -> {
-            UserDetailsServiceImpl.addAdmin(addAdminRequest);
+            userDetailsService.addAdmin(addAdminRequest);
         });
 
 

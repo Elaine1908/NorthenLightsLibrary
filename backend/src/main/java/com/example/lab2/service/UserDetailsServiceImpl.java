@@ -24,7 +24,7 @@ import java.util.Optional;
 /**
  * 这个类实现了Spring Security框架中UserDetailsService借口
  */
-@Service
+@Service("userService")
 public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
@@ -35,7 +35,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         userRepositoryStatic = userRepository;
     }
 
-    public static Optional<User> selectUserByName(String name) {
+    public  Optional<User> selectUserByName(String name) {
         return userRepositoryStatic.findByName(name);
     }
 
@@ -65,9 +65,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     }
 
-    public static HashMap<String, String> addAdmin(AddAdminRequest addAdminRequest) {
+    public HashMap<String, String> addAdmin(AddAdminRequest addAdminRequest) {
         //检测这个用户名是否已经在数据库中被使用过了
-        if (UserDetailsServiceImpl.selectUserByName(addAdminRequest.getUsername()).isPresent()) {
+        if (this.selectUserByName(addAdminRequest.getUsername()).isPresent()) {
             throw new RegisterException("这个用户名已经被占用了，请换一个用户名");
         }
 

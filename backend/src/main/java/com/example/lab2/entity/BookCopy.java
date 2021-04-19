@@ -43,6 +43,13 @@ public class BookCopy {
 
     private Long adminID;
 
-
-
+    public BookCopy(String status, String isbn, String uniqueBookMark, Long libraryID, Date lastRentDate, Date lastReturnDate, Long adminID) {
+        this.status = status;
+        this.isbn = isbn;
+        this.uniqueBookMark = uniqueBookMark;
+        this.libraryID = libraryID;
+        this.lastRentDate = lastRentDate;
+        this.lastReturnDate = lastReturnDate;
+        this.adminID = adminID;
+    }
 }

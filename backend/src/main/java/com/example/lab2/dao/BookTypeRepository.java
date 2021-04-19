@@ -23,4 +23,5 @@ public interface BookTypeRepository extends JpaRepository<BookType, Long> {
     @Query("select b_t from BookType b_t where b_t.isbn=:isbn")
     public Optional<BookType> getBookTypeByISBN(@Param("isbn") String isbn);
 
+
 }

@@ -45,6 +45,21 @@ public class JwtUtils {
         }
     }
 
+    /**
+     * 根据jwtToken中的libraryID，获得管理员的上班地点
+     *
+     * @param token token
+     * @return
+     */
+    public static Long getLibraryID(String token) {
+        try {
+            Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+            return claims.get("libraryID", Long.class);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
 
     /**
      * 根据token，返回用户的权限列表

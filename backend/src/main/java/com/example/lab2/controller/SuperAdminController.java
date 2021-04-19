@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import javax.jws.soap.SOAPBinding;
 import javax.swing.text.html.Option;
 import javax.validation.Valid;
@@ -23,6 +24,8 @@ import java.util.Objects;
 @RequestMapping("/superadmin")
 public class SuperAdminController {
 
+    @Resource(name = "userService")
+    UserDetailsServiceImpl userDetailsService;
 
     /**
      * 添加管理员的接口
@@ -42,7 +45,7 @@ public class SuperAdminController {
         }
 
         //在service层中尝试添加
-        HashMap<String, String> map = UserDetailsServiceImpl.addAdmin(addAdminRequest);
+        HashMap<String, String> map = userDetailsService.addAdmin(addAdminRequest);
 
         //把结果发回给前端
         return ResponseEntity.ok(map);
