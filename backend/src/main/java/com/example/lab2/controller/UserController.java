@@ -55,8 +55,17 @@ public class UserController {
         }
         return ResponseEntity.ok(new GeneralResponse("注册成功！"));
 
+    }
 
+    @PostMapping("/changePassword")
+    public ResponseEntity<?> changePassword(@RequestParam("newPassword")String newPassword,@RequestParam("username")String username) {
+        userDetailsServiceImpl.changePassword(newPassword,username);
+        return ResponseEntity.ok(new GeneralResponse("密码更新成功！"));
+    }
 
+    @GetMapping("/userinfo")
+    public ResponseEntity<?> userInfo(@RequestParam("username")String username){
+        return ResponseEntity.ok(new GeneralResponse("密码更新成功！"));
     }
 
 

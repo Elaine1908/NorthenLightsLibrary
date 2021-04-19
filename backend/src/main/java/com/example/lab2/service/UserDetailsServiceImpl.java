@@ -3,6 +3,7 @@ package com.example.lab2.service;
 import com.example.lab2.dao.UserRepository;
 import com.example.lab2.entity.User;
 import com.example.lab2.exception.LoginException;
+import com.example.lab2.exception.PasswordException;
 import com.example.lab2.exception.RegisterException;
 import com.example.lab2.request.auth.AddAdminRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,41 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     public static void save(User user) throws SQLIntegrityConstraintViolationException {
         userRepositoryStatic.save(user);
+    }
+
+
+    public void changePassword(String newPassword,String username){
+        User user = userRepository.getUserByUsername(username);
+        //String pass_md5 = DigestUtils.md5DigestAsHex(newPassword.getBytes(StandardCharsets.UTF_8));
+        if(newPassword.equals(user.getPassword())){//密码不加密
+            throw new PasswordException("新密码与旧密码相同");
+        }else if (newPassword.contains(username)){
+            throw new PasswordException("密码中不能包含帐号！");
+        }else if(!checkPasswordStrength(newPassword)){
+            throw new PasswordException("密码中字母，数字，特殊字符必须包含至少两种。");
+        }
+        userRepository.updatePasswordByUsername(newPassword,username);
+    }
+
+    private boolean checkPasswordStrength(String newPassword) {
+        boolean[] bool = new boolean[3];
+        int cnt = 0;
+        for (int i = 0; i < newPassword.length(); i++) {
+            char c = newPassword.charAt(i);
+            if (c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z') {
+                bool[0] = true;
+            } else if (c >= '0' && c <= '9') {
+                bool[1] = true;
+            } else if (c == '-' || c == '_') {
+                bool[2] = true;
+            }
+        }
+        for (boolean b : bool) {
+            if (b) {
+                cnt += 1;
+            }
+        }
+        return cnt >= 2;
     }
 
 
