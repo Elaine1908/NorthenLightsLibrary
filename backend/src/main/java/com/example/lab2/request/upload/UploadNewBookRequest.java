@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Valid
 @Data
 public class UploadNewBookRequest {
@@ -35,8 +36,6 @@ public class UploadNewBookRequest {
     @Pattern(regexp = "((((19|20)\\d{2})-(0?[13578]|1[02])-(0?[1-9]|[12]\\d|3[01]))|(((19|20)\\d{2})-(0?[469]|11)-(0?[1-9]|[12]\\d|30))|(((19|20)\\d{2})-0?2-(0?[1-9]|1\\d|2[0-8]))|((((19|20)([13579][26]|[2468][048]|0[48]))|(2000))-0?2-(0?[1-9]|[12]\\d)))",
             message = "出版日期必须符合规范！")
     private String publicationDate;
-    @NotNull(message = "校园不能为空")
-    private long campusID;
 
 
     /**
@@ -56,8 +55,7 @@ public class UploadNewBookRequest {
         } catch (ParseException parseException) {
             b.setPublicationDate(null);
         }
-        //b.setStatus(BookType.AVAILABLE);
-        //b.setCampusID(campusID);
+
         return b;
     }
 

@@ -41,30 +41,8 @@ public class SuperAdminController {
             );
         }
 
-        //检测这个用户名是否已经在数据库中被使用过了
-        if (UserDetailsServiceImpl.selectUserByName(addAdminRequest.getUsername()).isPresent()) {
-            throw new RegisterException("这个用户名已经被占用了，请换一个用户名");
-        }
-
-        //创建新的user对象
-        User admin = new User(
-                addAdminRequest.getUsername(),
-                addAdminRequest.getPassword(),
-                addAdminRequest.getEmail(),
-                User.ADMIN,
-                User.MAX_CREDIT
-        );
-
-        //把新创建的管理员存储到数据库中
-        try {
-            UserDetailsServiceImpl.save(admin);
-        } catch (SQLIntegrityConstraintViolationException e) {
-            throw new RegisterException("添加管理员失败");
-        }
-
-        //设置成功时的信息
-        HashMap<String, String> map = new HashMap<>();
-        map.put("message", "添加管理员成功！");
+        //在service层中尝试添加
+        HashMap<String, String> map = UserDetailsServiceImpl.addAdmin(addAdminRequest);
 
         //把结果发回给前端
         return ResponseEntity.ok(map);

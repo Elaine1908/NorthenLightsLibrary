@@ -49,7 +49,7 @@ public class UserController {
         //得到user对象
         User user = request.createUserObject();
         try {
-            userDetailsServiceImpl.save(user);
+            UserDetailsServiceImpl.save(user);
         } catch (DataIntegrityViolationException | SQLIntegrityConstraintViolationException e) {
             throw new RegisterException("注册失败，你的用户名可能与他人的重了。请换个用户名再试");
         }

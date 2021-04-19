@@ -14,7 +14,9 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 @Component
 public class UploadService {
@@ -32,17 +34,28 @@ public class UploadService {
 
 
     public static GeneralResponse handleUpload(UploadNewBookRequest uploadNewBookRequest) {
-        //检验校园是否存在
-        if (!CampusService.campusExists(uploadNewBookRequest.getCampusID())) {
-            throw new UploadException("找不到这个校区！");
-        }
 
         //生成随机文件名
         String fileName = UUID.randomUUID().toString();
+        String originalFileName = uploadNewBookRequest.getBookcoverimage().getOriginalFilename();
+
+        if (originalFileName == null) {
+            throw new UploadException("上传失败");
+        }
+
+        //获得源文件扩展名
+        String extensionName = originalFileName.split("\\.")[originalFileName.split("\\.").length - 1];
 
         //得到book对象
         BookType bookType = uploadNewBookRequest.getBook();
-        bookType.setImagePath(whereisbookcovers + "/" + fileName);
+        bookType.setImagePath(whereisbookcovers + "/" + fileName + "." + extensionName);
+
+        //检查是否有重复isbn的
+        Optional<BookType> hasRepeatedISBN = bookTypeRepository.getBookTypeByISBN(uploadNewBookRequest.getIsbn());
+        if (hasRepeatedISBN.isPresent()) {
+            throw new UploadException("根据isbn来看，这种书已经存在了");
+        }
+
 
         //尝试更新数据库及写入文件
         try {
@@ -54,6 +67,8 @@ public class UploadService {
         }
 
         return new GeneralResponse("上传成功");
+
+
     }
 
 
@@ -61,7 +76,7 @@ public class UploadService {
      * 将book信息更新数据库，并将multipartFile的文件写入。如果写入失败会回滚
      *
      * @param multipartFile 文件
-     * @param bookType          书本信息
+     * @param bookType      书本信息
      */
     @Transactional(rollbackFor = Exception.class)
     public void updateDatabaseAndSaveFile(MultipartFile multipartFile, BookType bookType) throws IOException {

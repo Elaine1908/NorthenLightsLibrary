@@ -1,18 +1,16 @@
 package com.example.lab2.exceptionhandler;
 
 
-import com.example.lab2.controller.UploadController;
+import com.example.lab2.controller.AdminController;
 import com.example.lab2.exception.UploadException;
 import com.example.lab2.response.GeneralResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 
-@ControllerAdvice(assignableTypes = {UploadController.class})
+@ControllerAdvice(assignableTypes = {AdminController.class})
 public class UploadExceptionHandler {
 
 

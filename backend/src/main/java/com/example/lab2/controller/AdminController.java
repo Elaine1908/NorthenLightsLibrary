@@ -16,9 +16,9 @@ import javax.validation.Valid;
 import java.util.Objects;
 
 @RestController
-@RequestMapping("/up")
+@RequestMapping("/admin")
 @CrossOrigin(allowCredentials = "true",originPatterns = "*")
-public class UploadController {
+public class AdminController {
 
 
     @Autowired
@@ -27,7 +27,13 @@ public class UploadController {
     @Autowired
     BookTypeRepository bookTypeRepository;
 
-    @PostMapping(value = "/bookupload")
+    /**
+     * 管理员上传一种新书。要求isbn必须是唯一的
+     * @param uploadNewBookRequest
+     * @param bindingResult
+     * @return
+     */
+    @PostMapping(value = "/uploadNewBook")
     public ResponseEntity<GeneralResponse> handleUpload(
             @ModelAttribute @Valid UploadNewBookRequest uploadNewBookRequest, BindingResult bindingResult) {
 
