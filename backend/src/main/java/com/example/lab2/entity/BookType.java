@@ -35,6 +35,7 @@ public class BookType {
     private String author;
     private String description;
     private Date publicationDate;
+    private String imagePathToFrontEnd;
 
     @JsonIgnore
     @Column

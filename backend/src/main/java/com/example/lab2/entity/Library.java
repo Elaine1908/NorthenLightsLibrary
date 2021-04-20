@@ -1,10 +1,7 @@
 package com.example.lab2.entity;
 
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -13,6 +10,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Library {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

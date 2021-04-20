@@ -3,17 +3,16 @@ package com.example.lab2.controller;
 
 import com.example.lab2.dao.BookTypeRepository;
 import com.example.lab2.dao.LibraryRepository;
-import com.example.lab2.entity.Library;
-import com.example.lab2.request.search.GetAllBooksRequest;
-import com.example.lab2.response.search.GetAllBooksResponse;
+import com.example.lab2.response.search.GetBookTypeAndCopyResponse;
 import com.example.lab2.service.SearchService;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
 
 
 /**
@@ -29,6 +28,8 @@ public class SearchController {
     @Autowired
     private LibraryRepository libraryRepository;
 
+    @Resource(name = "searchService")
+    private SearchService searchService;
 
     /**
      * 前端调用这个借口，就能获得所有图书馆的信息
@@ -40,6 +41,20 @@ public class SearchController {
         HashMap<String, Object> map = new HashMap<>();
         map.put("libraryList", libraryRepository.findAll());
         return map;
+    }
+
+    /**
+     * 根据isbn，得到书的基本信息，每个分管有几本，每个副本的状态
+     *
+     * @param isbn isbn
+     * @return info
+     */
+    @GetMapping("/useradmin/getBookTypeAndCopy")
+    public ResponseEntity<GetBookTypeAndCopyResponse> getBookTypeAndCopy(
+            @RequestParam(name = "isbn") String isbn) {
+        return ResponseEntity.ok(
+                searchService.getBookTypeAndCopy(isbn)
+        );
     }
 
 

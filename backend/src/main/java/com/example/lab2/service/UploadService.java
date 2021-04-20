@@ -39,6 +39,9 @@ public class UploadService {
     @Value("${images.whereisbookcovers}")
     String whereis;
 
+    @Value("${images.whereisbookcoversToFrontEnd}")
+    String whereIsForFrontEnd;
+
 
     @Transactional(rollbackFor = {RuntimeException.class, Exception.class})
     public GeneralResponse handleUpload(UploadNewBookRequest uploadNewBookRequest) {
@@ -57,6 +60,7 @@ public class UploadService {
         //得到book对象
         BookType bookType = uploadNewBookRequest.getBook();
         bookType.setImagePath(whereis + "/" + fileName + "." + extensionName);
+        bookType.setImagePathToFrontEnd(whereIsForFrontEnd + "/" + fileName + "." + extensionName);
 
         //检查是否有重复isbn的
         Optional<BookType> hasRepeatedISBN = bookTypeRepository.getBookTypeByISBN(uploadNewBookRequest.getIsbn());
