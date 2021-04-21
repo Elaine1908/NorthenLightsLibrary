@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import javax.swing.text.html.Option;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -23,5 +24,13 @@ public interface BookTypeRepository extends JpaRepository<BookType, Long> {
     @Query("select b_t from BookType b_t where b_t.isbn=:isbn")
     public Optional<BookType> getBookTypeByISBN(@Param("isbn") String isbn);
 
+    @Query("select b_t from BookType b_t where b_t.isbn=:isbn")
+    public List<BookType> getAllBookTypeByISBN(@Param("isbn") String isbn);
+
+    @Query("select b_t from BookType b_t where b_t.author=:author")
+    public List<BookType> getAllBookTypeByAuthor(@Param("author") String author);
+
+    @Query("select b_t from BookType b_t where b_t.name LIKE CONCAT('%',?1,'%')")
+    public List<BookType> getAllBookTypeByNameFuzzySearch(@Param("bookName") String bookName);
 
 }

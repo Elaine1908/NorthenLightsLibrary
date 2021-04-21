@@ -12,10 +12,8 @@ import com.example.lab2.response.search.NumberToLibrary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service("searchService")
 public class SearchService {
@@ -66,6 +64,45 @@ public class SearchService {
         getBookTypeAndCopyResponse.setNumberEachLibrary(numberEachLibrary);
 
         return getBookTypeAndCopyResponse;
+    }
+
+    /**
+     * 根据isbn，author，和bookName得到所有的bookType
+     *
+     * @param isbn     bookType的isbn（精确搜索）
+     * @param author   bookType的author（精确搜索）
+     * @param bookName bookType的名字（模糊搜索）
+     * @return List<BookType>
+     */
+    public List<BookType> getBookType(String isbn, String author, String bookName) {
+
+        //根据isbn查到的BookType的List
+        List<BookType> isbnList = bookTypeRepository.getAllBookTypeByISBN(isbn);
+
+        //根据author查到的BookType的List
+        List<BookType> authorList = bookTypeRepository.getAllBookTypeByAuthor(author);
+
+        //根据bookName查到的BookType的List
+        List<BookType> bookNameList = bookTypeRepository.getAllBookTypeByNameFuzzySearch(bookName);
+
+        TreeSet<BookType> set = new TreeSet<>();
+        set.addAll(isbnList);
+        set.addAll(authorList);
+        set.addAll(bookNameList);
+
+        //用set取交集
+        if (isbn != null) {
+            set.retainAll(isbnList);
+        }
+        if (author != null) {
+            set.retainAll(authorList);
+        }
+        if (bookName != null) {
+            set.retainAll(bookNameList);
+        }
+
+        //再转回list
+        return set.stream().collect(Collectors.toList());
     }
 
     /**

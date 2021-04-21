@@ -1,6 +1,7 @@
 package com.example.lab2.service;
 
 import com.example.lab2.entity.BookCopy;
+import com.example.lab2.entity.BookType;
 import com.example.lab2.entity.Library;
 import com.example.lab2.exception.BookTypeNotFoundException;
 import com.example.lab2.request.upload.AddBookCopyRequest;
@@ -21,8 +22,10 @@ import javax.annotation.Resource;
 import java.io.FileInputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import com.example.lab2.dao.*;
 
@@ -150,5 +153,149 @@ public class SearchServiceTest {
 
 
     }
+
+
+    @Test
+    @Transactional
+    public void testGetBookTypeByISBN() throws Exception {
+        MultipartFile multipartFile = new MockMultipartFile("test", "1.jpg", "content-type", new FileInputStream("/home/haojie/Pictures/1.jpg"));
+        UploadNewBookRequest uploadNewBookRequest = new UploadNewBookRequest(
+                multipartFile,
+                "isbntestttt",
+                "nametest",
+                "authortest",
+                "descriptiontest",
+                "2000-10-06"
+
+        );
+
+        UploadNewBookRequest uploadNewBookRequest2 = new UploadNewBookRequest(
+                multipartFile,
+                "isbntestttt2",
+                "nametest",
+                "authortest",
+                "descriptiontest",
+                "2000-10-06"
+
+        );
+
+        uploadService.handleUpload(uploadNewBookRequest);
+        uploadService.handleUpload(uploadNewBookRequest2);
+
+        List<BookType> bookTypeList = searchService.getBookType("isbntestttt", null, null);
+
+        assertEquals(bookTypeList.size(), 1);
+        assertEquals(bookTypeList.get(0).getIsbn(), "isbntestttt");
+        assertEquals(bookTypeList.get(0).getName(), "nametest");
+        assertEquals(bookTypeList.get(0).getDescription(), "descriptiontest");
+
+
+    }
+
+
+    @Test
+    @Transactional
+    public void testGetBookTypeByAuthor() throws Exception {
+        MultipartFile multipartFile = new MockMultipartFile("test", "1.jpg", "content-type", new FileInputStream("/home/haojie/Pictures/1.jpg"));
+        UploadNewBookRequest uploadNewBookRequest = new UploadNewBookRequest(
+                multipartFile,
+                "isbntestttt",
+                "nametest",
+                "author1",
+                "descriptiontest",
+                "2000-10-06"
+
+        );
+
+        UploadNewBookRequest uploadNewBookRequest2 = new UploadNewBookRequest(
+                multipartFile,
+                "isbntestttt2",
+                "nametest2",
+                "author2",
+                "descriptiontest",
+                "2000-10-06"
+
+        );
+
+        UploadNewBookRequest uploadNewBookRequest3 = new UploadNewBookRequest(
+                multipartFile,
+                "isbntestttt22",
+                "nametest2",
+                "author1",
+                "descriptiontest",
+                "2000-10-06"
+
+        );
+
+        uploadService.handleUpload(uploadNewBookRequest);
+        uploadService.handleUpload(uploadNewBookRequest2);
+        uploadService.handleUpload(uploadNewBookRequest3);
+
+        List<BookType> bookTypeList = searchService.getBookType(null, "author1", null);
+
+        assertEquals(bookTypeList.size(), 2);
+
+
+    }
+
+
+    @Test
+    @Transactional
+    public void testGetBookTypeByName() throws Exception {
+        MultipartFile multipartFile = new MockMultipartFile("test", "1.jpg", "content-type", new FileInputStream("/home/haojie/Pictures/1.jpg"));
+        for (char i = 'a'; i <= 'z'; i++) {
+            for (char j = i; j <= 'z'; j++) {
+                UploadNewBookRequest uploadNewBookRequest = new UploadNewBookRequest(
+                        multipartFile,
+                        UUID.randomUUID().toString(),
+                        i + String.valueOf(j),
+                        "authortest",
+                        "descriptiontest",
+                        "2000-10-06"
+
+                );
+                uploadService.handleUpload(uploadNewBookRequest);
+
+            }
+        }
+
+        List<BookType> bookTypes = searchService.getBookType(null, null, "a");
+        bookTypes.forEach(bookType -> {
+            assertTrue(bookType.getName().contains("a"));
+        });
+        assertEquals(bookTypes.size(), 26);
+
+    }
+
+    @Test
+    @Transactional
+    public void testGetBookTypeByNameAndAuthor() throws Exception {
+        MultipartFile multipartFile = new MockMultipartFile("test", "1.jpg", "content-type", new FileInputStream("/home/haojie/Pictures/1.jpg"));
+        for (char i = 'a'; i <= 'z'; i++) {
+            for (char j = i; j <= 'z'; j++) {
+                UploadNewBookRequest uploadNewBookRequest = new UploadNewBookRequest(
+                        multipartFile,
+                        UUID.randomUUID().toString(),
+                        i + String.valueOf(j),
+                        String.valueOf(i),
+                        "descriptiontest",
+                        "2000-10-06"
+
+                );
+                uploadService.handleUpload(uploadNewBookRequest);
+
+            }
+        }
+
+        List<BookType> bookTypes = searchService.getBookType(null, "a", "a");
+        bookTypes.forEach(bookType -> {
+            assertTrue(bookType.getName().contains("a"));
+            assertEquals(bookType.getAuthor(), "a");
+        });
+        assertEquals(bookTypes.size(), 26);
+
+    }
+
+
 
 }

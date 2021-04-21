@@ -20,7 +20,7 @@ import java.util.Date;
 @Getter
 @Setter
 @NoArgsConstructor
-public class BookType {
+public class BookType implements Comparable<BookType> {
 
 
     @Id
@@ -40,4 +40,39 @@ public class BookType {
     @JsonIgnore
     @Column
     private String imagePath;
+
+
+    /**
+     * 将hashcode设置成isbn的hashcode
+     *
+     * @return hashcode
+     */
+    @Override
+    public int hashCode() {
+        if (this.isbn != null) {
+            return this.isbn.hashCode();
+        }
+        return super.hashCode();
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof BookType)) {
+            return false;
+        }
+        BookType bookType = (BookType) o;
+        return
+                this.bookID == ((BookType) o).bookID &&
+                        this.name.equals(bookType.name) &&
+                        this.author.equals(bookType.author) &&
+                        this.description.equals(bookType.getDescription());
+
+
+    }
+
+    @Override
+    public int compareTo(BookType bookType) {
+        return this.name.compareTo(bookType.name);
+    }
 }
