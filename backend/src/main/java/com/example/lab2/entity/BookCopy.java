@@ -46,8 +46,11 @@ public class BookCopy {
     @JsonIgnore
     private Long adminID;
 
+    //这两个属性是连表查询的时候为了方便加的
+    @Transient
     private String borrower;
 
+    @Transient
     private String libraryName;
 
     public BookCopy(String status, String isbn, String uniqueBookMark, Long libraryID, Date lastRentDate, Date lastReturnDate, Long adminID) {
@@ -68,5 +71,14 @@ public class BookCopy {
         this.borrower = borrower;
         this.libraryName = libraryName;
         this.libraryID = libraryID;
+    }
+
+    /**
+     * 返回这本图书目前是否可用
+     *
+     * @return
+     */
+    public boolean isAvailable() {
+        return this.status.equals(BookCopy.AVAILABLE);
     }
 }

@@ -43,7 +43,7 @@ public class SearchServiceTest {
     UploadService uploadService;
 
     @Autowired
-    BookCopyRepository bookCopyRepository;
+    BookkCopyRepository bookCopyRepository;
 
     @Test
     public void testGetNumberEachLibrary() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {

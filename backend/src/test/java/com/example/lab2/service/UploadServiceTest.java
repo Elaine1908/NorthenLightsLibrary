@@ -1,6 +1,6 @@
 package com.example.lab2.service;
 
-import com.example.lab2.dao.BookCopyRepository;
+import com.example.lab2.dao.BookkCopyRepository;
 import com.example.lab2.dao.BookTypeRepository;
 import com.example.lab2.entity.BookType;
 import com.example.lab2.exception.UploadException;
@@ -17,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import static org.junit.Assert.*;
@@ -31,7 +30,7 @@ public class UploadServiceTest {
     BookTypeRepository bookTypeRepository;
 
     @Autowired
-    BookCopyRepository bookCopyRepository;
+    BookkCopyRepository bookCopyRepository;
 
 
     @Resource(name = "uploadService")

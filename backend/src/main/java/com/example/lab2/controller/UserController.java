@@ -27,6 +27,9 @@ import java.util.Map;
 import java.util.Objects;
 
 
+/**
+ * 这是和用户登陆注册有关的controller
+ */
 @RestController
 @RequestMapping("/auth")
 @CrossOrigin(allowCredentials = "true", originPatterns = "*")

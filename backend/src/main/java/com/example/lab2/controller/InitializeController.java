@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
 
+/**
+ * 这是管理员的controller
+ */
 @RestController
 @Component
 public class InitializeController {

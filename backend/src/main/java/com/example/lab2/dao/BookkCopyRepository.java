@@ -6,9 +6,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 
-public interface BookCopyRepository extends JpaRepository<BookCopy, Long> {
+public interface BookkCopyRepository extends JpaRepository<BookCopy, Long> {
 
 
     @Query("select new java.lang.Long(count(b_c.bookCopyID)) from BookCopy b_c where b_c.isbn=:isbn")
@@ -21,5 +22,8 @@ public interface BookCopyRepository extends JpaRepository<BookCopy, Long> {
             " where b_c.isbn=:isbn")
     public List<BookCopy> getBookCopiesByISBN(@Param("isbn") String isbn);
 
+
+    @Query("select b_c from BookCopy b_c where b_c.uniqueBookMark=:uniqueBookMark")
+    public Optional<BookCopy> getBookCopyByUniqueBookMark(@Param("uniqueBookMark") String uniqueBookMark);
 
 }

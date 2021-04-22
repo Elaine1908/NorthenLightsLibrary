@@ -1,6 +1,6 @@
 package com.example.lab2.service;
 
-import com.example.lab2.dao.BookCopyRepository;
+import com.example.lab2.dao.BookkCopyRepository;
 import com.example.lab2.dao.BookTypeRepository;
 import com.example.lab2.dao.LibraryRepository;
 import com.example.lab2.entity.BookCopy;
@@ -12,12 +12,10 @@ import com.example.lab2.response.GeneralResponse;
 import com.example.lab2.request.upload.UploadNewBookRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
@@ -33,7 +31,7 @@ public class UploadService {
     LibraryRepository libraryRepository;
 
     @Autowired
-    BookCopyRepository bookCopyRepository;
+    BookkCopyRepository bookCopyRepository;
 
 
     @Value("${images.whereisbookcovers}")

@@ -21,4 +21,9 @@ public class Reservation {
     private Long userID;
 
     private Long bookCopyID;
+
+    public Reservation(Long userID, Long bookCopyID) {
+        this.userID = userID;
+        this.bookCopyID = bookCopyID;
+    }
 }

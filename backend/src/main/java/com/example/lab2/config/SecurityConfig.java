@@ -64,6 +64,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/superadmin/**").hasAnyAuthority("superadmin")
                 .antMatchers("/admin/**").hasAnyAuthority("superadmin", "admin")
                 .antMatchers("/useradmin/**").hasAnyAuthority("teacher", "student", "admin", "superadmin")
+                .antMatchers("/user/**").hasAnyAuthority("teacher", "student")
                 .antMatchers("/auth/login", "/auth/register").permitAll()
                 .antMatchers("/student").hasAnyAuthority("student").and()
                 .addFilter(new JwtLoginFilter(authenticationManager())).csrf().disable()
