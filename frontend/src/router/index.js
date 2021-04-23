@@ -35,11 +35,6 @@ const routes = [
     component: () => import('@/views/Home'),
     children: [
       {
-        path: 'upload',
-        name: 'Upload',
-        component: () => import('@/components/Upload')
-      },
-      {
         path: 'show',
         name: 'Show',
         component: () => import('@/components/Show'),
@@ -48,6 +43,19 @@ const routes = [
             path:'details',
             name:'Details',
             component:() => import('@/components/Details')
+          }
+        ]
+      },
+      {
+        path: 'admin',
+        name: 'Admin',
+        redirect: '/home/admin/returnBooks',
+        component: () => import('@/views/Admin'),
+        children: [
+          {
+            path: 'returnBooks',
+            name: 'ReturnBooks',
+            component: () => import('@/components/ReturnBooks')
           }
         ]
       }

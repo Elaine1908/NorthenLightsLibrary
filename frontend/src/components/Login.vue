@@ -47,7 +47,7 @@
                   @click="resetForm('ruleForm')"
           >重置</el-button>
         </el-form-item>
-        <span class="reminder">还没有账号？先<a @click="linkToRegister">注册</a></span>
+        <span class="reminder"><router-link to="/home">游客登录</router-link> | 还没有账号？先<router-link to="/register">注册</router-link></span>
       </el-form>
 
     </div>

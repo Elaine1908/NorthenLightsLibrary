@@ -62,7 +62,7 @@
       >重置
       </el-button>
     </el-form-item>
-    <span class="reminder">已有账号？<a @click="linkToLogin">登录</a></span>
+    <span class="reminder"><router-link to="/home/show">游客登录</router-link> | 已有账号？<router-link to="/login">登录</router-link></span>
   </el-form>
 </template>
 
@@ -122,7 +122,6 @@ export default {
         callback();
       }
     }
-    // let emailValue = this.ruleForm.username === undefined ? '' : (this.ruleForm.username + '@fudan.edu.cn')
     return {
       ruleForm: {
         passWord: '',
@@ -176,9 +175,6 @@ export default {
     },
     autoFill() {
       this.ruleForm.email = this.ruleForm.username === '' ? '' : (this.ruleForm.username + '@fudan.edu.cn')
-    },
-    linkToLogin() {
-      this.$router.push('/logIn')
     }
   }
 }
