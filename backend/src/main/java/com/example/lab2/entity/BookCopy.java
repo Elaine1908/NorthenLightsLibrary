@@ -16,10 +16,10 @@ import java.util.Date;
 public class BookCopy {
 
     //书籍的四种状态
-    public static final String AVAILABLE = "available";
-    public static final String BORROWED = "borrowed";
-    public static final String RESERVED = "reserved";
-    public static final String DAMAGED = "damaged";
+    public static final String AVAILABLE = "可用（在架上）";
+    public static final String BORROWED = "已被借走";
+    public static final String RESERVED = "已被预定";
+    public static final String DAMAGED = "已损坏";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

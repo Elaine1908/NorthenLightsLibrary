@@ -6,6 +6,7 @@ import com.example.lab2.exception.bookcopy.BookCopyIsBorrowedException;
 import com.example.lab2.exception.bookcopy.BookCopyNotAvailableException;
 import com.example.lab2.exception.bookcopy.BookCopyNotHereException;
 import com.example.lab2.exception.bookcopy.BookCopyReservedException;
+import com.example.lab2.exception.borrow.AdminBorrowBookException;
 import com.example.lab2.exception.notfound.BookCopyNotFoundException;
 import com.example.lab2.exception.notfound.LibraryNotFoundException;
 import com.example.lab2.exception.notfound.UserNotFoundException;
@@ -13,6 +14,7 @@ import com.example.lab2.response.GeneralResponse;
 import jdk.nashorn.internal.runtime.options.Option;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -45,6 +47,7 @@ public class BorrowService {
      * @param adminLibraryID 管理员在哪个图书馆？？
      * @return
      */
+    @Transactional(rollbackFor = {Exception.class, RuntimeException.class})
     public GeneralResponse lendBookToUser(String uniqueBookMark, String username, Long adminLibraryID) {
         List<Library> libraries = libraryRepository.findAll();
 
@@ -53,6 +56,11 @@ public class BorrowService {
         Optional<User> userOptional = userRepository.findByName(username);
         if (!userOptional.isPresent()) {
             throw new UserNotFoundException("用户不存在！");
+        }
+
+        //看看用户是不是管理员？如果是管理员的话则不让借书
+        if (userOptional.get().getRole().equals(User.ADMIN) || userOptional.get().getRole().equals(User.SUPERADMIN)) {
+            throw new AdminBorrowBookException("不能把书借给一个管理员！");
         }
 
         //检验书的副本存不存在
@@ -78,11 +86,6 @@ public class BorrowService {
 
         synchronized (BorrowService.class) {
 
-            //看看这本书是否在架上
-            if (!bookCopyOptional.get().getStatus().equals(BookCopy.AVAILABLE)) {
-                throw new BookCopyNotAvailableException("这本书的状态是" + bookCopyOptional.get().getStatus());
-            }
-
             //看看这本书有没有被预约？
             Optional<Reservation> reservationOptional = reservationRepository.getReservationByBookCopyID(bookCopyOptional.get().getBookCopyID());
             if (reservationOptional.isPresent()) {
@@ -95,17 +98,24 @@ public class BorrowService {
                 throw new BookCopyIsBorrowedException("这本书已经被别人借走了");
             }
 
+            //看看这本书是否在架上
+            if (!bookCopyOptional.get().getStatus().equals(BookCopy.AVAILABLE)) {
+                throw new BookCopyNotAvailableException("这本书的状态是" + bookCopyOptional.get().getStatus());
+            }
+
             //如果能运行到这里，说明一切条件都满足了！
             //新建borrow对象
+            Date currentDate = new Date();
             Borrow newBorrow = new Borrow(
                     userOptional.get().getUser_id(),
                     uniqueBookMark,
-                    new Date()
+                    currentDate
             );
 
             //更改原本bookcopy的status属性
             BookCopy bookCopy = bookCopyOptional.get();
             bookCopy.setStatus(BookCopy.BORROWED);
+            bookCopy.setLastRentDate(currentDate);
 
             //更新数据库
             bookkCopyRepository.save(bookCopy);
