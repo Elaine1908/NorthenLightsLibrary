@@ -6,7 +6,10 @@ import com.example.lab2.dao.UserRepository;
 import com.example.lab2.entity.BookCopy;
 import com.example.lab2.entity.Reservation;
 import com.example.lab2.entity.User;
-import com.example.lab2.exception.ReserveException;
+import com.example.lab2.exception.bookcopy.BookCopyNotAvailableException;
+import com.example.lab2.exception.notfound.BookCopyNotFoundException;
+import com.example.lab2.exception.notfound.UserNotFoundException;
+import com.example.lab2.exception.reserve.ReservedByOtherException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +18,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import javax.xml.ws.soap.Addressing;
-import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.*;
 
@@ -49,12 +50,9 @@ public class ReserveServiceTest {
 
         userRepository.save(user);
 
-        try {
-            reserveService.reserveBook("non_existent_book", "newUser");
-        } catch (Exception e) {
-            assertEquals(e.getClass(), ReserveException.class);
-            assertEquals(e.getMessage(), "该副本不存在！");
-        }
+        assertThrows(BookCopyNotFoundException.class, () -> {
+            reserveService.reserveBook("non_existent", "newUser");
+        });
 
     }
 
@@ -76,8 +74,7 @@ public class ReserveServiceTest {
         try {
             reserveService.reserveBook("uniqueBookMark", "non_existent_user");
         } catch (Exception e) {
-            assertEquals(e.getClass(), ReserveException.class);
-            assertEquals(e.getMessage(), "用户不存在！");
+            assertEquals(e.getClass(), UserNotFoundException.class);
         }
 
     }
@@ -109,7 +106,7 @@ public class ReserveServiceTest {
         try {
             reserveService.reserveBook("uniqueBookMark", "newUser");
         } catch (Exception e) {
-            assertEquals(e.getClass(), ReserveException.class);
+            assertTrue(e.getClass() == ReservedByOtherException.class || e.getClass() == BookCopyNotAvailableException.class);
         }
 
     }

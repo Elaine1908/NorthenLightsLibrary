@@ -23,5 +23,9 @@ public class Borrow {
     private String uniqueBookMark;
     private Date borrowDate;
 
-
+    public Borrow(Long userID, String uniqueBookMark, Date borrowDate) {
+        this.userID = userID;
+        this.uniqueBookMark = uniqueBookMark;
+        this.borrowDate = borrowDate;
+    }
 }

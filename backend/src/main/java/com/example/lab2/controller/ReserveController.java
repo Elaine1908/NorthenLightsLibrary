@@ -1,7 +1,6 @@
 package com.example.lab2.controller;
 
 
-import com.example.lab2.exception.ReserveException;
 import com.example.lab2.request.reserve.ReserveRequest;
 import com.example.lab2.response.GeneralResponse;
 import com.example.lab2.service.ReserveService;
@@ -40,7 +39,7 @@ public class ReserveController {
 
         //如果输入不满足要求就抛出异常给exception handler
         if (bindingResult.hasFieldErrors()) {
-            throw new ReserveException(Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage());
+            throw new IllegalArgumentException(Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage());
         }
 
         //获得jwt token

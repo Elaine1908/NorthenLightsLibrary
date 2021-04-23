@@ -4,9 +4,11 @@ package com.example.lab2.controller;
 import com.example.lab2.dao.BookTypeRepository;
 import com.example.lab2.dao.LibraryRepository;
 import com.example.lab2.exception.UploadException;
+import com.example.lab2.request.borrow.BorrowBookRequest;
 import com.example.lab2.request.upload.AddBookCopyRequest;
 import com.example.lab2.response.GeneralResponse;
 import com.example.lab2.request.upload.UploadNewBookRequest;
+import com.example.lab2.service.BorrowService;
 import com.example.lab2.service.UploadService;
 import com.example.lab2.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,9 @@ public class AdminController {
 
     @Resource(name = "uploadService")
     UploadService uploadService;
+
+    @Resource(name = "borrowService")
+    BorrowService borrowService;
 
     @Autowired
     LibraryRepository libraryRepository;
@@ -75,11 +80,48 @@ public class AdminController {
         //从jwt中读取出管理员的上班地点，并缺省设置添加副本的library为管理员上班的library
         String token = request.getHeader("token");
         Long libraryID = JwtUtils.getLibraryID(token);
-        addBookCopyRequest.setLibraryID(libraryID+"");
+        addBookCopyRequest.setLibraryID(libraryID + "");
 
         GeneralResponse generalResponse = uploadService.addBookCopy(addBookCopyRequest);
         return ResponseEntity.ok(generalResponse);
 
+
+    }
+
+
+    /**
+     * 管理员把书借给用户的接口
+     *
+     * @param borrowBookRequest
+     * @param bindingResult
+     * @param httpServletRequest
+     * @return
+     */
+    @PostMapping("/lendBookToUser")
+    public ResponseEntity<GeneralResponse> lendBookToUser(
+            @Valid @RequestBody BorrowBookRequest borrowBookRequest,
+            BindingResult bindingResult,
+            HttpServletRequest httpServletRequest) {
+
+        //如果输入的参数不完整，就抛出异常！
+        if (bindingResult.hasFieldErrors()) {
+            throw new IllegalArgumentException(Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage());
+        }
+
+        String token = httpServletRequest.getHeader("token");
+
+        //获得管理员现在在哪个图书馆上班？
+        Long adminLibraryID = JwtUtils.getLibraryID(token);
+
+        //进入业务层
+        GeneralResponse generalResponse = borrowService.lendBookToUser(
+                borrowBookRequest.getUniqueBookMark(),
+                borrowBookRequest.getUsername(),
+                adminLibraryID
+        );
+
+        //把结果返回给前端
+        return ResponseEntity.ok(generalResponse);
 
     }
 

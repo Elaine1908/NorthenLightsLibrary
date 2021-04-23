@@ -6,7 +6,7 @@ import com.example.lab2.dao.LibraryRepository;
 import com.example.lab2.entity.BookCopy;
 import com.example.lab2.entity.BookType;
 import com.example.lab2.entity.Library;
-import com.example.lab2.exception.BookTypeNotFoundException;
+import com.example.lab2.exception.notfound.BookTypeNotFoundException;
 import com.example.lab2.response.search.GetBookTypeAndCopyResponse;
 import com.example.lab2.response.search.NumberToLibrary;
 import org.springframework.beans.factory.annotation.Autowired;
