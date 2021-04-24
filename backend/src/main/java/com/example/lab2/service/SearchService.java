@@ -13,7 +13,6 @@ import com.example.lab2.exception.notfound.BookCopyNotFoundException;
 import com.example.lab2.exception.notfound.BookTypeNotFoundException;
 import com.example.lab2.response.search.GetBookTypeAndCopyResponse;
 import com.example.lab2.response.search.NumberToLibrary;
-import com.sun.source.tree.LambdaExpressionTree;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

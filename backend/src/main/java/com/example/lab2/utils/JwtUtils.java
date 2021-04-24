@@ -9,7 +9,7 @@ import java.util.*;
 public class JwtUtils {
 
     private static final String secret = UUID.randomUUID().toString();//jwt签名时的盐值
-    private static final long shelfLife = 60 * 60 * 1000;//每个签发的jwt有效期是1小时
+    private static final long shelfLife = (long) 60 * 60 * 1000;//每个签发的jwt有效期是1小时
     private static final SignatureAlgorithm algo = SignatureAlgorithm.HS256;//jwt签名算法
 
 
