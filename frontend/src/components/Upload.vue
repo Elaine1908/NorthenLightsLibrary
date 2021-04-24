@@ -53,15 +53,6 @@
         <el-col :span="4" style="color:white">1</el-col>
       </el-row>
     </el-form-item>
-
-    <el-form-item label="校区" prop="campusID" placeholder="请选择校区">
-      <el-select v-model="form.campusID">
-        <el-option label="邯郸" value="1"></el-option>
-        <el-option label="枫林" value="2"></el-option>
-        <el-option label="江湾" value="4"></el-option>
-        <el-option label="张江" value="3"></el-option>
-      </el-select>
-    </el-form-item>
     <el-form-item label="书本名称" prop="name">
       <el-input v-model="form.name"></el-input>
     </el-form-item>
@@ -147,8 +138,7 @@ export default {
         isbn: '',
         publishDate: '',
         author: '',
-        description: '',
-        campusID: ''
+        description: ''
       },
       rules: {
         bookCover: [
@@ -165,9 +155,6 @@ export default {
         ],
         author: [
           {validator: validateAuthor, trigger: 'blur', required: true},
-        ],
-        campusID: [
-          {validator: validateCampusID, trigger: 'blur', type: 'number', required: true},
         ],
         description: [
           {required: true, message: '请填写简介', trigger: 'blur'}
@@ -211,14 +198,13 @@ export default {
       fd.append('bookcoverimage', this.fileList[0].raw);
       fd.append('name', this.form.name);
       fd.append('author', this.form.author);
-      fd.append('campusID', this.form.campusID);
       fd.append('description', this.form.description);
       fd.append('isbn', this.form.isbn);
       fd.append('publicationDate', this.form.publishDate);
       this.$refs.form.validate(valid => {
         if (valid) {
           request({
-            url: '/up/bookupload',
+            url: '/admin/uploadNewBook',
             method: 'post',
             data: fd
           }).then((rep) => {
