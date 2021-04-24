@@ -1,6 +1,5 @@
 package com.example.lab2.controller;
-
-
+import com.example.lab2.dto.UserDTO;
 import com.example.lab2.entity.User;
 import com.example.lab2.exception.RegisterException;
 import com.example.lab2.request.auth.AddAdminRequest;
@@ -18,6 +17,7 @@ import javax.swing.text.html.Option;
 import javax.validation.Valid;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -52,6 +52,13 @@ public class SuperAdminController {
 
     }
 
+    @RequestMapping("/showAdmin")
+    public ResponseEntity<?> showAdmin(){
+        List<UserDTO> admins = userDetailsService.showAdmin();
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("admin",admins);
+        return ResponseEntity.ok(result);
+    }
 }
 
 

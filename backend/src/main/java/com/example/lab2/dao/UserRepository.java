@@ -1,5 +1,6 @@
 package com.example.lab2.dao;
 
+import com.example.lab2.dto.UserDTO;
 import com.example.lab2.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -7,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 //从数据库查询用户信息的接口层
@@ -26,5 +28,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("select u from User u where u.username=:username")
     User getUserByUsername(@Param("username") String username);
+
+    @Query("select new com.example.lab2.dto.UserDTO(u.username,u.email) from User u where u.role='superadmin' OR u.role='admin'")
+    List<UserDTO> getAllAdmin();
 }
 

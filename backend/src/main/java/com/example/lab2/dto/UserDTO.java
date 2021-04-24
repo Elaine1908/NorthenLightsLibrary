@@ -12,5 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 @AllArgsConstructor
 public class UserDTO {
     private String username;
+    private String email;
 
 }

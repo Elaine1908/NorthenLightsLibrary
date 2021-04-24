@@ -1,6 +1,7 @@
 package com.example.lab2.service;
 
 import com.example.lab2.dao.UserRepository;
+import com.example.lab2.dto.UserDTO;
 import com.example.lab2.entity.User;
 import com.example.lab2.exception.LoginException;
 import com.example.lab2.exception.PasswordException;
@@ -132,5 +133,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     }
 
-
+    public List<UserDTO> showAdmin(){
+        return userRepository.getAllAdmin();
+    }
 }
