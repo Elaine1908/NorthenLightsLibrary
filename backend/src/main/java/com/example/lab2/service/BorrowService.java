@@ -51,7 +51,7 @@ public class BorrowService {
      * @return
      */
     @Transactional(rollbackFor = {Exception.class, RuntimeException.class})
-    public GeneralResponse lendBookToUser(String uniqueBookMark, String username, Long adminLibraryID) {
+    public GeneralResponse lendBookToUser(String uniqueBookMark, String username, Long adminLibraryID,String admin) {
         List<Library> libraries = libraryRepository.findAll();
 
 
@@ -115,10 +115,17 @@ public class BorrowService {
                     currentDate
             );
 
+            //得到管理员的ID
+            Long adminID = userRepository.getUserByUsername(admin).getUser_id();
+
             //更改原本bookcopy的status属性
             BookCopy bookCopy = bookCopyOptional.get();
             bookCopy.setStatus(BookCopy.BORROWED);
             bookCopy.setLastRentDate(currentDate);
+            bookCopy.setAdminID(adminID);
+            bookCopy.setBorrower(username);
+            bookCopy.setLibraryID(adminLibraryID);
+            //借出的分馆？？
 
             //更新数据库
             bookkCopyRepository.save(bookCopy);
@@ -134,7 +141,7 @@ public class BorrowService {
 
     //propagation = Propagation.REQUIRES_NEW 防止循环体中的业务因为其中一个抛出异常而全部取消
     @Transactional(rollbackFor = {Exception.class, RuntimeException.class}, propagation = Propagation.REQUIRES_NEW)
-    public GeneralResponse lendReservedBookToUser(String username, List<String> booklist, Long adminLibraryID) {
+    public GeneralResponse lendReservedBookToUser(String username, List<String> booklist, Long adminLibraryID,String admin) {
         List<Library> libraries = libraryRepository.findAll();
         //检验用户存不存在
         Optional<User> userOptional = userRepository.findByName(username);
@@ -151,7 +158,7 @@ public class BorrowService {
 
             try {
                 //尝试把这本预约的书借给用户
-                this.lendOnlyOneReservedBookToUser(uniqueBookMark, adminLibraryID, libraries, userOptional.get());
+                this.lendOnlyOneReservedBookToUser(uniqueBookMark, adminLibraryID, libraries, userOptional.get(),admin);
 
                 //如果没有抛出异常，说明成功
                 messageBuilder.append(String.format("取预约的书%s成功;", uniqueBookMark));
@@ -179,7 +186,7 @@ public class BorrowService {
             String uniqueBookMark,
             Long adminLibraryID,
             List<Library> libraries,
-            User user) {
+            User user,String admin) {
 
         //看看这本bookcopy存不存在
         Optional<BookCopy> bookCopyOptional = bookkCopyRepository.getBookCopyByUniqueBookMark(uniqueBookMark);
@@ -228,10 +235,16 @@ public class BorrowService {
                 currentDate
         );
 
+        //得到管理员的ID
+        Long adminID = userRepository.getUserByUsername(admin).getUser_id();
+
         //更改原本bookcopy的status属性
         BookCopy bookCopy = bookCopyOptional.get();
         bookCopy.setStatus(BookCopy.BORROWED);
         bookCopy.setLastRentDate(currentDate);
+        bookCopy.setAdminID(adminID);
+        bookCopy.setBorrower(user.getUsername());
+        bookCopy.setLibraryID(adminLibraryID);
 
         //删除预约条目
         reservationRepository.deleteReservationByBookCopyID(bookCopy.getBookCopyID());

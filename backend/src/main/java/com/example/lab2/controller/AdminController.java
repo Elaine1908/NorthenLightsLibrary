@@ -9,6 +9,7 @@ import com.example.lab2.entity.Reservation;
 import com.example.lab2.exception.UploadException;
 import com.example.lab2.request.borrow.BorrowBookRequest;
 import com.example.lab2.request.borrow.BorrowReservedBookRequest;
+import com.example.lab2.request.borrow.ReturnBookRequest;
 import com.example.lab2.request.upload.AddBookCopyRequest;
 import com.example.lab2.response.GeneralResponse;
 import com.example.lab2.request.upload.UploadNewBookRequest;
@@ -43,6 +44,9 @@ public class AdminController {
 
     @Resource(name = "searchService")
     SearchService searchService;
+
+    @Resource(name = "normalUserService")
+    NormalUserService normalUserService;
 
     @Autowired
     LibraryRepository libraryRepository;
@@ -134,12 +138,14 @@ public class AdminController {
 
         //获得管理员现在在哪个图书馆上班？
         Long adminLibraryID = JwtUtils.getLibraryID(token);
+        //得到admin的账号
+        String admin = JwtUtils.getUserName(token);
 
         //进入业务层
         GeneralResponse generalResponse = borrowService.lendBookToUser(
                 borrowBookRequest.getUniqueBookMark(),
                 borrowBookRequest.getUsername(),
-                adminLibraryID
+                adminLibraryID,admin
         );
 
         //把结果返回给前端
@@ -166,11 +172,13 @@ public class AdminController {
 
         //获得管理员现在在哪个图书馆上班
         Long adminLibraryID = JwtUtils.getLibraryID(token);
+        //得到admin的账号
+        String admin = JwtUtils.getUserName(token);
 
         GeneralResponse generalResponse = borrowService.lendReservedBookToUser(
                 borrowReservedBookRequest.getUsername(),
                 borrowReservedBookRequest.getUniqueBookMarkList(),
-                adminLibraryID
+                adminLibraryID,admin
         );
 
         //把结果返回给前端
@@ -178,4 +186,23 @@ public class AdminController {
 
     }
 
+    @PostMapping("/receiveBookFromUser")
+    public ResponseEntity<?> receiveBookFromUser(@Valid @RequestBody ReturnBookRequest returnBookRequest,BindingResult bindingResult,
+                                                 HttpServletRequest httpServletRequest){
+
+        if (bindingResult.hasFieldErrors()) {
+            throw new IllegalArgumentException(Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage());
+        }
+        String token = httpServletRequest.getHeader("token");
+
+        //获得管理员现在在哪个图书馆上班
+        Long adminLibraryID = JwtUtils.getLibraryID(token);
+        //得到admin的账号
+        String admin = JwtUtils.getUserName(token);
+
+        GeneralResponse generalResponse = normalUserService.returnBooks(returnBookRequest.getUniqueBookMarkList(),adminLibraryID,admin);
+
+        //把结果返回给前端
+        return ResponseEntity.ok(generalResponse);
+    }
 }
