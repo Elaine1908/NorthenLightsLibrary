@@ -7,7 +7,7 @@
       status-icon
       :rules="rules"
       label-position="left"
-      label-width="80px">
+      label-width="100px">
     <el-form-item
         label="上传封面" prop="bookCover">
       <el-checkbox-group v-show="false" v-model="form.bookCover"></el-checkbox-group>
@@ -255,19 +255,7 @@ export default {
 .avatar-uploader .el-upload:hover {
   border-color: #409EFF;
 }
-
-.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 178px;
-  height: 178px;
-  line-height: 178px;
-  text-align: center;
-}
-
-.avatar {
-  width: 178px;
-  height: 178px;
-  display: block;
+.form {
+  width: 90%;
 }
 </style>

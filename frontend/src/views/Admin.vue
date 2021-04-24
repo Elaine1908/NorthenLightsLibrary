@@ -2,23 +2,28 @@
   <el-row>
     <el-col class="menu">
       <el-menu
+          :default-active="$route.path"
+          :router="true"
           class="el-menu-vertical-demo">
-        <el-menu-item index="1">
-            <span slot="title">
-              <router-link to="/home/admin/returnBooks" class="admin-link">
-                <i class="el-icon-menu"></i> 现场还书
-              </router-link>
-            </span>
+        <el-menu-item index="/home/admin/returnBooks">
+          <i class="el-icon-menu"></i>
+          <span slot="title">现场还书</span>
         </el-menu-item>
-        <el-menu-item index="2">
-            <span slot="title">
-              <router-link to="/home/admin/borrowBooks" class="admin-link">
-                <i class="el-icon-document"></i> 现场借书
-              </router-link></span>
+        <el-menu-item index="/home/admin/borrowBooks">
+          <i class="el-icon-document"></i>
+          <span slot="title">现场借书</span>
         </el-menu-item>
-        <el-menu-item index="3">
+        <el-menu-item index="/home/admin/upload">
           <i class="el-icon-setting"></i>
-          <span slot="title">有四个字</span>
+          <span slot="title">上传新书</span>
+        </el-menu-item>
+        <el-menu-item index="/home/admin/upload">
+          <i class="el-icon-setting"></i>
+          <span slot="title">添加副本</span>
+        </el-menu-item>
+        <el-menu-item index="/home/admin/upload">
+          <i class="el-icon-setting"></i>
+          <span slot="title">新管理员</span>
         </el-menu-item>
       </el-menu>
     </el-col>
@@ -39,12 +44,12 @@ export default {
 
 <style>
 .menu {
-  width: 20%;
+  width: 12%;
   float: left;
 }
 .content {
   float: right;
-  display: contents;
+  width: 85%;
 }
 .router-link-active {
   color: deepskyblue;

@@ -56,6 +56,16 @@ const routes = [
             path: 'returnBooks',
             name: 'ReturnBooks',
             component: () => import('@/components/ReturnBooks')
+          },
+          {
+            path: 'borrowBooks',
+            name: 'BorrowBooks',
+            component: () => import('@/components/BorrowBooks')
+          },
+          {
+            path: 'upload',
+            name: 'Upload',
+            component: () => import('@/components/Upload')
           }
         ]
       }
