@@ -66,6 +66,16 @@ const routes = [
             path: 'upload',
             name: 'Upload',
             component: () => import('@/components/Upload')
+          },
+          {
+            path: 'addCopy',
+            name: 'AddCopy',
+            component: () => import('@/components/AddCopy')
+          },
+          {
+            path: 'addAdmin',
+            name: 'AddAdmin',
+            component: () => import('@/components/AddAdmin')
           }
         ]
       }

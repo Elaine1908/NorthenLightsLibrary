@@ -17,11 +17,11 @@
           <i class="el-icon-setting"></i>
           <span slot="title">上传新书</span>
         </el-menu-item>
-        <el-menu-item index="/home/admin/upload">
+        <el-menu-item index="/home/admin/addCopy">
           <i class="el-icon-setting"></i>
           <span slot="title">添加副本</span>
         </el-menu-item>
-        <el-menu-item index="/home/admin/upload">
+        <el-menu-item index="/home/admin/addAdmin">
           <i class="el-icon-setting"></i>
           <span slot="title">新管理员</span>
         </el-menu-item>

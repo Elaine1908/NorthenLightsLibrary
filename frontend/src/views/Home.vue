@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <el-menu :default-active="$route.path" class="el-menu-demo" mode="horizontal" @select="handleSelect" :router="true">
+    <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect" :router="true">
       <el-menu-item index="/home/show">首页</el-menu-item>
       <el-submenu index="2">
         <template slot="title">我的账户</template>
@@ -27,7 +27,7 @@ export default {
   name: 'Home',
   data() {
     return {
-      activeIndex: this.$route.path
+      activeIndex: ''
     };
   },
   methods: {
@@ -52,6 +52,13 @@ export default {
     logout(){
       this.$store.commit("doLogout");
       this.$router.push({path:'/home/show'})
+    }
+  },
+  mounted: function () {
+    if (/^\/home\/admin*/.test(this.$route.path)) {
+      this.activeIndex = '/home/admin'
+    } else if (/^\/home\/show*/.test(this.$route.path)) {
+      this.activeIndex = '/home/show'
     }
   }
 }
