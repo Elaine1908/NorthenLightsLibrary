@@ -29,7 +29,6 @@ public interface BookCopyRepository extends JpaRepository<BookCopy, Long> {
             "from Borrow borrow left join BookCopy b_c on borrow.uniqueBookMark=b_c.uniqueBookMark left join BookType b_t on b_t.isbn=b_c.isbn left join User  u on u.user_id=borrow.userID where u.username=:username")
     public List<BorrowedBookCopyDTO> getBorrowedBookCopiesByUsername(@Param("username") String username);//显示用户借阅的书本信息
 
-
     @Query("select b_c from BookCopy b_c where b_c.uniqueBookMark=:uniqueBookMark")
     public Optional<BookCopy> getBookCopyByUniqueBookMark(@Param("uniqueBookMark") String uniqueBookMark);
 

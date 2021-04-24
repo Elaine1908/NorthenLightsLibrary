@@ -20,5 +20,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     @Query("select count(rv.reservationID) from Reservation rv where rv.userID=:userID")
     public Long getReservationCountByUserID(@Param("userID") Long userID);
 
+    public void deleteReservationByBookCopyID(Long bookCopyID);
 
 }

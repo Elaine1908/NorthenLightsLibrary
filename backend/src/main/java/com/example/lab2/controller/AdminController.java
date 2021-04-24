@@ -5,10 +5,12 @@ import com.example.lab2.dao.BookTypeRepository;
 import com.example.lab2.dao.LibraryRepository;
 import com.example.lab2.exception.UploadException;
 import com.example.lab2.request.borrow.BorrowBookRequest;
+import com.example.lab2.request.borrow.BorrowReservedBookRequest;
 import com.example.lab2.request.upload.AddBookCopyRequest;
 import com.example.lab2.response.GeneralResponse;
 import com.example.lab2.request.upload.UploadNewBookRequest;
 import com.example.lab2.service.BorrowService;
+import com.example.lab2.service.NormalUserService;
 import com.example.lab2.service.UploadService;
 import com.example.lab2.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +18,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.PushBuilder;
 import javax.validation.Valid;
 import java.util.Objects;
 
@@ -31,6 +35,9 @@ public class AdminController {
 
     @Resource(name = "borrowService")
     BorrowService borrowService;
+
+    @Resource(name = "normalUserService")
+    NormalUserService normalUserService;
 
     @Autowired
     LibraryRepository libraryRepository;
@@ -125,5 +132,35 @@ public class AdminController {
 
     }
 
+    /**
+     * 管理员把用户预约的书借出
+     * @param borrowReservedBookRequest
+     * @param bindingResult
+     * @param httpServletRequest
+     * @return
+     */
+    @PostMapping("/lendReservedBookToUser")
+    public ResponseEntity<?> lendReservedBookToUser(@Valid @RequestBody BorrowReservedBookRequest borrowReservedBookRequest,
+                                                    BindingResult bindingResult,
+                                                    HttpServletRequest httpServletRequest) {
+
+        if (bindingResult.hasFieldErrors()) {
+            throw new IllegalArgumentException(Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage());
+        }
+        String token = httpServletRequest.getHeader("token");
+
+        //获得管理员现在在哪个图书馆上班
+        Long adminLibraryID = JwtUtils.getLibraryID(token);
+
+        GeneralResponse generalResponse = borrowService.lendReservedBookToUser(
+                borrowReservedBookRequest.getUsername(),
+                borrowReservedBookRequest.getUniqueBookMarkList(),
+                adminLibraryID
+        );
+
+        //把结果返回给前端
+        return ResponseEntity.ok(generalResponse);
+
+    }
 
 }
