@@ -8,7 +8,7 @@
         <el-menu-item index="/login" v-else>登录</el-menu-item>
         <el-menu-item index="/register" v-if="!this.$store.state.login">注册</el-menu-item>
         <el-menu-item index="/modifyPassword" v-if="this.$store.state.login">修改密码</el-menu-item>
-        <el-menu-item index="/personalInfo" v-if="this.$store.state.login">个人信息</el-menu-item>
+        <el-menu-item index="/home/user" v-if="this.$store.state.login">个人信息</el-menu-item>
       </el-submenu>
       <el-menu-item index="3" v-if="this.$store.state.identity === 3">在线预约</el-menu-item>
       <el-menu-item index="/home/admin" v-if="this.$store.state.identity === 1 || this.$store.state.identity === 2">
@@ -46,8 +46,8 @@ export default {
     linkToModifyPass() {
       this.$router.push({path:'/modifyPassword'})
     },
-    linkToPersonalInformation() {
-      this.$router.push({path:'/personalInfo'})
+    linkToUserInformation() {
+      this.$router.push({path:'/userInfo'})
     },
     logout(){
       this.$store.commit("doLogout");
@@ -59,6 +59,8 @@ export default {
       this.activeIndex = '/home/admin'
     } else if (/^\/home\/show*/.test(this.$route.path)) {
       this.activeIndex = '/home/show'
+    }else if (/^\/home\/user*/.test(this.$route.path)) {
+      this.activeIndex = '/home/user'
     }
   }
 }

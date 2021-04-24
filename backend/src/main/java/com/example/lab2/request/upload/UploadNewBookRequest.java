@@ -1,10 +1,7 @@
 package com.example.lab2.request.upload;
 
-import com.example.lab2.entity.Book;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import com.example.lab2.entity.BookType;
 import lombok.*;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
@@ -12,11 +9,11 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Valid
 @Data
 public class UploadNewBookRequest {
@@ -39,8 +36,6 @@ public class UploadNewBookRequest {
     @Pattern(regexp = "((((19|20)\\d{2})-(0?[13578]|1[02])-(0?[1-9]|[12]\\d|3[01]))|(((19|20)\\d{2})-(0?[469]|11)-(0?[1-9]|[12]\\d|30))|(((19|20)\\d{2})-0?2-(0?[1-9]|1\\d|2[0-8]))|((((19|20)([13579][26]|[2468][048]|0[48]))|(2000))-0?2-(0?[1-9]|[12]\\d)))",
             message = "出版日期必须符合规范！")
     private String publicationDate;
-    @NotNull(message = "校园不能为空")
-    private long campusID;
 
 
     /**
@@ -48,8 +43,8 @@ public class UploadNewBookRequest {
      *
      * @return book对象
      */
-    public Book getBook() {
-        Book b = new Book();
+    public BookType getBook() {
+        BookType b = new BookType();
         b.setIsbn(isbn);
         b.setName(name);
         b.setAuthor(author);
@@ -60,8 +55,7 @@ public class UploadNewBookRequest {
         } catch (ParseException parseException) {
             b.setPublicationDate(null);
         }
-        b.setStatus(Book.AVAILABLE);
-        b.setCampusID(campusID);
+
         return b;
     }
 

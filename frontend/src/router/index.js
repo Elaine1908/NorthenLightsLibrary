@@ -47,6 +47,29 @@ const routes = [
         ]
       },
       {
+        path: 'user',
+        name: 'User',
+        redirect:'/home/user/userInfo',
+        component: () => import('@/views/User'),
+        children:[
+          {
+            path: 'userInfo',
+            name: 'UserInfo',
+            component: () => import('@/components/UserInfo')
+          },
+          {
+            path: 'userBorrowed',
+            name: 'UserBorrowed',
+            component: () => import('@/components/UserBorrowed')
+          },
+          {
+            path: 'userReserved',
+            name: 'UserReserved',
+            component: () => import('@/components/UserReserved')
+          }
+        ]
+      },
+      {
         path: 'admin',
         name: 'Admin',
         redirect: '/home/admin/returnBooks',
