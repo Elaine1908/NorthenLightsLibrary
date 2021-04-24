@@ -6,10 +6,10 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     // 保存登录状态
-    login: true,
-    username:'Admin',
-    identity: 1,
-    campusID: 1
+    login: false,
+    username:'我的账户',
+    identity: 0,
+    campusID: 0
   },
   // mutations: 专门书写方法,用来更新 state 中的值
   mutations: {
