@@ -3,6 +3,9 @@ package com.example.lab2.controller;
 
 import com.example.lab2.dao.BookTypeRepository;
 import com.example.lab2.dao.LibraryRepository;
+import com.example.lab2.dto.ShowBookCopyDTO;
+import com.example.lab2.entity.BookCopy;
+import com.example.lab2.entity.Reservation;
 import com.example.lab2.exception.UploadException;
 import com.example.lab2.request.borrow.BorrowBookRequest;
 import com.example.lab2.request.borrow.BorrowReservedBookRequest;
@@ -11,6 +14,7 @@ import com.example.lab2.response.GeneralResponse;
 import com.example.lab2.request.upload.UploadNewBookRequest;
 import com.example.lab2.service.BorrowService;
 import com.example.lab2.service.NormalUserService;
+import com.example.lab2.service.SearchService;
 import com.example.lab2.service.UploadService;
 import com.example.lab2.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +27,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.PushBuilder;
 import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.Objects;
 
 @RestController
@@ -36,8 +41,8 @@ public class AdminController {
     @Resource(name = "borrowService")
     BorrowService borrowService;
 
-    @Resource(name = "normalUserService")
-    NormalUserService normalUserService;
+    @Resource(name = "searchService")
+    SearchService searchService;
 
     @Autowired
     LibraryRepository libraryRepository;
@@ -91,11 +96,21 @@ public class AdminController {
 
         GeneralResponse generalResponse = uploadService.addBookCopy(addBookCopyRequest);
         return ResponseEntity.ok(generalResponse);
-
-
     }
 
 
+    /**
+     * 管理员输入副本号后前端页面显示副本信息的接口
+     * @param isbn
+     * @return
+     */
+    @GetMapping("/showBookToUser")
+    public ResponseEntity<?> showBookToUser(@RequestParam("isbn")String isbn){
+        HashMap<String, Object> result = new HashMap<>();
+        ShowBookCopyDTO bookCopy = searchService.getBookCopyByIsbn(isbn);
+        result.put("book",bookCopy);
+        return ResponseEntity.ok(result);
+    }
     /**
      * 管理员把书借给用户的接口
      *

@@ -21,11 +21,14 @@ public class BorrowedBookCopyDTO {
 
     private String uniqueBookMark;
 
-    public BorrowedBookCopyDTO(Date borrowDate, String isbn, String author, String name, String uniqueBookMark) {
+    private String imagePath;
+
+    public BorrowedBookCopyDTO(Date borrowDate, String isbn, String author, String name, String uniqueBookMark,String imagePath) {
         this.borrowDate = borrowDate;
         this.isbn = isbn;
         this.author = author;
         this.name = name;
         this.uniqueBookMark = uniqueBookMark;
+        this.imagePath = imagePath;
     }
 }

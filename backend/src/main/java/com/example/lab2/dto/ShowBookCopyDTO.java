@@ -1,21 +1,8 @@
 package com.example.lab2.dto;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.util.Date;
 
-/**
- * 用户已经预约的书的数据传输对象
- */
-@Getter
-@Setter
-@NoArgsConstructor
-public class ReservedBookCopyDTO {
-
-    private Date reservationDate;
-
+public class ShowBookCopyDTO {
     private String isbn;
 
     private String author;
@@ -28,8 +15,7 @@ public class ReservedBookCopyDTO {
 
     private String imagePath;
 
-    public ReservedBookCopyDTO(Date reservationDate, String isbn, String author, String name, String uniqueBookMark, String libraryName,String imagePath) {
-        this.reservationDate = reservationDate;
+    public ShowBookCopyDTO(String isbn, String author, String name, String uniqueBookMark, String libraryName, String imagePath) {
         this.isbn = isbn;
         this.author = author;
         this.name = name;

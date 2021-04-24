@@ -72,7 +72,7 @@ public class ReserveController {
 
         //加入result
         HashMap<String, Object> result = new HashMap<>();
-        result.put("book", reservedBookCopyDTOS);
+        result.put("reservedBooks", reservedBookCopyDTOS);
 
         //返回给前端
         return ResponseEntity.ok(result);

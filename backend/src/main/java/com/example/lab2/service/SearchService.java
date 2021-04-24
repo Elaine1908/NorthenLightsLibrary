@@ -4,12 +4,16 @@ import com.example.lab2.dao.*;
 import com.example.lab2.dao.BookTypeRepository;
 import com.example.lab2.dao.LibraryRepository;
 import com.example.lab2.dto.BookCopyDTO;
+import com.example.lab2.dto.ReservedBookCopyDTO;
+import com.example.lab2.dto.ShowBookCopyDTO;
 import com.example.lab2.entity.BookCopy;
 import com.example.lab2.entity.BookType;
 import com.example.lab2.entity.Library;
+import com.example.lab2.exception.notfound.BookCopyNotFoundException;
 import com.example.lab2.exception.notfound.BookTypeNotFoundException;
 import com.example.lab2.response.search.GetBookTypeAndCopyResponse;
 import com.example.lab2.response.search.NumberToLibrary;
+import com.sun.source.tree.LambdaExpressionTree;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -137,5 +141,18 @@ public class SearchService {
 
     }
 
-
+    /**
+     * 场景：现场借书
+     * 此方法用于管理员每输入一个副本号，并在前端网页点击“加号”按钮时，后端从数据库搜索书本并返回
+     * 以便在网页动态展示书本形态和信息，让读者确认是否是ta想要借的书
+     * @param isbn 副本的唯一标识
+     * @return
+     */
+    public ShowBookCopyDTO getBookCopyByIsbn(String isbn){
+        Optional<ShowBookCopyDTO> bookCopy = bookCopyRepository.getBookCopyByUniqueBookMarkAndShow(isbn);
+        if(!bookCopy.isPresent()){
+            throw new BookCopyNotFoundException("该图书的副本没有找到！");
+        }
+        return bookCopy.get();
+    }
 }
