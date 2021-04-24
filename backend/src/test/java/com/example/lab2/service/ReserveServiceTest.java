@@ -1,6 +1,6 @@
 package com.example.lab2.service;
 
-import com.example.lab2.dao.BookkCopyRepository;
+import com.example.lab2.dao.BookCopyRepository;
 import com.example.lab2.dao.ReservationRepository;
 import com.example.lab2.dao.UserRepository;
 import com.example.lab2.entity.BookCopy;
@@ -32,7 +32,7 @@ public class ReserveServiceTest {
     ReserveService reserveService;
 
     @Autowired
-    BookkCopyRepository bookkCopyRepository;
+    BookCopyRepository bookkCopyRepository;
 
     @Autowired
     ReservationRepository reservationRepository;

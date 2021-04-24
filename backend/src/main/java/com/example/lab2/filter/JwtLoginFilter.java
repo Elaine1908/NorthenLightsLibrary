@@ -1,8 +1,10 @@
 package com.example.lab2.filter;
 
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.support.jaxrs.FastJsonProvider;
 import com.example.lab2.entity.User;
 import com.example.lab2.request.auth.LoginRequest;
+import com.example.lab2.response.GeneralResponse;
 import com.example.lab2.utils.JwtUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -74,6 +76,11 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
             user.setLibraryID((Long) request.getAttribute("libraryID"));
         }
 
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json; charset=utf-8");
+        String jsonString = JSONObject.toJSONString(new GeneralResponse("登陆成功！"));
+        response.getWriter().write(jsonString);
+
         String token = JwtUtils.generateJwt(user);
         response.addHeader("token", token);
     }
@@ -82,6 +89,9 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
         response.setCharacterEncoding("UTF-8");
         response.setStatus(403);
-        response.getWriter().write("用户名或密码错误");
+        response.setContentType("application/json; charset=utf-8");
+
+        String jsonString = JSONObject.toJSONString(new GeneralResponse("用户名或密码错误！"));
+        response.getWriter().write(jsonString);
     }
 }

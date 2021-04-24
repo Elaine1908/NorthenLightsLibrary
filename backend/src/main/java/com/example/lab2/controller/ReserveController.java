@@ -1,19 +1,20 @@
 package com.example.lab2.controller;
 
 
+import com.example.lab2.dto.ReservedBookCopyDTO;
 import com.example.lab2.request.reserve.ReserveRequest;
 import com.example.lab2.response.GeneralResponse;
 import com.example.lab2.service.ReserveService;
 import com.example.lab2.utils.JwtUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -54,6 +55,29 @@ public class ReserveController {
 
         //返回给前端
         return ResponseEntity.ok(response);
+    }
+
+    /**
+     * 现场取预约过的书籍，显示一个用户预约过的所有书籍
+     *
+     * @return
+     */
+    @GetMapping("/admin/showReservation")
+    public ResponseEntity<HashMap<String, Object>> getAllReservation(
+            @RequestParam("username")String username) {
+
+
+        //获得预约过的书
+        List<ReservedBookCopyDTO> reservedBookCopyDTOS = reserveService.getAllReservation(username);
+
+        //加入result
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("book", reservedBookCopyDTOS);
+
+        //返回给前端
+        return ResponseEntity.ok(result);
+
+
     }
 }
 

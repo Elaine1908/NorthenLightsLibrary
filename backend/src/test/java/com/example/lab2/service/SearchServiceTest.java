@@ -1,5 +1,6 @@
 package com.example.lab2.service;
 
+import com.example.lab2.dto.BookCopyDTO;
 import com.example.lab2.entity.BookCopy;
 import com.example.lab2.entity.BookType;
 import com.example.lab2.entity.Library;
@@ -42,7 +43,7 @@ public class SearchServiceTest {
     UploadService uploadService;
 
     @Autowired
-    BookkCopyRepository bookCopyRepository;
+    BookCopyRepository bookCopyRepository;
 
     @Test
     public void testGetNumberEachLibrary() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
@@ -56,13 +57,13 @@ public class SearchServiceTest {
         libraries.add(new Library(2, "2号"));
         libraries.add(new Library(3, "3号"));
 
-        List<BookCopy> bookCopies = new ArrayList<>();
-        bookCopies.add(new BookCopy("", "", "", (long) 1, null, null, (long) 0));
-        bookCopies.add(new BookCopy("", "", "", (long) 1, null, null, (long) 0));
-        bookCopies.add(new BookCopy("", "", "", (long) 1, null, null, (long) 0));
-        bookCopies.add(new BookCopy("", "", "", (long) 2, null, null, (long) 0));
-        bookCopies.add(new BookCopy("", "", "", (long) 2, null, null, (long) 0));
-        bookCopies.add(new BookCopy("", "", "", (long) 3, null, null, (long) 0));
+        List<BookCopyDTO> bookCopies = new ArrayList<>();
+        bookCopies.add(new BookCopyDTO((long) 1, "1号", BookCopy.AVAILABLE, "unique-1", "br"));
+        bookCopies.add(new BookCopyDTO((long) 1, "1号", BookCopy.AVAILABLE, "unique-2", "br"));
+        bookCopies.add(new BookCopyDTO((long) 1, "1号", BookCopy.AVAILABLE, "unique-3", "br"));
+        bookCopies.add(new BookCopyDTO((long) 2, "2号", BookCopy.AVAILABLE, "unique-4", "br"));
+        bookCopies.add(new BookCopyDTO((long) 2, "2号", BookCopy.AVAILABLE, "unique-5", "br"));
+        bookCopies.add(new BookCopyDTO((long) 3, "3号", BookCopy.AVAILABLE, "unique-6", "br"));
 
         List<NumberToLibrary> numberToLibraries = (List<NumberToLibrary>) getNumberEachLibrary.invoke(searchService, bookCopies, libraries);
         numberToLibraries.forEach(numberToLibrary -> {
@@ -138,7 +139,7 @@ public class SearchServiceTest {
         });
 
         //测试副本数目
-        List<BookCopy> bookCopies = getBookTypeAndCopyResponse.getBookCopies();
+        List<BookCopyDTO> bookCopies = getBookTypeAndCopyResponse.getBookCopies();
         assertEquals(bookCopies.size(), 1 + 2 + 3 + 4);
 
         bookCopies.forEach(bookCopy -> {
@@ -294,7 +295,6 @@ public class SearchServiceTest {
         assertEquals(bookTypes.size(), 26);
 
     }
-
 
 
 }

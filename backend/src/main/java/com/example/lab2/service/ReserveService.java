@@ -2,6 +2,7 @@ package com.example.lab2.service;
 
 import com.example.lab2.dao.*;
 import com.example.lab2.dao.UserRepository;
+import com.example.lab2.dto.ReservedBookCopyDTO;
 import com.example.lab2.entity.BookCopy;
 import com.example.lab2.entity.Reservation;
 import com.example.lab2.entity.User;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service("reserveService")
@@ -70,14 +72,15 @@ public class ReserveService {
             }
 
             //更新书本副本的状态为已预约，设置最近一次借阅时间
+            Date currentDate = new Date();
             BookCopy bc = desiredBookCopy.get();
             bc.setStatus(BookCopy.RESERVED);
-            bc.setLastRentDate(new Date());
+            bc.setLastReservationDate(currentDate);
             bookkCopyRepository.save(bc);
 
             //在预约表里插入一个新的预约
             Reservation newReservation = new Reservation(
-                    userReserving.get().getUser_id(), bc.getBookCopyID()
+                    userReserving.get().getUser_id(), bc.getBookCopyID(), currentDate
             );
             reservationRepository.save(newReservation);
 
@@ -86,5 +89,23 @@ public class ReserveService {
 
         return new GeneralResponse("预约" + desiredBookCopy.get().getUniqueBookMark() + "成功！");
 
+    }
+
+    /**
+     * 根据用户名，获得他预约过的所有书籍的函数
+     *
+     * @param username
+     * @return
+     */
+    public List<ReservedBookCopyDTO> getAllReservation(String username) {
+
+        //看看用户存不存在
+        Optional<User> userOptional = userRepository.findByName(username);
+        if (!userOptional.isPresent()) {
+            throw new UserNotFoundException("找不到这个用户！");
+        }
+
+
+        return bookkCopyRepository.getAllReservedBooksByUsername(username);
     }
 }

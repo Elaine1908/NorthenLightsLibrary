@@ -4,6 +4,7 @@ package com.example.lab2.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Data
 @Getter
@@ -22,8 +23,11 @@ public class Reservation {
 
     private Long bookCopyID;
 
-    public Reservation(Long userID, Long bookCopyID) {
+    private Date reservationDate;
+
+    public Reservation(Long userID, Long bookCopyID, Date reservationDate) {
         this.userID = userID;
         this.bookCopyID = bookCopyID;
+        this.reservationDate = reservationDate;
     }
 }

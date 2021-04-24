@@ -1,22 +1,17 @@
 package com.example.lab2.controller;
 
-import com.example.lab2.dto.UserTDO;
 import com.example.lab2.entity.User;
 import com.example.lab2.exception.RegisterException;
-import com.example.lab2.request.auth.LoginRequest;
 import com.example.lab2.request.auth.RegisterRequest;
 import com.example.lab2.response.GeneralResponse;
 import com.example.lab2.service.UserDetailsServiceImpl;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.dao.DataIntegrityViolationException;

@@ -1,9 +1,6 @@
 package com.example.lab2.service;
 
-import com.example.lab2.dao.BookkCopyRepository;
-import com.example.lab2.dao.BorrowRepository;
-import com.example.lab2.dao.ReservationRepository;
-import com.example.lab2.dao.UserRepository;
+import com.example.lab2.dao.*;
 import com.example.lab2.entity.BookCopy;
 import com.example.lab2.entity.Borrow;
 import com.example.lab2.entity.Reservation;
@@ -38,7 +35,7 @@ public class BorrowServiceTest {
     UserRepository userRepository;
 
     @Autowired
-    BookkCopyRepository bookkCopyRepository;
+    BookCopyRepository bookkCopyRepository;
 
     @Autowired
     ReservationRepository reservationRepository;
@@ -141,7 +138,7 @@ public class BorrowServiceTest {
         BookCopy bookCopyFromDB = bookkCopyRepository.getBookCopyByUniqueBookMark("uniqueBookMark").get();
 
         Reservation reservation = new Reservation(
-                (long) 345, bookCopyFromDB.getBookCopyID()
+                (long) 345, bookCopyFromDB.getBookCopyID(),new Date()
         );
 
         reservationRepository.save(reservation);

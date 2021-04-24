@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserTDO {
+public class UserDTO {
     private String username;
 
 }

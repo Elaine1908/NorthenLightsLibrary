@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
 public class BookkCopyRepositoryTest {
 
     @Autowired
-    BookkCopyRepository bookkCopyRepository;
+    BookCopyRepository bookkCopyRepository;
 
     @Test
     public void testGetBookCopyByUniqueBookMark() {

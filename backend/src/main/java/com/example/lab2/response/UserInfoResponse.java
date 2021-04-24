@@ -1,6 +1,7 @@
 package com.example.lab2.response;
 
-import com.example.lab2.dto.BookDTO;
+import com.example.lab2.dto.BorrowedBookCopyDTO;
+import com.example.lab2.dto.ReservedBookCopyDTO;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,8 +13,8 @@ public class UserInfoResponse{
     private String username;
     private int credit;
     private String role;
-    private List<BookDTO> borrowedBooks;
-    private List<BookDTO> reservedBooks;
+    private List<BorrowedBookCopyDTO> borrowedBooks;
+    private List<ReservedBookCopyDTO> reservedBooks;
     /**
      * 根据用户个人信息创建response
      *

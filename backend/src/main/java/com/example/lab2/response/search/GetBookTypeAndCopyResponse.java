@@ -1,5 +1,6 @@
 package com.example.lab2.response.search;
 
+import com.example.lab2.dto.BookCopyDTO;
 import com.example.lab2.entity.BookCopy;
 import com.example.lab2.entity.BookType;
 import lombok.AllArgsConstructor;
@@ -28,7 +29,7 @@ public class GetBookTypeAndCopyResponse {
 
     private List<NumberToLibrary> numberEachLibrary;
 
-    private List<BookCopy> bookCopies;
+    private List<BookCopyDTO> bookCopies;
 
 
     /**

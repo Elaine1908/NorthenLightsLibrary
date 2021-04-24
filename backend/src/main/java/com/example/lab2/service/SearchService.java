@@ -3,6 +3,7 @@ package com.example.lab2.service;
 import com.example.lab2.dao.*;
 import com.example.lab2.dao.BookTypeRepository;
 import com.example.lab2.dao.LibraryRepository;
+import com.example.lab2.dto.BookCopyDTO;
 import com.example.lab2.entity.BookCopy;
 import com.example.lab2.entity.BookType;
 import com.example.lab2.entity.Library;
@@ -49,7 +50,7 @@ public class SearchService {
                 new GetBookTypeAndCopyResponse(bookType.get());
 
         //获得所有的bookcopy
-        List<BookCopy> bookCopies = bookCopyRepository.getBookCopiesByISBN(isbn);
+        List<BookCopyDTO> bookCopies = bookCopyRepository.getBookCopiesByISBN(isbn);
 
         //在response对象中设置bookcopies
         getBookTypeAndCopyResponse.setBookCopies(bookCopies);
@@ -112,7 +113,7 @@ public class SearchService {
      * @param libraries  图书馆列表
      * @return 每个图书馆有几本？
      */
-    private List<NumberToLibrary> getNumberEachLibrary(List<BookCopy> bookCopies, List<Library> libraries) {
+    private List<NumberToLibrary> getNumberEachLibrary(List<BookCopyDTO> bookCopies, List<Library> libraries) {
         //每个图书馆有几种这本书的副本
         List<NumberToLibrary> numberEachLibrary = new ArrayList<>();
 
@@ -135,5 +136,6 @@ public class SearchService {
         return numberEachLibrary;
 
     }
+
 
 }
