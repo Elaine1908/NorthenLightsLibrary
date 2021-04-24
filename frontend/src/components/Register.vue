@@ -51,7 +51,6 @@
           required
       ></el-input>
     </el-form-item>
-    <el-form-item>
       <el-button
           type="primary"
           @click="submitForm('ruleForm')"
@@ -61,8 +60,7 @@
           @click="resetForm('ruleForm')"
       >重置
       </el-button>
-    </el-form-item>
-    <span class="reminder"><router-link to="/home/show">游客登录</router-link> | 已有账号？<router-link to="/login">登录</router-link></span>
+    <div class="reminder"><router-link to="/home/show">游客登录</router-link> | 已有账号？<router-link to="/login">登录</router-link></div>
   </el-form>
 </template>
 
@@ -104,14 +102,17 @@ export default {
         callback();
       }
     };
-    var validUsername = (rule, value, callback) => {
+    let validUsername = (rule, value, callback) => {
       let pat = /^\d{11}$/
-      if (!pat.test(value)) {
+      if (value === '') {
+        callback(new Error('请填写学/工号'))
+      }
+      else if (!pat.test(value)) {
         callback(new Error('请注意学/工号的正确格式'))
       } else {
         callback();
       }
-    };
+    }
     var validEmail = (rule, value, callback) => {
       let emailPat = /^\w+@[a-zA-Z0-9]{2,10}(?:\.[a-z]{2,4}){1,3}$/
       if (value === '') {
@@ -137,7 +138,7 @@ export default {
           {validator: validatePass2, trigger: 'blur', required: true},
         ],
         username: [
-          {validator: validUsername, trigger: 'blur', required: true, message: '请输入您的学/工号'},
+          {validator: validUsername, trigger: 'blur', required: true},
         ],
         email: [
           {validator: validEmail, trigger: 'blur', required: true},
@@ -188,6 +189,7 @@ a {
   cursor: pointer;
 }
 .reminder {
+  margin-top: 10px;
   font-size: smaller;
   color: gray;
 }
