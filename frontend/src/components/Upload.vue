@@ -1,6 +1,6 @@
 <template>
   <el-form
-      class="form"
+      class="up-form"
       id="form"
       ref="form"
       :model="form"
@@ -23,8 +23,7 @@
           :limit="1"
           :show-file-list="false"
           :on-change="imgSaveToUrl"
-          :accept="'image/*'"
-      >
+          :accept="'image/*'">
         <i class="el-icon-upload" style="color:#409EFF"></i>
         <div class="el-upload__text text">
           将图片拖到此处，或
@@ -32,8 +31,8 @@
         </div>
         <div
             class="el-upload__tip text"
-            slot="tip"
-        >提示：可支持PNG、JPG、BMP，图片大小不超过4M,长边不大于4096像素，请保证识别的部分为图片的主题部分
+            slot="tip">
+          提示：可支持PNG、JPG、BMP，图片大小不超过4M,长边不大于4096像素，请保证识别的部分为图片的主题部分
         </div>
       </el-upload>
       <el-row v-if="isShowImgUpload" style="padding-left:10%;padding-right:10%;">
@@ -255,7 +254,7 @@ export default {
 .avatar-uploader .el-upload:hover {
   border-color: #409EFF;
 }
-.form {
+.up-form {
   width: 90%;
 }
 </style>
