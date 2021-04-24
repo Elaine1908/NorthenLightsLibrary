@@ -1,4 +1,4 @@
-<template>
+`<template>
   <el-row>
     <el-col class="menu">
       <el-menu

@@ -7,7 +7,7 @@ export default new Vuex.Store({
   state: {
     // 保存登录状态
     login: true,
-    username:'Admin',
+    username:'我的账户',
     identity: 1,
     campusID: 1
   },
