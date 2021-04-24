@@ -66,10 +66,6 @@ public class UserController {
         return ResponseEntity.ok(new GeneralResponse("密码更新成功！"));
     }
 
-    @GetMapping("/userinfo")
-    public ResponseEntity<?> userInfo(@RequestParam("username")String username){
-        return ResponseEntity.ok(new GeneralResponse("密码更新成功！"));
-    }
 
 
 

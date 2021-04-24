@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 
-public interface BookkCopyRepository extends JpaRepository<BookCopy, Long> {
+public interface BookCopyRepository extends JpaRepository<BookCopy, Long> {
 
 
     @Query("select new java.lang.Long(count(b_c.bookCopyID)) from BookCopy b_c where b_c.isbn=:isbn")
@@ -20,8 +20,7 @@ public interface BookkCopyRepository extends JpaRepository<BookCopy, Long> {
             "left join User u on u.user_id=borrow.userID " +
             "left join Library library on library.libraryID=b_c.libraryID " +
             " where b_c.isbn=:isbn")
-    public List<BookCopy> getBookCopiesByISBN(@Param("isbn") String isbn);
-
+    public List<BookCopy> getBookCopiesByISBN(@Param("isbn") String isbn);//显示一本书及其副本信息
 
     @Query("select b_c from BookCopy b_c where b_c.uniqueBookMark=:uniqueBookMark")
     public Optional<BookCopy> getBookCopyByUniqueBookMark(@Param("uniqueBookMark") String uniqueBookMark);
