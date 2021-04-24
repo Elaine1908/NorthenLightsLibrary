@@ -63,6 +63,11 @@ const routes = [
             component: () => import('@/components/BorrowBooks')
           },
           {
+            path: 'FetchBooks',
+            name: 'FetchBooks',
+            components: () => import('@/components/FetchBooks')
+          },
+          {
             path: 'upload',
             name: 'Upload',
             component: () => import('@/components/Upload')
