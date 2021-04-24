@@ -28,7 +28,7 @@ public class BorrowService {
     UserRepository userRepository;
 
     @Autowired
-    BookkCopyRepository bookkCopyRepository;
+    BookCopyRepository bookkCopyRepository;
 
     @Autowired
     ReservationRepository reservationRepository;

@@ -23,7 +23,7 @@ public class SearchService {
     private LibraryRepository libraryRepository;
 
     @Autowired
-    private BookkCopyRepository bookCopyRepository;
+    private BookCopyRepository bookCopyRepository;
 
     @Autowired
     private BookTypeRepository bookTypeRepository;

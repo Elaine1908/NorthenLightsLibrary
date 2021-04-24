@@ -24,8 +24,12 @@ public class BookDTO {
     private String author;
     private String description;
     private Date publicationDate;
-
-    private String imagePath;
+    /**added*/
+    private Date lastReturnDate;
+    private Date lastRentDate;
+    private Date lastReservationDate;
+    /**added*/
+    private String imagePath;//传给前端的imagePath
     private long campusID;
     private String status;
 
@@ -71,4 +75,29 @@ public class BookDTO {
         this.status = status;
         this.campusName = campusName;
     }
+
+    public BookDTO(String isbn, String name, String author, String description, Date lastRentDateDate,Date lastReturnDate,String imagePath, String status, String campusName) {
+        this.isbn = isbn;
+        this.name = name;
+        this.author = author;
+        this.description = description;
+        this.lastRentDate = lastRentDateDate;
+        this.lastReturnDate = lastReturnDate;
+        this.imagePath = imagePath;
+        this.status = status;
+        this.campusName = campusName;
+    }
+    //added: 获取用户借阅的书本信息
+
+    public BookDTO(String isbn, String name, String author, String description, Date lastReservationDate,String imagePath, String status, String campusName) {
+        this.isbn = isbn;
+        this.name = name;
+        this.author = author;
+        this.description = description;
+        this.lastReservationDate = lastReservationDate;
+        this.imagePath = imagePath;
+        this.status = status;
+        this.campusName = campusName;
+    }
+    //added: 获取用户预约的书本信息
 }

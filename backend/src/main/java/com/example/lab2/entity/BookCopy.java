@@ -43,6 +43,8 @@ public class BookCopy {
 
     private Date lastReturnDate;
 
+    private Date lastReservationDate;
+
     @JsonIgnore
     private Long adminID;
 

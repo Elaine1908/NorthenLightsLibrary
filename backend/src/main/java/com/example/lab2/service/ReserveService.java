@@ -28,7 +28,7 @@ public class ReserveService {
     ReservationRepository reservationRepository;
 
     @Autowired
-    BookkCopyRepository bookkCopyRepository;
+    BookCopyRepository bookkCopyRepository;
 
 
     @Transactional(rollbackFor = {Exception.class, RuntimeException.class})

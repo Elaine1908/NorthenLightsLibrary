@@ -1,6 +1,5 @@
 package com.example.lab2.service;
-
-import com.example.lab2.dao.BookkCopyRepository;
+import com.example.lab2.dao.BookCopyRepository;
 import com.example.lab2.dao.BookTypeRepository;
 import com.example.lab2.dao.LibraryRepository;
 import com.example.lab2.entity.BookCopy;
@@ -31,7 +30,7 @@ public class UploadService {
     LibraryRepository libraryRepository;
 
     @Autowired
-    BookkCopyRepository bookCopyRepository;
+    BookCopyRepository bookCopyRepository;
 
 
     @Value("${images.whereisbookcovers}")
