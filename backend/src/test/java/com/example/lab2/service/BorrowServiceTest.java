@@ -247,7 +247,9 @@ public class BorrowServiceTest {
                     "non_existent",
                     (long) 0,
                     libraries,
-                    userFromDb,"admin"
+
+                    userFromDb,
+                    "admin"
             );
         });
 
@@ -284,7 +286,9 @@ public class BorrowServiceTest {
                     "uniqueBookMark",
                     (long) 0,
                     libraries,
-                    userFromDb,"admin"
+
+                    userFromDb,
+                    "admin"
             );
         });
     }
@@ -329,7 +333,9 @@ public class BorrowServiceTest {
                     "uniqueBookMark",
                     (long) 0,
                     libraries,
-                    userFromDb,"admin"
+
+                    userFromDb,
+                    "admin"
             );
         });
 
@@ -375,7 +381,9 @@ public class BorrowServiceTest {
                     "uniqueBookMark",
                     new SecureRandom().nextLong(),
                     libraries,
-                    userFromDb,"admin"
+
+                    userFromDb,
+                    "admin"
             );
         });
 
@@ -420,7 +428,9 @@ public class BorrowServiceTest {
                 "uniqueBookMark",
                 (long) 1,
                 libraries,
-                userFromDb,"admin"
+
+                userFromDb,
+                "admin"
         );
 
         Optional<Reservation> reservationFromDB = reservationRepository.getReservationByBookCopyID(bookCopyFromDb.getBookCopyID());

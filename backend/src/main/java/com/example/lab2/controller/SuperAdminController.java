@@ -1,7 +1,6 @@
 package com.example.lab2.controller;
 import com.example.lab2.dto.UserDTO;
-import com.example.lab2.entity.User;
-import com.example.lab2.exception.RegisterException;
+import com.example.lab2.exception.auth.RegisterException;
 import com.example.lab2.request.auth.AddAdminRequest;
 import com.example.lab2.service.UserDetailsServiceImpl;
 import org.springframework.http.ResponseEntity;
@@ -12,10 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import javax.jws.soap.SOAPBinding;
-import javax.swing.text.html.Option;
 import javax.validation.Valid;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;

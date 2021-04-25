@@ -13,7 +13,6 @@ import com.example.lab2.exception.notfound.UserNotFoundException;
 import com.example.lab2.exception.reserve.NotReservedException;
 import com.example.lab2.exception.reserve.ReservedByOtherException;
 import com.example.lab2.response.GeneralResponse;
-import jdk.nashorn.internal.runtime.options.Option;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -51,7 +50,10 @@ public class BorrowService {
      * @return
      */
     @Transactional(rollbackFor = {Exception.class, RuntimeException.class})
-    public GeneralResponse lendBookToUser(String uniqueBookMark, String username, Long adminLibraryID,String admin) {
+    public GeneralResponse lendBookToUser(String uniqueBookMark,
+                                          String username,
+                                          Long adminLibraryID,
+                                          String admin) {
         List<Library> libraries = libraryRepository.findAll();
 
 
@@ -116,7 +118,12 @@ public class BorrowService {
             );
 
             //得到管理员的ID
-            Long adminID = userRepository.getUserByUsername(admin).getUser_id();
+            Optional<User> adminOptional = userRepository.findByName(admin);
+            if (!adminOptional.isPresent()) {
+                throw new UserNotFoundException("找不到管理员" + admin);
+            }
+            Long adminID = adminOptional.get().getUser_id();
+
 
             //更改原本bookcopy的status属性
             BookCopy bookCopy = bookCopyOptional.get();
@@ -139,9 +146,10 @@ public class BorrowService {
 
     }
 
-    //propagation = Propagation.REQUIRES_NEW 防止循环体中的业务因为其中一个抛出异常而全部取消
-    @Transactional(rollbackFor = {Exception.class, RuntimeException.class}, propagation = Propagation.REQUIRES_NEW)
-    public GeneralResponse lendReservedBookToUser(String username, List<String> booklist, Long adminLibraryID,String admin) {
+    public GeneralResponse lendReservedBookToUser(String username,
+                                                  List<String> booklist,
+                                                  Long adminLibraryID,
+                                                  String admin) {
         List<Library> libraries = libraryRepository.findAll();
         //检验用户存不存在
         Optional<User> userOptional = userRepository.findByName(username);
@@ -158,7 +166,7 @@ public class BorrowService {
 
             try {
                 //尝试把这本预约的书借给用户
-                this.lendOnlyOneReservedBookToUser(uniqueBookMark, adminLibraryID, libraries, userOptional.get(),admin);
+                this.lendOnlyOneReservedBookToUser(uniqueBookMark, adminLibraryID, libraries, userOptional.get(), admin);
 
                 //如果没有抛出异常，说明成功
                 messageBuilder.append(String.format("取预约的书%s成功;", uniqueBookMark));
@@ -186,7 +194,7 @@ public class BorrowService {
             String uniqueBookMark,
             Long adminLibraryID,
             List<Library> libraries,
-            User user,String admin) {
+            User user, String admin) {
 
         //看看这本bookcopy存不存在
         Optional<BookCopy> bookCopyOptional = bookkCopyRepository.getBookCopyByUniqueBookMark(uniqueBookMark);
@@ -236,7 +244,11 @@ public class BorrowService {
         );
 
         //得到管理员的ID
-        Long adminID = userRepository.getUserByUsername(admin).getUser_id();
+        Optional<User> adminOptional = userRepository.findByName(admin);
+        if (!adminOptional.isPresent()) {
+            throw new UserNotFoundException("找不到管理员" + admin);
+        }
+        Long adminID = adminOptional.get().getUser_id();
 
         //更改原本bookcopy的status属性
         BookCopy bookCopy = bookCopyOptional.get();

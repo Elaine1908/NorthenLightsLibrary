@@ -1,0 +1,149 @@
+[33mcommit d7dca05efe5731ab800469c4516bfc9ac6f51891[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31morigin/backend[m[33m, [m[1;32mbackend[m[33m)[m
+Author: ZhuYiwen <child_2000@126.com>
+Date:   Sun Apr 25 01:15:18 2021 +0800
+
+    现场还书功能完成
+
+[33mcommit f2e0446f3bfb4c42955e3531ac29c59c6ed94911[m
+Author: ZhuYiwen <child_2000@126.com>
+Date:   Sun Apr 25 00:02:57 2021 +0800
+
+    补充显示管理员功能
+
+[33mcommit 7028a03b87559d6f84237cf337a72127dba2e022[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Haojie <zhj630985214@gmail.com>
+Date:   Sat Apr 24 23:30:47 2021 +0800
+
+    完成了管理员把已经预约的书借给用户的功能
+
+[33mcommit 27b04ca5ad135f965b84ac2efe490d3abf6da93f[m
+Author: ZhuYiwen <child_2000@126.com>
+Date:   Sat Apr 24 20:57:55 2021 +0800
+
+    新增现场借书管理员输入副本号显示副本详情功能，接口文档更新
+
+[33mcommit cdd158eb183462483ba634d9792f4d2479c2b8bf[m
+Author: ZhuYiwen <child_2000@126.com>
+Date:   Sat Apr 24 16:23:31 2021 +0800
+
+    用户取预约书功能完成
+
+[33mcommit 5a7e332e12ff0c75a2bc33cf0877450e363d306e[m
+Author: Haojie <zhj630985214@gmail.com>
+Date:   Sat Apr 24 15:25:00 2021 +0800
+
+    重构了bootdto，完成了显示用户的图书列表的功能
+
+[33mcommit 41b802cb82db66acb9fa19255276e53190026cc0[m
+Author: ZhuYiwen <child_2000@126.com>
+Date:   Sat Apr 24 11:45:46 2021 +0800
+
+    用户信息展示功能完成
+
+[33mcommit fd2430967d74102a735ed783dc0aacb65a393740[m
+Author: ZhuYiwen <child_2000@126.com>
+Date:   Sat Apr 24 10:14:23 2021 +0800
+
+    接口文档修改
+
+[33mcommit 1e5a9e225fd5e8514854b9e49a97ab67b3e7c165[m
+Author: Haojie <zhj630985214@gmail.com>
+Date:   Fri Apr 23 23:27:41 2021 +0800
+
+    zhj测试完了管理员借书给用户的接口
+
+[33mcommit 541c78b6be4ba08518b59719b1e4b13dd537ad25[m
+Author: Haojie <zhj630985214@gmail.com>
+Date:   Fri Apr 23 15:35:10 2021 +0800
+
+    重构了异常类，写完了管理员借书给用户的接口，但是还没有测试orz
+
+[33mcommit 52bb87f64a74ab896eceb898a3833d2f7313124c[m
+Author: Haojie <zhj630985214@gmail.com>
+Date:   Thu Apr 22 23:02:32 2021 +0800
+
+    zhj完成了在线预约的功能
+
+[33mcommit eb9b04113c0ec7d9d695f09a226ae8ccfe08ff00[m
+Author: Haojie <zhj630985214@gmail.com>
+Date:   Wed Apr 21 14:55:01 2021 +0800
+
+    去掉了原先lab2遗留在后端项目里面的static文件夹
+
+[33mcommit b6d9ce97af62a62593dd8cb0eb5a6d3242f34922[m
+Author: Haojie <zhj630985214@gmail.com>
+Date:   Wed Apr 21 14:48:31 2021 +0800
+
+    完成了根据isbn或书名或作者搜索书的功能
+
+[33mcommit d87c82bfe8bcc2cd1e619ea065fdd5695d3ecddb[m
+Author: Haojie <zhj630985214@gmail.com>
+Date:   Tue Apr 20 22:08:37 2021 +0800
+
+    完成了根据isbn获得书的信息和副本的信息的功能，过程中发现之前的接口约定有点不合理，改了一下，希望前端还没开工
+
+[33mcommit 62e58cfb2ff0e2b884bdbe8a4b70589abc311297[m
+Author: ZhuYiwen <child_2000@126.com>
+Date:   Mon Apr 19 19:26:05 2021 +0800
+
+    修改密码功能完成
+
+[33mcommit 789b6f85022d4f072d1f2d7b9f1d3de083752e83[m
+Author: Haojie <zhj630985214@gmail.com>
+Date:   Mon Apr 19 17:22:31 2021 +0800
+
+    完成了添加书本副本的功能
+
+[33mcommit 91dd34e64b5f43c49161340dbc26cf0d9dd25f66[m
+Author: Haojie <zhj630985214@gmail.com>
+Date:   Mon Apr 19 14:46:19 2021 +0800
+
+    完成了添加新书的接口
+
+[33mcommit 7ca33983530b8106c2edff84c7665b470f659f8e[m
+Author: Haojie <zhj630985214@gmail.com>
+Date:   Sun Apr 18 21:13:45 2021 +0800
+
+    完成了增加管理员的接口
+
+[33mcommit 91915bd87e45c552704f5996e1bd9ffddaee25e9[m
+Author: Haojie <zhj630985214@gmail.com>
+Date:   Sun Apr 18 21:11:27 2021 +0800
+
+    完成了增加管理员的接口
+
+[33mcommit 0944b006344ae8b0860bddaa9af3b3a5c28ed9ae[m
+Author: Haojie <zhj630985214@gmail.com>
+Date:   Tue Apr 13 23:02:07 2021 +0800
+
+    完成了登陆和注册的功能，完成了获得所有图书馆信息的功能
+
+[33mcommit c31f7d84c0f55f966cfa9ba321d43437507e3710[m
+Author: Haojie <zhj630985214@gmail.com>
+Date:   Tue Apr 13 16:07:21 2021 +0800
+
+    更新了接口文档
+
+[33mcommit 32b9c5af2bab8af3060539671aaf6120b3f95f31[m
+Author: Haojie <zhj630985214@gmail.com>
+Date:   Tue Apr 13 12:02:59 2021 +0800
+
+    整合了spring security框架和jwt
+
+[33mcommit 7236ec077b3873c5b6d9c22c6860aa60d361a789[m
+Author: Haojie <zhj630985214@gmail.com>
+Date:   Mon Apr 12 16:11:58 2021 +0800
+
+    把lab2复制过来
+
+[33mcommit 0cac408b5442558ec0b1aaa3ee812cfcc25b9638[m
+Author: hw87363760 <0ba4e09a3b00f5dd1fb7c015689b2f6d@huawei.com>
+Date:   Mon Apr 12 16:00:09 2021 +0800
+
+    Initial commit
+
+[33mcommit 0fdeb3ac63a919982b88170e06634c7cb4cab2c7[m
+Author: hw87363760 <0ba4e09a3b00f5dd1fb7c015689b2f6d@huawei.com>
+Date:   Mon Apr 12 16:00:08 2021 +0800
+
+    Initial commit

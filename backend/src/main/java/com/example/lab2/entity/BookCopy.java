@@ -48,12 +48,7 @@ public class BookCopy {
     @JsonIgnore
     private Long adminID;
 
-    //这两个属性是连表查询的时候为了方便加的
-    @Transient
     private String borrower;
-
-    @Transient
-    private String libraryName;
 
     public BookCopy(String status, String isbn, String uniqueBookMark, Long libraryID, Date lastRentDate, Date lastReturnDate, Long adminID) {
         this.status = status;
@@ -65,13 +60,11 @@ public class BookCopy {
         this.adminID = adminID;
     }
 
-    public BookCopy(Long bookCopyID, String status, String uniqueBookMark, String borrower, String libraryName, Long
+    public BookCopy(Long bookCopyID, String status, String uniqueBookMark, Long
             libraryID) {
         this.bookCopyID = bookCopyID;
         this.status = status;
         this.uniqueBookMark = uniqueBookMark;
-        this.borrower = borrower;
-        this.libraryName = libraryName;
         this.libraryID = libraryID;
     }
 

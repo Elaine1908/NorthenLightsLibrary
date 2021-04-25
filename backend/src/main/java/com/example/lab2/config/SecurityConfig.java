@@ -13,6 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 
@@ -26,6 +27,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
+
+    @Autowired
+    private AuthenticationEntryPoint myAuthenticationFailEntryPoint;
+
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint() {
+        return new MyAuthenticationFailEntryPointImpl();
+    }
+
 
     /**
      * 在这里设置UserDetailsService
@@ -66,10 +76,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/useradmin/**").hasAnyAuthority("teacher", "student", "admin", "superadmin")
                 .antMatchers("/user/**").hasAnyAuthority("teacher", "student")
                 .antMatchers("/auth/login", "/auth/register").permitAll()
+                .antMatchers("/auth/changePassword").hasAnyAuthority("teacher", "student", "admin", "superadmin")
                 .antMatchers("/student").hasAnyAuthority("student").and()
                 .addFilter(new JwtLoginFilter(authenticationManager())).csrf().disable()
                 .addFilter(new JwtAuthenticationFilter(authenticationManager()))
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+
+        //设置请求被spring security拦截时的自定义信息
+        http.exceptionHandling().authenticationEntryPoint(myAuthenticationFailEntryPoint);
     }
 
     @Bean

@@ -3,20 +3,23 @@ package com.example.lab2.service;
 import com.example.lab2.dao.UserRepository;
 import com.example.lab2.dto.UserDTO;
 import com.example.lab2.entity.User;
-import com.example.lab2.exception.LoginException;
-import com.example.lab2.exception.PasswordException;
-import com.example.lab2.exception.RegisterException;
+import com.example.lab2.exception.auth.password.NewPasswordIsOldPasswordException;
+import com.example.lab2.exception.auth.PasswordException;
+import com.example.lab2.exception.auth.RegisterException;
+import com.example.lab2.exception.auth.password.PasswordContainUsernameException;
+import com.example.lab2.exception.auth.password.PasswordTooWeakException;
+import com.example.lab2.exception.auth.password.WrongPasswordException;
+import com.example.lab2.exception.notfound.UserNotFoundException;
 import com.example.lab2.request.auth.AddAdminRequest;
+import com.example.lab2.response.GeneralResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.util.DigestUtils;
 
 import javax.annotation.PostConstruct;
-import java.nio.charset.StandardCharsets;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,37 +33,52 @@ import java.util.Optional;
 public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private UserRepository userRepository;
-    private static UserRepository userRepositoryStatic;
-
-    @PostConstruct
-    public void init() {
-        userRepositoryStatic = userRepository;
-    }
-
-    public  Optional<User> selectUserByName(String name) {
-        return userRepositoryStatic.findByName(name);
-    }
 
 
-    public static void save(User user) throws SQLIntegrityConstraintViolationException {
-        userRepositoryStatic.save(user);
-    }
+    public GeneralResponse changePassword(String originalPassword, String newPassword, String username) {
 
+        //查找是否有这个用户
+        Optional<User> userOptional = userRepository.findByName(username);
 
-    public void changePassword(String newPassword,String username){
-        User user = userRepository.getUserByUsername(username);
-        //String pass_md5 = DigestUtils.md5DigestAsHex(newPassword.getBytes(StandardCharsets.UTF_8));
-        if(newPassword.equals(user.getPassword())){//密码不加密
-            throw new PasswordException("新密码与旧密码相同");
-        }else if (newPassword.contains(username)){
-            throw new PasswordException("密码中不能包含帐号！");
-        }else if(!checkPasswordStrength(newPassword)){
-            throw new PasswordException("密码中字母，数字，特殊字符必须包含至少两种。");
+        //用户不存在的情况
+        if (!userOptional.isPresent()) {
+            throw new UserNotFoundException("用户不存在！");
         }
-        userRepository.updatePasswordByUsername(newPassword,username);
+
+        //从optional对象中获得真正的user
+        User user = userOptional.get();
+
+        //检查原来的密码是否输入正确
+        if (!user.getPassword().equals(originalPassword)) {
+            throw new WrongPasswordException("原密码输入不正确！");
+        }
+
+        if (newPassword.equals(user.getPassword())) {//密码不加密
+            throw new NewPasswordIsOldPasswordException("新密码与旧密码相同");
+        }
+        if (newPassword.contains(username)) {
+            throw new PasswordContainUsernameException("密码中不能包含帐号！");
+        }
+
+        if (!checkPasswordStrength(newPassword)) {
+            throw new PasswordTooWeakException("密码中字母，数字，特殊字符必须包含至少两种。");
+        }
+
+        //如果能运行到这里，说明输入正常，无异常发生
+        user.setPassword(newPassword);
+
+        //存数据库
+        userRepository.save(user);
+
+        return new GeneralResponse("修改密码成功！");
+
     }
 
     private boolean checkPasswordStrength(String newPassword) {
+        if (newPassword.length() < 6 || newPassword.length() > 32) {
+            return false;
+        }
+
         boolean[] bool = new boolean[3];
         int cnt = 0;
         for (int i = 0; i < newPassword.length(); i++) {
@@ -100,11 +118,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         return user.get();
 
+
     }
 
     public HashMap<String, String> addAdmin(AddAdminRequest addAdminRequest) {
         //检测这个用户名是否已经在数据库中被使用过了
-        if (this.selectUserByName(addAdminRequest.getUsername()).isPresent()) {
+        if (userRepository.findByName(addAdminRequest.getUsername()).isPresent()) {
             throw new RegisterException("这个用户名已经被占用了，请换一个用户名");
         }
 
@@ -118,11 +137,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         );
 
         //把新创建的管理员存储到数据库中
-        try {
-            UserDetailsServiceImpl.save(admin);
-        } catch (SQLIntegrityConstraintViolationException e) {
-            throw new RegisterException("添加管理员失败");
-        }
+        userRepository.save(admin);
 
         //设置成功时的信息
         HashMap<String, String> map = new HashMap<>();

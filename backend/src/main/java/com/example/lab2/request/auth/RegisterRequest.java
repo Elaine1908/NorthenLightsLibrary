@@ -2,15 +2,12 @@ package com.example.lab2.request.auth;
 
 
 import com.example.lab2.entity.User;
-import com.example.lab2.exception.RegisterException;
+import com.example.lab2.exception.auth.RegisterException;
 import lombok.*;
-import org.springframework.util.DigestUtils;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.nio.charset.StandardCharsets;
 
 /**
  * lab2注册的请求

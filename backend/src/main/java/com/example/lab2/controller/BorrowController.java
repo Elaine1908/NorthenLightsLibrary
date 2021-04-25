@@ -46,20 +46,20 @@ public class BorrowController {
         //获得管理员现在在哪个图书馆上班？
         Long adminLibraryID = JwtUtils.getLibraryID(token);
 
+        String adminUsername = JwtUtils.getUserName(token);
+
         //进入业务层
         GeneralResponse generalResponse = borrowService.lendBookToUser(
                 borrowBookRequest.getUniqueBookMark(),
                 borrowBookRequest.getUsername(),
-                adminLibraryID
+                adminLibraryID,
+                adminUsername
         );
 
         //把结果返回给前端
         return ResponseEntity.ok(generalResponse);
 
     }
-
-
-
 
 
 }

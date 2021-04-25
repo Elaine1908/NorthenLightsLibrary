@@ -145,7 +145,8 @@ public class AdminController {
         GeneralResponse generalResponse = borrowService.lendBookToUser(
                 borrowBookRequest.getUniqueBookMark(),
                 borrowBookRequest.getUsername(),
-                adminLibraryID,admin
+                adminLibraryID,
+                admin
         );
 
         //把结果返回给前端
