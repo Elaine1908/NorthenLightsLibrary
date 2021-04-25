@@ -1,25 +1,25 @@
 <template>
   <div class="container">
-    <div style="height: 30px">
-      <el-form :inline="true" :model="formInline" class="demo-form-inline">
-        <el-form-item>
-          <el-input v-model="formInline.bookName" placeholder="书名"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-input v-model="formInline.author" placeholder="作者名"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-input v-model="formInline.isbn" placeholder="ISBN"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="onSubmit">查询</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
     <el-container>
       <el-container style="border: 1px solid #eee">
         <el-container>
           <el-main>
+            <div class="search_bar">
+              <el-form :inline="true" :model="formInline" class="demo-form-inline">
+                <el-form-item>
+                  <el-input v-model="formInline.bookName" placeholder="书名"></el-input>
+                </el-form-item>
+                <el-form-item>
+                  <el-input v-model="formInline.author" placeholder="作者名"></el-input>
+                </el-form-item>
+                <el-form-item>
+                  <el-input v-model="formInline.isbn" placeholder="ISBN"></el-input>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary" @click="onSubmit">查询</el-button>
+                </el-form-item>
+              </el-form>
+            </div>
             <DisplayBox></DisplayBox>
           </el-main>
         </el-container>
@@ -54,5 +54,9 @@
 </script>
 
 <style scoped>
-
+  .search_bar {
+    width: 100%;
+    height: 40px;
+    margin-bottom: 30px;
+  }
 </style>

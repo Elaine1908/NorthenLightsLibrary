@@ -3,12 +3,12 @@
     <el-row>
       <el-col :span="6" v-for="(o, index) in bookList" :key="o" :offset="index > 0 ? 2 : 0">
         <el-card :body-style="{ padding: '0px' }">
-          <img :src="imagePathToFrontEnd" class="image">
+          <img :src="o.imagePathToFrontEnd" class="image">
           <div style="padding: 14px;">
             <h2 style="margin-bottom: 5px;line-height: 20px">{{o.name}}</h2>
             <h3 style="margin-bottom: 5px;line-height: 15px">{{o.author}}</h3>
             <p style="margin-bottom: 20px;line-height: 10px">{{o.description}}</p>
-            <el-button type="text" class="button">预约</el-button>
+            <el-button type="text" class="button" @click="reserve">预约</el-button>
             <div class="bottom clearfix">
               <time class="time">{{ currentDate }}</time>
             </div>
@@ -29,11 +29,16 @@ export default {
       bookList: [{
         name:'hh',
         author:'w',
-        description:'very good'
+        description:'very good',
+        imagePathToFrontEnd:'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png'
       }
       ],
       currentDate: new Date(),
-      imagePathToFrontEnd:'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png'
+      }
+  },
+  methods:{
+    reserve(){
+
     }
   },
   created() {//初始化操作
@@ -85,5 +90,7 @@ export default {
 .clearfix:after {
   clear: both
 }
-
+.button:hover{
+  cursor: pointer;
+}
 </style>
