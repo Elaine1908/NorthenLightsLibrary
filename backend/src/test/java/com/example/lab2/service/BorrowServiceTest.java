@@ -64,7 +64,7 @@ public class BorrowServiceTest {
         userRepository.save(user);
 
         assertThrows(BookCopyNotFoundException.class, () -> {
-            borrowService.lendBookToUser("non_existent_book", "newUser", (long) 3);
+            borrowService.lendBookToUser("non_existent_book", "newUser", (long) 3,"admin");
         });
 
     }
@@ -85,7 +85,7 @@ public class BorrowServiceTest {
         bookkCopyRepository.save(bookCopy);
 
         assertThrows(UserNotFoundException.class, () -> {
-            borrowService.lendBookToUser("uniqueBookMark", "non_existent_user", (long) 3);
+            borrowService.lendBookToUser("uniqueBookMark", "non_existent_user", (long) 3,"admin");
 
         });
 
@@ -113,7 +113,7 @@ public class BorrowServiceTest {
         userRepository.save(user);
         bookkCopyRepository.save(bookCopy);
         assertThrows(BookCopyNotHereException.class, () -> {
-            borrowService.lendBookToUser("uniqueBookMark", "newUser", (long) 0);
+            borrowService.lendBookToUser("uniqueBookMark", "newUser", (long) 0,"admin");
         });
 
 
@@ -150,7 +150,7 @@ public class BorrowServiceTest {
         reservationRepository.save(reservation);
 
         assertThrows(BookCopyReservedException.class, () -> {
-            borrowService.lendBookToUser("uniqueBookMark", "newUser", (long) 1);
+            borrowService.lendBookToUser("uniqueBookMark", "newUser", (long) 1,"admin");
         });
 
     }
@@ -183,7 +183,7 @@ public class BorrowServiceTest {
         borrowRepository.save(borrow);
 
         assertThrows(BookCopyIsBorrowedException.class, () -> {
-            borrowService.lendBookToUser("uniqueBookMark", "newUser", (long) 1);
+            borrowService.lendBookToUser("uniqueBookMark", "newUser", (long) 1,"admin");
         });
 
 
@@ -211,7 +211,7 @@ public class BorrowServiceTest {
         userRepository.save(user);
         bookkCopyRepository.save(bookCopy);
 
-        borrowService.lendBookToUser("uniqueBookMark", "newUser", (long) 1);
+        borrowService.lendBookToUser("uniqueBookMark", "newUser", (long) 1,"admin");
 
         Borrow borrowFromDb = borrowRepository.getBorrowByUniqueBookMark("uniqueBookMark").get();
         User userFromDb = userRepository.getUserByUsername("newUser");
@@ -247,7 +247,7 @@ public class BorrowServiceTest {
                     "non_existent",
                     (long) 0,
                     libraries,
-                    userFromDb
+                    userFromDb,"admin"
             );
         });
 
@@ -284,10 +284,9 @@ public class BorrowServiceTest {
                     "uniqueBookMark",
                     (long) 0,
                     libraries,
-                    userFromDb
+                    userFromDb,"admin"
             );
         });
-
     }
 
     @Transactional
@@ -330,7 +329,7 @@ public class BorrowServiceTest {
                     "uniqueBookMark",
                     (long) 0,
                     libraries,
-                    userFromDb
+                    userFromDb,"admin"
             );
         });
 
@@ -376,7 +375,7 @@ public class BorrowServiceTest {
                     "uniqueBookMark",
                     new SecureRandom().nextLong(),
                     libraries,
-                    userFromDb
+                    userFromDb,"admin"
             );
         });
 
@@ -421,7 +420,7 @@ public class BorrowServiceTest {
                 "uniqueBookMark",
                 (long) 1,
                 libraries,
-                userFromDb
+                userFromDb,"admin"
         );
 
         Optional<Reservation> reservationFromDB = reservationRepository.getReservationByBookCopyID(bookCopyFromDb.getBookCopyID());

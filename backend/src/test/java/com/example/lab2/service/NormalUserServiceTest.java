@@ -1,11 +1,15 @@
 package com.example.lab2.service;
 
+import com.example.lab2.dao.BookCopyRepository;
 import com.example.lab2.dao.BorrowRepository;
 import com.example.lab2.dao.ReservationRepository;
 import com.example.lab2.dao.UserRepository;
+import com.example.lab2.entity.BookCopy;
 import com.example.lab2.entity.Borrow;
 import com.example.lab2.entity.Reservation;
 import com.example.lab2.entity.User;
+import com.example.lab2.exception.borrow.NotBorrowedException;
+import com.example.lab2.exception.notfound.BookCopyNotFoundException;
 import com.example.lab2.response.UserInfoResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,6 +22,7 @@ import javax.annotation.Resource;
 
 import java.security.SecureRandom;
 import java.util.Date;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
@@ -34,6 +39,9 @@ public class NormalUserServiceTest {
 
     @Autowired
     BorrowRepository borrowRepository;
+
+    @Autowired
+    BookCopyRepository bookCopyRepository;
 
     @Resource(name = "normalUserService")
     NormalUserService normalUserService;
@@ -86,5 +94,96 @@ public class NormalUserServiceTest {
         assertEquals(userInfoResponse.getBorrowedBooks().size(), borrowNumber);
         assertEquals(userInfoResponse.getReservedBooks().size(), reservationNumber);
     }
+
+    @Transactional
+    @Test
+    public void returnOnlyOneBook_BookNonExistent() {
+        assertThrows(BookCopyNotFoundException.class,() -> {
+            normalUserService.returnOnlyOneBook(
+                    "non_existent",
+                    (long) 0, "admin"
+            );
+        });
+    }
+
+    @Transactional
+    @Test
+    public void returnOnlyOneBook_BookNotBorrowed() {
+        BookCopy bookCopy = new BookCopy(
+                BookCopy.AVAILABLE,
+                "isbn",
+                "uniqueBookMark",
+                (long) 1,
+                null,
+                null,
+                (long) 1
+        );
+
+        bookCopyRepository.save(bookCopy);
+        assertThrows(NotBorrowedException.class, () -> {
+            normalUserService.returnOnlyOneBook(
+                    "uniqueBookMark",
+                    (long) 0,
+                  "admin"
+            );
+        });
+    }
+
+    @Transactional
+    @Test
+    public void returnOnlyOneBook_BookNotOnBorrowedList(){
+        BookCopy bookCopy = new BookCopy(
+                BookCopy.BORROWED,
+                "isbn",
+                "uniqueBookMark",
+                (long) 1,
+                null,
+                null,
+                (long) 1
+        );
+
+        assertThrows(NotBorrowedException.class, () -> {
+            normalUserService.returnOnlyOneBook(
+                    "uniqueBookMark",
+                    (long) 0,
+                    "admin"
+            );
+        });
+
+    }
+
+    @Transactional
+    @Test
+    public void returnOnlyOneBook_Success(){
+        BookCopy bookCopy = new BookCopy(
+                BookCopy.BORROWED,
+                "isbn",
+                "uniqueBookMark",
+                (long) 1,
+                null,
+                null,
+                (long) 1
+        );
+
+        bookCopyRepository.save(bookCopy);
+        Date date = new Date();
+        Borrow borrow = new Borrow((long)0,"uniqueBookMark",date);
+        borrowRepository.save(borrow);
+
+        normalUserService.returnOnlyOneBook("uniqueBookMark",(long)0,"admin");
+
+        Optional<Borrow> borrowFromDB = borrowRepository.getBorrowByUniqueBookMark("uniqueBookMark");
+        assertFalse(borrowFromDB.isPresent());
+
+        Optional<BookCopy> bookCopy1 = bookCopyRepository.getBookCopyByUniqueBookMark("uniqueBookMark");
+        assertEquals(bookCopy1.get().getStatus(),BookCopy.AVAILABLE);
+
+        assertEquals((long)bookCopy1.get().getAdminID(),1);
+
+        assertEquals((long)bookCopy1.get().getLibraryID(),0);
+
+
+    }
+
 
 }
