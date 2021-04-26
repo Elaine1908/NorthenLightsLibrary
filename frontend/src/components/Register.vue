@@ -165,12 +165,12 @@ export default {
                 path: '/login'
               });
             }
-            alert(data.data.message)
+            this.$message.success(data.data.message)
           }).catch(err => {
-            alert(err.response.data.message)
+            this.$message.error(err.response.data.message)
           })
         } else {
-          alert('请正确填写所有信息')
+          this.$message.error('请正确填写所有信息')
         }
       })
     },

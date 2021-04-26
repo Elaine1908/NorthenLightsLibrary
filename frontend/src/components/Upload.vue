@@ -208,20 +208,20 @@ export default {
             method: 'post',
             data: fd
           }).then((rep) => {
-            alert(rep.data.message)
+            this.$message.success(rep.data.message)
             this.$router.push('/home/show')
           }).catch((err) => {
-            alert(err.response.data.message)
+            this.$message.error(err.response.data.message)
           })
         } else {
-          alert('请填写完所有内容！')
+          this.$message.error('请填写完所有内容！')
         }
       })
     }
   },
   mounted() {
     if (!this.$store.state.login) {
-      alert('你没登录，不能上传')
+      this.$message.error('你没登录，不能上传')
       this.$router.push('/login');
     }
   }

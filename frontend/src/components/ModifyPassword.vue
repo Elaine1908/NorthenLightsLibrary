@@ -117,12 +117,12 @@ export default {
                 //后续可能会修改
               })
             }
-            alert(data.data.message)
+            this.$message.success(data.data.message)
           }).catch(err => {
-            alert(err.response.data.message)
+            this.$message.error(err.response.data.message)
           })
         } else {
-          alert('请正确填写所有信息')
+          this.$message.error('请正确填写所有信息')
         }
       })
     },
@@ -132,7 +132,7 @@ export default {
   },
   mounted() {
     if (!this.$store.state.login) {
-      alert('你没登录，不能修改密码')
+      this.$message.error('你没登录，不能修改密码')
       this.$router.push('/login')
     }
   }

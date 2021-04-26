@@ -51,9 +51,10 @@ export default {
     }).then(resp => {
       if (resp.status === 200) {
         this.bookList = resp.data;
-      } else {
-        alert(resp.data.message)
+        this.$message.success(resp.data.message)
       }
+    }).then(err => {
+      this.$message.error(err.response.data.message)
     })
   }
 }
