@@ -70,6 +70,7 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         User user = (User) authResult.getPrincipal();
+        String role = user.getRole();
 
         //如果用户是管理员，还要设置他的上班地点
         if (user.getRole().equals(User.ADMIN) || user.getRole().equals(User.SUPERADMIN)) {
@@ -78,7 +79,7 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
 
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json; charset=utf-8");
-        String jsonString = JSONObject.toJSONString(new GeneralResponse("登陆成功！"));
+        String jsonString = JSONObject.toJSONString(new GeneralResponse(role));
         response.getWriter().write(jsonString);
 
         String token = JwtUtils.generateJwt(user);
