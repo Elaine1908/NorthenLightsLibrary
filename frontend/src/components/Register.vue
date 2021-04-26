@@ -53,10 +53,13 @@
     </el-form-item>
       <el-button
           type="primary"
+          plain
           @click="submitForm('ruleForm')"
       >提交
       </el-button>
       <el-button
+          type="primary"
+          plain
           @click="resetForm('ruleForm')"
       >重置
       </el-button>

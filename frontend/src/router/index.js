@@ -88,7 +88,7 @@ const routes = [
           {
             path: 'fetchBooks',
             name: 'FetchBooks',
-            components: () => import('@/components/FetchBooks')
+            component: () => import('@/components/FetchBooks')
           },
           {
             path: 'upload',

@@ -7,19 +7,16 @@
               :rules="rules"
               status-icon
               label-width="80px"
-              class="loginForm"
-      >
+              class="loginForm">
         <h3>登录</h3>
         <el-form-item
                 label="用户名"
-                prop="username"
-        >
+                prop="username">
           <el-input
                   type="text"
                   v-model="ruleForm.username"
                   auto-complete="off"
-                  placeholder="请输入用户名"
-          ></el-input>
+                  placeholder="请输入用户名"></el-input>
         </el-form-item>
         <el-form-item
                 label="密码"
@@ -29,38 +26,55 @@
                   type="password"
                   v-model="ruleForm.password"
                   auto-complete="off"
-                  placeholder="请输入密码"
-          ></el-input>
+                  placeholder="请输入密码"></el-input>
         </el-form-item>
-        <el-form-item>
+        <el-form-item label="登陆身份" prop="identity">
+          <el-radio-group v-model="ruleForm.identity">
+            <el-radio :label="2">普通管理员</el-radio>
+            <el-radio :label="1">超级管理员</el-radio>
+            <el-radio :label="3">普通读者</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item v-if="this.ruleForm.identity === 1 || this.ruleForm.identity === 2" label="所在分馆" prop="libraryID">
+          <el-radio-group v-model="ruleForm.libraryID">
+            <el-radio :label="1">邯郸</el-radio>
+            <el-radio :label="2">枫林</el-radio>
+            <el-radio :label="3">江湾</el-radio>
+            <el-radio :label="4">张江</el-radio>
+          </el-radio-group>
+        </el-form-item>
           <el-button
                   class="homeBut"
                   type="primary"
                   plain
                   @click="submitForm('ruleForm')"
-                  :loading="logining"
-          >登录</el-button>
+                  :loading="logining">登录</el-button>
           <el-button
                   class="loginBut"
                   type="primary"
                   plain
-                  @click="resetForm('ruleForm')"
-          >重置</el-button>
-        </el-form-item>
-        <span class="reminder"><router-link to="/home">游客登录</router-link> | 还没有账号？先<router-link to="/register">注册</router-link></span>
+                  @click="resetForm('ruleForm')">重置</el-button>
+        <div class="reminder"><router-link to="/home">游客登录</router-link> | 还没有账号？先<router-link to="/register">注册</router-link></div>
       </el-form>
-
     </div>
   </div>
 </template>
 <script>
   export default {
     data() {
+      let validateLibraryID = (rule, value, callback) => {
+        if ((this.ruleForm.identity === 1 || this.ruleForm.identity === 2) && value === 0) {
+          callback(new Error('请选择所在分馆'))
+        }
+        callback()
+      }
       return {
         logining: false,
         ruleForm: {
           username: '',
-          password: ''
+          password: '',
+          identity: '',
+          libraryID: 0
         },
         rules: {
           username: [
@@ -68,6 +82,12 @@
           ],
           password: [
             { required: true, message: '请输入密码', trigger: 'blur' },
+          ],
+          identity: [
+            { required: true, message: '请选择身份', trigger: 'blur' }
+          ],
+          libraryID: [
+            { required: true, message: '请选择所在分馆', trigger: 'blur'}
           ]
         }
       }
@@ -76,27 +96,35 @@
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
+            let libraryID = (this.ruleForm.identity === 3) ? 0 : this.ruleForm.libraryID;
             this.$axios.post('/auth/login', {
               username: this.ruleForm.username,
-              password: this.ruleForm.password
+              password: this.ruleForm.password,
+              libraryID: libraryID
             })
                 .then(resp => {
-                  if (resp.status === 200) {
+                  if (resp.status === 200 && resp.data.hasOwnProperty('token')) {
                     this.$router.replace({path: '/'});
                     //更新 vuex 的 state的值, 必须通过 mutations 提供的方法才可以
                     // 通过 commit('方法名') 就可以出发 mutations 中的指定方法
-                    this.$store.commit("doLogin",this.ruleForm.username);
+                    this.$store.commit({
+                      type: 'doLogin',
+                      token: resp.data.token,
+                      username: this.ruleForm.username,
+                      identity: resp.data.message,
+                      campusID: libraryID,
+                      loginIdentity: this.ruleForm.identity
+                    });
+                    this.$message.success('登陆成功')
                   } else{
-                    alert(resp.data.message);
+                    this.$message.info(resp.data.message);
                   }
                 })
                 .catch(error => {
-                  alert(error.response.data.message)
-                  console.log(error.response)
+                  this.$message.error(error.response.data.message)
                 })
           } else {
-            console.log('error submit!!');
-            return false;
+            this.$message.error('请正确填写表单')
           }
         });
       },
@@ -117,6 +145,7 @@ a {
   cursor: pointer;
 }
 .reminder {
+  margin-top: 10px;
   font-size: smaller;
   color: gray;
 }

@@ -2,7 +2,7 @@
     <div class="container">
         <div class="link">
         </div>
-        <router-view class="form"/>
+        <router-view class="lr-form"/>
     </div>
 </template>
 
@@ -19,7 +19,7 @@
         border: solid 1px gray;
         border-radius: 10px;
     }
-    .form {
+    .lr-form {
         margin: 20px 10%
     }
     .link {

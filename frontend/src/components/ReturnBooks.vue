@@ -1,6 +1,6 @@
 <template>
   <el-form
-      class="form"
+      class="return-form"
       id="form"
       ref="form"
       :model="form"
@@ -72,7 +72,7 @@ export default {
 </script>
 
 <style scoped>
-.form {
+.return-form {
   text-align: left;
   width: 90%;
 }

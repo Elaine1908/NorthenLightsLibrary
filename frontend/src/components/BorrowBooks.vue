@@ -1,22 +1,13 @@
 <template>
   <el-form
-      class="form"
+      class="borrow-form"
       ref="form"
       :model="form"
       status-icon
       label-position="left"
       label-width="100px">
-    <el-form-item
-        v-for="(domain, index) in form.domains"
-        :label="'ISBN ' + (index + 1)"
-        :key="domain.key"
-        :prop="'domains.' + index + '.value'"
-        :rules="{required: true, message: 'ISBN不能为空', trigger: 'blur'}">
-      <el-input v-model="domain.value" class="return-input"></el-input>
-      <span @click.prevent="removeDomain(domain)" class="icon"><i class="el-icon-delete"></i></span>
-    </el-form-item>
-    <el-form-item>
-      <el-button @click="addDomain">新增书本</el-button>
+    <el-form-item label="ISBN" prop="isbn">
+      <el-input v-model="form.isbn" class="return-input"></el-input>
     </el-form-item>
     <el-form-item label="读者学/工号" prop="username">
       <el-input v-model="form.username" class="return-input"></el-input>
@@ -44,40 +35,25 @@ export default {
     }
     return {
       form: {
-        domains: [{
-          value: ''
-        }],
+        isbn: '',
         username: ''
       },
       rules: {
         username: [
           {validator: validUsername, trigger: 'blur', required: true},
+        ],
+        isbn: [
+          {required: true, message: '请输入ISBN', trigger: 'blur'}
         ]
       }
     }
   },
   methods: {
-    removeDomain(item) {
-      let index = this.form.domains.indexOf(item)
-      if (index !== -1) {
-        this.form.domains.splice(index, 1)
-      }
-    },
-    addDomain() {
-      this.form.domains.push({
-        value: '',
-        key: Date.now()
-      });
-    },
     submitForm() {
       this.$refs.form.validate(valid => {
         if (valid) {
-          let isbnList = new Array(this.form.domains.length)
-          for (let i = 0; i < isbnList.length; i++) {
-            isbnList[i] = this.form.domains[i].value
-          }
           this.$axios.post('/admin/lendBookToUser', {
-            uniqueBookMarkList: isbnList,
+            uniqueBookMarkList: this.form.isbn,
             username: this.form.username
           }).then(data => {
             this.$router.go(0)
@@ -96,7 +72,7 @@ export default {
 </script>
 
 <style>
-.form {
+.borrow-form {
   text-align: left;
   width: 90%;
 }

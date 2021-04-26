@@ -7,6 +7,15 @@
     class="demo-ruleForm">
     <h3>修改密码</h3>
     <el-form-item
+        label="旧密码"
+        prop="oldPassword">
+      <el-input
+          type="password"
+          v-model="modifyForm.oldPassword"
+          auto-complete="off"
+          placeholder="旧密码"></el-input>
+    </el-form-item>
+    <el-form-item
       label="新密码"
       prop="newPassword">
       <el-input
@@ -77,9 +86,13 @@ export default {
     return {
       modifyForm: {
         newPassword: '',
-        newPasswordAgain: ''
+        newPasswordAgain: '',
+        oldPassword: ''
       },
       rules: {
+        oldPassword: [
+          {required: true, message: '请输入原来的密码', trigger: 'blur'}
+        ],
         newPassword: [
           {validator: validatePass, trigger: 'blur', required: true}
         ],
@@ -94,6 +107,7 @@ export default {
       this.$refs.modifyForm.validate((valid) => {
         if (valid) {
           this.$axios.post('/auth/changePassword', {
+            oldPassword: this.modifyForm.oldPassword,
             newPassword: this.modifyForm.newPassword,
             username: this.$store.state.username
           }).then(data => {

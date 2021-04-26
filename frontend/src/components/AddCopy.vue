@@ -1,7 +1,7 @@
 <template>
 <el-form
   ref="form"
-  class="form"
+  class="copy-form"
   :model="form"
   :rules="rules"
   status-icon
@@ -77,7 +77,7 @@ export default {
 </script>
 
 <style scoped>
-.form {
+.copy-form {
   text-align: left;
   width: 400px;
 }
