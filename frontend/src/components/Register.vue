@@ -167,10 +167,10 @@ export default {
             }
             console.log(data.data.message)
           }).catch(err => {
-            console.log(err)
+            this.$message.error(err.response.data.message)
           })
         } else {
-          console.log('请正确填写所有信息')
+          this.$message.error('请正确填写所有信息')
         }
       })
     },

@@ -12,7 +12,7 @@ let config = {
   // baseURL: process.env.baseURL || process.env.apiUrl || ""
   // timeout: 60 * 1000, // Timeout
   // withCredentials: true, // Check cross-site Access-Control
-  baseURL: 'http://localhost:80/api'
+  baseURL: '/api'
 };
 
 const _axios = axios.create(config);
@@ -20,10 +20,10 @@ const _axios = axios.create(config);
 _axios.interceptors.request.use(
   function(config) {
     // Do something before request is sent
-    /*if(store.state.token) {
+    if(localStorage.token) {
       // 判断是否有token，若存在，每个http header加上token
-      config.headers.Authorization = this.$store.state.token;
-    }*/
+      config.headers.token = localStorage.token;
+    }
     return config;
   },
   function(error) {
@@ -46,7 +46,7 @@ _axios.interceptors.response.use(
 
 export function request(config) {
   const instance = axios.create({
-    baseURL: 'http://localhost:8888',
+    baseURL: '/api',
     timeout: 5000,
     'Content-Type' : 'multipart/form-data',
     withCredentials:true
@@ -54,10 +54,10 @@ export function request(config) {
   instance.interceptors.request.use(
       function(config) {
         // Do something before request is sent
-        /*if(store.state.token) {
+        if(localStorage.token) {
           // 判断是否有token，若存在，每个http header加上token
-          config.headers.Authorization = 'Bearer ${store.state.token}';
-        }*/
+          config.headers.token = localStorage.token;
+        }
         return config;
       },
       function(error) {
