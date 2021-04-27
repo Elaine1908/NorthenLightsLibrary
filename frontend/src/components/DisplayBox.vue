@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-row>
-      <el-col :span="6" v-for="(o, index) in bookList" :key="o" :offset="index > 0 ? 2 : 0">
+      <el-col :span="6" v-for="(o, index) in bookList" :offset="index > 0 ? 2 : 0">
         <el-card :body-style="{ padding: '0px' }">
           <img :src="o.imagePathToFrontEnd" class="image">
           <div style="padding: 14px;">
