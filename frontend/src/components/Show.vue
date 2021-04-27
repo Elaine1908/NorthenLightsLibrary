@@ -2,18 +2,26 @@
   <div class="container">
     <el-container>
       <el-container style="border: 1px solid #eee">
-        <el-aside width="200px">
-          <div style="position: fixed;left:70px;">
-            <el-form>
-              <el-input v-model="input" placeholder="You can search here" style="width: 80%"></el-input>
-            </el-form>
-          </div>
-        </el-aside>
         <el-container>
           <el-main>
+            <div class="search_bar">
+              <el-form :inline="true" :model="formInline" class="demo-form-inline">
+                <el-form-item>
+                  <el-input v-model="formInline.bookName" placeholder="书名"></el-input>
+                </el-form-item>
+                <el-form-item>
+                  <el-input v-model="formInline.author" placeholder="作者名"></el-input>
+                </el-form-item>
+                <el-form-item>
+                  <el-input v-model="formInline.isbn" placeholder="ISBN"></el-input>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary" @click="onSubmit">查询</el-button>
+                </el-form-item>
+              </el-form>
+            </div>
             <DisplayBox></DisplayBox>
           </el-main>
-          <el-footer>Copyright@2021 软件工程第20组. All Rights Reserved.</el-footer>
         </el-container>
       </el-container>
     </el-container>
@@ -28,38 +36,27 @@
       DisplayBox
     },
     // 搜索还没有写
-    data(){
-      return{
-        input:''
+    data() {
+      return {
+        formInline: {
+          bookName: '',
+          author: '',
+          isbn:''
+        }
+      }
+    },
+    methods: {
+      onSubmit() {
+        console.log('submit!');
       }
     }
   }
 </script>
 
 <style scoped>
-  .el-footer {
-    background-color: #2c3e50;
-    color: white;
-    text-align: center;
-    line-height: 60px;
+  .search_bar {
+    width: 100%;
+    height: 40px;
+    margin-bottom: 30px;
   }
-
-  .el-aside {
-    background-color: #D3DCE6;
-    color: #333;
-    text-align: center;
-    line-height: 200px;
-    height: 100%;
-  }
-
-  .el-main {
-    background-color: white;
-    text-align: center;
-    line-height: 160px;
-  }
-
-  body > .el-container {
-    margin-bottom: 40px;
-  }
-
 </style>

@@ -1,0 +1,50 @@
+<template>
+  <el-row>
+    <el-col class="menu">
+      <el-menu
+              :default-active="$route.path"
+              :router="true"
+              class="el-menu-vertical-demo">
+        <el-menu-item index="/home/user/userInfo">
+          <i class="el-icon-menu"></i>
+          <span slot="title">基本信息</span>
+        </el-menu-item>
+        <el-menu-item index="/home/user/userBorrowed">
+          <i class="el-icon-document"></i>
+          <span slot="title">已借书籍</span>
+        </el-menu-item>
+        <el-menu-item index="/home/user/userReserved">
+          <i class="el-icon-document"></i>
+          <span slot="title">预约书籍</span>
+        </el-menu-item>
+      </el-menu>
+    </el-col>
+    <el-col class="content">
+      <router-view/>
+    </el-col>
+  </el-row>
+</template>
+
+<script>
+  export default {
+    name: "User"
+  }
+</script>
+
+<style>
+  .menu {
+    width: 12%;
+    float: left;
+  }
+  .content {
+    float: right;
+    width: 85%;
+  }
+  .router-link-active {
+    color: deepskyblue;
+  }
+  .admin-link {
+    text-decoration: none;
+    color: inherit;
+  }
+</style>

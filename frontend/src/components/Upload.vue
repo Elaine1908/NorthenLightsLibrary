@@ -1,13 +1,13 @@
 <template>
   <el-form
-      class="form"
+      class="up-form"
       id="form"
       ref="form"
       :model="form"
       status-icon
       :rules="rules"
       label-position="left"
-      label-width="80px">
+      label-width="100px">
     <el-form-item
         label="上传封面" prop="bookCover">
       <el-checkbox-group v-show="false" v-model="form.bookCover"></el-checkbox-group>
@@ -23,8 +23,7 @@
           :limit="1"
           :show-file-list="false"
           :on-change="imgSaveToUrl"
-          :accept="'image/*'"
-      >
+          :accept="'image/*'">
         <i class="el-icon-upload" style="color:#409EFF"></i>
         <div class="el-upload__text text">
           将图片拖到此处，或
@@ -32,8 +31,8 @@
         </div>
         <div
             class="el-upload__tip text"
-            slot="tip"
-        >提示：可支持PNG、JPG、BMP，图片大小不超过4M,长边不大于4096像素，请保证识别的部分为图片的主题部分
+            slot="tip">
+          提示：可支持PNG、JPG、BMP，图片大小不超过4M,长边不大于4096像素，请保证识别的部分为图片的主题部分
         </div>
       </el-upload>
       <el-row v-if="isShowImgUpload" style="padding-left:10%;padding-right:10%;">
@@ -53,15 +52,6 @@
         </el-col>
         <el-col :span="4" style="color:white">1</el-col>
       </el-row>
-    </el-form-item>
-
-    <el-form-item label="校区" prop="campusID" placeholder="请选择校区">
-      <el-select v-model="form.campusID">
-        <el-option label="邯郸" value="1"></el-option>
-        <el-option label="枫林" value="2"></el-option>
-        <el-option label="江湾" value="4"></el-option>
-        <el-option label="张江" value="3"></el-option>
-      </el-select>
     </el-form-item>
     <el-form-item label="书本名称" prop="name">
       <el-input v-model="form.name"></el-input>
@@ -148,32 +138,23 @@ export default {
         isbn: '',
         publishDate: '',
         author: '',
-        description: '',
-        campusID: ''
+        description: ''
       },
       rules: {
         bookCover: [
           {required: true, message: '请上传图片', trigger: 'change', type: 'object'}
         ],
         name: [
-          {validator: validateBookName, trigger: 'blur'},
-          {required: true}
+          {required: true, validator: validateBookName, trigger: 'blur'},
         ],
         isbn: [
-          {validator: validateISBN, trigger: 'blur'},
-          {required: true}
+          {validator: validateISBN, trigger: 'blur', required: true},
         ],
         publishDate: [
-          {validator: validatePublicationDate, trigger: 'blur'},
-          {required: true}
+          {validator: validatePublicationDate, trigger: 'blur', required: true},
         ],
         author: [
-          {validator: validateAuthor, trigger: 'blur'},
-          {required: true}
-        ],
-        campusID: [
-          {validator: validateCampusID, trigger: 'blur', type: 'number'},
-          {required: true}
+          {validator: validateAuthor, trigger: 'blur', required: true},
         ],
         description: [
           {required: true, message: '请填写简介', trigger: 'blur'}
@@ -182,17 +163,6 @@ export default {
     };
   },
   methods: {
-    checkLogIn() {
-      if (!this.$store.state.login) {
-        alert('你还没登录呢')
-        this.$router.push('/login')
-      }
-    },
-    created() {
-      if (document.readyState === 'complete') this.checkLogIn()
-      else document.addEventListener('load', () => this.checkLogIn())
-    },
-
     imgSaveToUrl(event, fileList) {
       // 获取上传图片的本地URL，用于上传前的本地预览
       var URL = null;
@@ -228,26 +198,31 @@ export default {
       fd.append('bookcoverimage', this.fileList[0].raw);
       fd.append('name', this.form.name);
       fd.append('author', this.form.author);
-      fd.append('campusID', this.form.campusID);
       fd.append('description', this.form.description);
       fd.append('isbn', this.form.isbn);
       fd.append('publicationDate', this.form.publishDate);
       this.$refs.form.validate(valid => {
         if (valid) {
           request({
-            url: '/up/bookupload',
+            url: '/admin/uploadNewBook',
             method: 'post',
             data: fd
           }).then((rep) => {
-            alert(rep.data.message)
+            this.$message.success(rep.data.message)
             this.$router.push('/home/show')
           }).catch((err) => {
-            alert(err.response.data.message)
+            this.$message.error(err.response.data.message)
           })
         } else {
-          alert('请填写完所有内容！')
+          this.$message.error('请填写完所有内容！')
         }
       })
+    }
+  },
+  mounted() {
+    if (!this.$store.state.login) {
+      this.$message.error('你没登录，不能上传')
+      this.$router.push('/login');
     }
   }
 }
@@ -265,19 +240,7 @@ export default {
 .avatar-uploader .el-upload:hover {
   border-color: #409EFF;
 }
-
-.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 178px;
-  height: 178px;
-  line-height: 178px;
-  text-align: center;
-}
-
-.avatar {
-  width: 178px;
-  height: 178px;
-  display: block;
+.up-form {
+  width: 90%;
 }
 </style>
