@@ -9,7 +9,8 @@ export default new Vuex.Store({
     login: false,
     username:'未登录',
     identity: 0,
-    campusID: 0
+    campusID: 0,
+    token: null
   },
   // mutations: 专门书写方法,用来更新 state 中的值
   mutations: {
