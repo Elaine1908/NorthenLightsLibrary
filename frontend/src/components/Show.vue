@@ -24,7 +24,7 @@
               <el-row>
                 <el-col :span="6" v-for="(o, index) in bookList" :offset="index > 0 ? 2 : 0">
                   <el-card :body-style="{ padding: '0px' }">
-                    <img :src="o.imagePath" class="image">
+                    <img :src="o.imagePathToFrontEnd" class="image">
                     <div style="padding: 14px;">
                       <h2 style="margin-bottom: 5px;line-height: 20px">{{o.name}}</h2>
                       <h3 style="margin-bottom: 5px;line-height: 15px">{{o.author}}</h3>
@@ -56,7 +56,7 @@
           isbn:''
         },
         bookList:[{
-          imagePath:"https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
+          imagePathToFrontEnd:"https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
         }],
         currentDate: new Date(),
       }
@@ -72,7 +72,7 @@
               }
             }).then(resp => {
           if (resp.status === 200) {
-            this.bookList = resp.data;
+            this.bookList = resp.data.;
             this.$message.success(resp.data.message)
           }
         }).then(err => {
@@ -81,14 +81,6 @@
       },
       showCopy(){
         this.$router.push({path:'/home/showCopy'});
-      },
-      reserve(){
-        this.$axios.post('/user/reserveBook', {
-        }).then(data => {
-          this.$message.success(data.data.message)
-        }).catch(err => {
-          this.$message.error(err.response.data.message)
-        })
       }
     }
   }

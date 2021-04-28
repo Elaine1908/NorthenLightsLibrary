@@ -38,7 +38,7 @@
     </el-table>
     <div style="margin-top: 20px">
       <el-button @click="toggleSelection()">取消选择</el-button>
-      <el-button @click="">预约</el-button>
+      <el-button @click="reserve">预约</el-button>
     </div>
   </div>
 </template>
@@ -74,6 +74,14 @@
       },
       handleSelectionChange(val) {
         this.multipleSelection = val;
+      },
+      reserve(){
+        this.$axios.post('/user/reserveBook', {
+        }).then(data => {
+          this.$message.success(data.data.message)
+        }).catch(err => {
+          this.$message.error(err.response.data.message)
+        })
       }
     }
   }

@@ -107,7 +107,7 @@ export default {
       this.$refs.modifyForm.validate((valid) => {
         if (valid) {
           this.$axios.post('/auth/changePassword', {
-            oldPassword: this.modifyForm.oldPassword,
+            originalPassword: this.modifyForm.oldPassword,
             newPassword: this.modifyForm.newPassword,
             username: this.$store.state.username
           }).then(data => {

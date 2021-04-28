@@ -1,5 +1,5 @@
 module.exports = {
   devServer: {
-    port: 8181,   // 端口号
+    port: 8080,   // 端口号
   }
 };
