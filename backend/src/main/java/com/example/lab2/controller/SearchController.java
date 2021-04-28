@@ -88,4 +88,18 @@ public class SearchController {
     }
 
 
+    /**
+     * 获得全部的bookCopt
+     *
+     * @return
+     */
+    @GetMapping("/useradmin/getAllBookType")
+    public ResponseEntity<HashMap<String, Object>> getAllBookType() {
+        List<BookType> bookTypes = searchService.getAllBookType();
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("bookTypeList", bookTypes);
+        return ResponseEntity.ok(map);
+    }
+
+
 }

@@ -109,6 +109,11 @@ public class SearchService {
         return set.stream().collect(Collectors.toList());
     }
 
+
+    public List<BookType> getAllBookType() {
+        return bookTypeRepository.findAll();
+    }
+
     /**
      * 得到每个图书馆有几本的列表
      *
