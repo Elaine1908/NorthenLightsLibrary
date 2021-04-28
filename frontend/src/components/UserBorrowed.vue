@@ -65,8 +65,8 @@
     },
     created() {//初始化操作
       this.axios.get('/user/userinfo').then(resp => {
-        if (resp.status === 200) {
-          this.tableData = resp.data.borrowedBooks;
+        if (resp.status === 200){
+          this.tableData=resp.data.borrowedBooks;
         } else {
           this.$message(resp.data.message);
         }

@@ -37,14 +37,12 @@ const routes = [
       {
         path: 'show',
         name: 'Show',
-        component: () => import('@/components/Show'),
-        children:[
-          {
-            path:'details',
-            name:'Details',
-            component:() => import('@/components/Details')
-          }
-        ]
+        component: () => import('@/components/Show')
+      },
+      {
+        path:'showCopy',
+        name:'ShowCopy',
+        component: () => import('@/components/ShowCopy')
       },
       {
         path: 'user',
