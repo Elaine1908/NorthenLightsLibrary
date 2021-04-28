@@ -46,7 +46,7 @@ public class UploadServiceTest {
     public void testHandleUpload() throws IOException {
 
         //测试正常使用
-        MultipartFile multipartFile = new MockMultipartFile("test", "1.jpg", "content-type", new FileInputStream("/home/haojie/Pictures/1.jpg"));
+        MultipartFile multipartFile = new MockMultipartFile("test", "1.jpg", "content-type", new FileInputStream("D:\\OneDrive\\MyLaptop\\Pictures\\wxh.png"));
         UploadNewBookRequest uploadNewBookRequest = new UploadNewBookRequest(
                 multipartFile,
                 "isbntest",
@@ -76,7 +76,7 @@ public class UploadServiceTest {
     public void testHandleRepeatedUpload() throws IOException {
 
         //测试正常使用
-        MultipartFile multipartFile = new MockMultipartFile("test", "1.jpg", "content-type", new FileInputStream("/home/haojie/Pictures/1.jpg"));
+        MultipartFile multipartFile = new MockMultipartFile("test", "1.jpg", "content-type", new FileInputStream("D:\\OneDrive\\MyLaptop\\Pictures\\wxh.png"));
         UploadNewBookRequest uploadNewBookRequest = new UploadNewBookRequest(
                 multipartFile,
                 "isbntest",
@@ -112,7 +112,7 @@ public class UploadServiceTest {
     public void testNormalAddCopy() throws IOException {
 
         //先添加一个booktype
-        MultipartFile multipartFile = new MockMultipartFile("test", "1.jpg", "content-type", new FileInputStream("/home/haojie/Pictures/1.jpg"));
+        MultipartFile multipartFile = new MockMultipartFile("test", "1.jpg", "content-type", new FileInputStream("D:\\OneDrive\\MyLaptop\\Pictures\\wxh.png"));
         UploadNewBookRequest uploadNewBookRequest = new UploadNewBookRequest(
                 multipartFile,
                 "isbntestttt",
@@ -164,7 +164,7 @@ public class UploadServiceTest {
     public void testAddCopyLibraryNonExist() throws IOException {
 
         //先添加一个booktype
-        MultipartFile multipartFile = new MockMultipartFile("test", "1.jpg", "content-type", new FileInputStream("/home/haojie/Pictures/1.jpg"));
+        MultipartFile multipartFile = new MockMultipartFile("test", "1.jpg", "content-type", new FileInputStream("D:\\OneDrive\\MyLaptop\\Pictures\\wxh.png"));
         UploadNewBookRequest uploadNewBookRequest = new UploadNewBookRequest(
                 multipartFile,
                 "isbntestttt",
@@ -192,7 +192,7 @@ public class UploadServiceTest {
     @Transactional
     public void testAddCopyNegativeCnt() throws IOException {
         //先添加一个booktype
-        MultipartFile multipartFile = new MockMultipartFile("test", "1.jpg", "content-type", new FileInputStream("/home/haojie/Pictures/1.jpg"));
+        MultipartFile multipartFile = new MockMultipartFile("test", "1.jpg", "content-type", new FileInputStream("D:\\OneDrive\\MyLaptop\\Pictures\\wxh.png"));
         UploadNewBookRequest uploadNewBookRequest = new UploadNewBookRequest(
                 multipartFile,
                 "isbntestttt",

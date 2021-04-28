@@ -95,13 +95,13 @@ public class SearchService {
         set.addAll(bookNameList);
 
         //用set取交集
-        if (isbn != null) {
+        if (!isbn.isBlank()) {
             set.retainAll(isbnList);
         }
-        if (author != null) {
+        if (!author.isBlank()) {
             set.retainAll(authorList);
         }
-        if (bookName != null) {
+        if (!bookName.isBlank()) {
             set.retainAll(bookNameList);
         }
 
@@ -144,12 +144,13 @@ public class SearchService {
      * 场景：现场借书
      * 此方法用于管理员每输入一个副本号，并在前端网页点击“加号”按钮时，后端从数据库搜索书本并返回
      * 以便在网页动态展示书本形态和信息，让读者确认是否是ta想要借的书
+     *
      * @param isbn 副本的唯一标识
      * @return
      */
-    public ShowBookCopyDTO getBookCopyByIsbn(String isbn){
+    public ShowBookCopyDTO getBookCopyByIsbn(String isbn) {
         Optional<ShowBookCopyDTO> bookCopy = bookCopyRepository.getBookCopyByUniqueBookMarkAndShow(isbn);
-        if(!bookCopy.isPresent()){
+        if (!bookCopy.isPresent()) {
             throw new BookCopyNotFoundException("该图书的副本没有找到！");
         }
         return bookCopy.get();
