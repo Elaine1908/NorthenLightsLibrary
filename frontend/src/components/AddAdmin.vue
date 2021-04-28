@@ -14,19 +14,19 @@
                 label="序号"
                 width="60"></el-table-column>
         <el-table-column
-                prop="name"
+                prop="username"
                 label="用户名">
           <template slot-scope="scope">
             <template v-if="scope.row.action == 'view'">
-              {{scope.row.name}}
+              {{scope.row.username}}
             </template>
             <template v-else>
               <el-form-item
-                      :prop="'datas.'+scope.$index + '.name'"
-                      :rules='rules.name'>
+                      :prop="'datas.'+scope.$index + '.username'"
+                      :rules='rules.username'>
                 <el-input
                         size="mini"
-                        v-model.trim="scope.row.name"
+                        v-model.trim="scope.row.username"
                         style="width: 120px;"></el-input>
               </el-form-item>
             </template>
@@ -46,7 +46,7 @@
                       :rules='rules.email'>
                 <el-input
                         size="mini"
-                        v-model.number="scope.row.email"
+                        v-model.trim="scope.row.email"
                         style="width: 200px;"></el-input>
               </el-form-item>
             </template>
@@ -81,32 +81,47 @@
 <script>
   export default {
     data() {
+      var validEmail = (rule, value, callback) => {
+        let emailPat = /^\w+@[a-zA-Z0-9]{2,10}(?:\.[a-z]{2,4}){1,3}$/
+        if (value === '') {
+          callback(new Error('请输入邮箱'))
+        } else if (!emailPat.test(value)) {
+          callback(new Error('请输入使用雷·汤普森创立的标准E-mail格式的邮箱'))
+        } else {
+          callback();
+        }
+      }
       return {
         form: {
-          datas: [
-            { id: 1, name: "张三", email:'www.shh@fudan.edu.cn' },
-          ]
+          datas: []
         },
 
         //表单验证规则
         rules: {
-          name: [{
+          username: [{
             type: 'string',
             required: true,
             trigger: 'blur',
             message: '请输入用户名',
           }],
           email: [{
-            type: 'string',
+            validator: validEmail,
             required: true,
-            trigger: 'blur',
-            message: '请输入email',
+            trigger: 'blur'
           }],
         }
       }
     },
 
     created() {
+      //显示已有管理员列表
+      this.axios.get('/superadmin/showAdmin').then(resp => {
+        if (resp.status === 200) {
+          this.form.datas = resp.data.admin;
+        } else {
+          this.$message(resp.data.message);
+        }
+      })
       //处理数据，为已有数据添加action:'view'
       this.form.datas.map(item => {
         this.$set(item,"action","view")
@@ -152,6 +167,22 @@
       click_add(item,index) {
         if( !this.validateField('form',index) ) return;
         //模拟新增一条数据
+        this.$axios.post('/superadmin/addAdmin', {
+          username: item.username,
+          password:'111111',//默认管理员密码为111111 后续通过修改密码修改
+          email: item.email
+            }).then(data => {
+              if(data.status==200) {
+                let itemClone = JSON.parse(JSON.stringify(item));
+                itemClone.id = this.form.datas.length;
+                itemClone.action = "view";
+                this.form.datas.push(itemClone);
+                this.resetField('form', index);
+                this.$message.success('添加成功');
+              }
+            }).catch(err => {
+              this.$message.error(err.response.data.message)
+            })
         let itemClone = JSON.parse(JSON.stringify(item));
         itemClone.id = this.form.datas.length;
         itemClone.action = "view";
@@ -168,6 +199,22 @@
       click_save(item,index) {
         if( !this.validateField('form',index) ) return;
         item.action = "view";
+        this.$axios.post('/superadmin/addAdmin', {//编辑的接口没有
+          username: item.username,
+          password:'111111',//默认管理员密码为111111 后续通过修改密码修改
+          email: item.email
+        }).then(data => {
+          if(data.status==200) {
+            let itemClone = JSON.parse(JSON.stringify(item));
+            itemClone.id = this.form.datas.length;
+            itemClone.action = "view";
+            this.form.datas.push(itemClone);
+            this.resetField('form', index);
+            this.$message.success('编辑成功');
+          }
+        }).catch(err => {
+          this.$message.error(err.response.data.message)
+        })
       },
 
       //编辑-取消操作
@@ -181,7 +228,7 @@
         item.action = "edit";
       },
 
-      //删除操作
+      //删除操作 还没有删除的接口
       click_delete(item,index) {
         this.$confirm("确定删除该条数据(ID" + item.id + ")吗?", "提示", {
           confirmButtonText: "确定",
