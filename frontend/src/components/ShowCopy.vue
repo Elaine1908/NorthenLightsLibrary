@@ -11,24 +11,34 @@
               width="55">
       </el-table-column>
       <el-table-column
-              label="日期"
+              label="书名"
               width="120">
-        <template slot-scope="scope">{{ scope.row.date }}</template>
+        <template slot-scope="scope">{{ scope.row.name }}</template>
       </el-table-column>
       <el-table-column
-              prop="name"
-              label="姓名"
+              prop="author"
+              label="作者"
               width="120">
       </el-table-column>
       <el-table-column
-              prop="address"
-              label="地址"
+              prop="libraryName"
+              label="所在分馆"
+              width="120">
+      </el-table-column>
+      <el-table-column
+              prop="status"
+              label="状态"
+              width="120">
+      </el-table-column>
+      <el-table-column
+              prop="uniqueBookMark"
+              label="ISBN"
               show-overflow-tooltip>
       </el-table-column>
     </el-table>
     <div style="margin-top: 20px">
-      <el-button @click="toggleSelection([tableData[1], tableData[2]])">切换第二、第三行的选中状态</el-button>
       <el-button @click="toggleSelection()">取消选择</el-button>
+      <el-button @click="">预约</el-button>
     </div>
   </div>
 </template>
@@ -39,10 +49,16 @@
     data() {
       return {
         tableData: [{
-          date: '2016-05-03',
+          uniqueBookMark: '2016-05-03',
           name: '王小虎',
           address: '上海市普陀区金沙江路 1518 弄'
-        }],
+        },
+          {
+            uniqueBookMark: '2016-05-03',
+            name: '王小虎',
+            address: '上海市普陀区金沙江路 1518 弄'
+          }
+        ],
         multipleSelection: []
       }
     },

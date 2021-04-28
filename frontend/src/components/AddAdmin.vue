@@ -8,11 +8,6 @@
               :data="form.datas"
               highlight-current-row
               style="width: 100%">
-
-        <el-table-column
-                prop="id"
-                label="序号"
-                width="60"></el-table-column>
         <el-table-column
                 prop="username"
                 label="用户名">
@@ -113,23 +108,21 @@
       this.axios.get('/superadmin/showAdmin').then(resp => {
         if (resp.status === 200) {
           this.form.datas = resp.data.admin;
+          //处理数据，为已有数据添加action:'view'
+          this.form.datas.map(item => {
+            this.$set(item,"action","view")
+            return item;
+          });
+          //在开头增加一条添加数据的行
+          this.form.datas.unshift({
+            username:undefined,
+            email:undefined,
+            action: "add"
+          });
         } else {
           this.$message(resp.data.message);
         }
       })
-      //处理数据，为已有数据添加action:'view'
-      this.form.datas.map(item => {
-        this.$set(item,"action","view")
-        return item;
-      });
-
-      //再插入一条添加操作的数据
-      this.form.datas.unshift({
-        id:undefined,
-        name:undefined,
-        email:undefined,
-        action: "add"
-      });
     },
 
     methods: {
@@ -169,7 +162,6 @@
             }).then(data => {
               if(data.status==200) {
                 let itemClone = JSON.parse(JSON.stringify(item));
-                itemClone.id = this.form.datas.length;
                 itemClone.action = "view";
                 this.form.datas.push(itemClone);
                 this.resetField('form', index);
@@ -178,11 +170,6 @@
             }).catch(err => {
               this.$message.error(err.response.data.message)
             })
-        let itemClone = JSON.parse(JSON.stringify(item));
-        itemClone.id = this.form.datas.length;
-        itemClone.action = "view";
-        this.form.datas.push(itemClone);
-        this.resetField('form',index);
       },
 
       //新增-重置操作
