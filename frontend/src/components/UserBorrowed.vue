@@ -9,17 +9,17 @@
             <el-col span="13">
               <el-row>
                 <el-form-item label="书籍名称">
-                  <span>{{ props.row.borrowedBooks.name }}</span>
+                  <span>{{ props.row.name }}</span>
                 </el-form-item>
               </el-row>
               <el-row>
                 <el-form-item label="作者名称">
-                  <span>{{ props.row.borrowedBooks.author }}</span>
+                  <span>{{ props.row.author }}</span>
                 </el-form-item>
               </el-row>
               <el-row>
                 <el-form-item label="ISBN">
-                  <span>{{ props.row.borrowedBooks.uniqueBookMark }}</span>
+                  <span>{{ props.row.uniqueBookMark }}</span>
                 </el-form-item>
               </el-row>
             </el-col>
@@ -27,7 +27,7 @@
               <el-form-item>
                 <div class="box">
                   <a href="#">
-                    <el-image :src="props.row.borrowedBooks.imagePath"
+                    <el-image :src="props.row.imagePath"
                               style="border-radius: 4px"
                               class="scrollLoading"
                               lazy
@@ -60,15 +60,13 @@
     name: "UserBorrowed",
     data() {
       return {
-        tableData: [{
-          borrowedBooks:[]
-        }]
+        tableData: []
       }
     },
     created() {//初始化操作
       this.axios.get('/user/userinfo').then(resp => {
-        if (resp.status === 200) {
-          this.tableData.push(resp.data);
+        if (resp.status === 200){
+          this.tableData.push(resp.data.borrowedBooks);
         } else {
           this.$message(resp.data.message);
         }

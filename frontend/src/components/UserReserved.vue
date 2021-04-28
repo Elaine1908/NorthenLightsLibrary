@@ -9,27 +9,27 @@
             <el-col span="13">
               <el-row>
                 <el-form-item label="书籍名称">
-                  <span>{{ props.row.reservedBooks.name }}</span>
+                  <span>{{ props.row.name }}</span>
                 </el-form-item>
               </el-row>
               <el-row>
                 <el-form-item label="作者名称">
-                  <span>{{ props.row.reservedBooks.author }}</span>
+                  <span>{{ props.row.author }}</span>
                 </el-form-item>
               </el-row>
               <el-row>
                 <el-form-item label="预约分馆">
-                  <span>{{ props.row.reservedBooks.libraryName }}</span>
+                  <span>{{ props.row.libraryName }}</span>
                 </el-form-item>
               </el-row>
               <el-row>
                 <el-form-item label="预约时间">
-                  <span>{{ props.row.reservedBooks.reservationDate }}</span>
+                  <span>{{ props.row.reservationDate }}</span>
                 </el-form-item>
               </el-row>
               <el-row>
                 <el-form-item label="ISBN">
-                  <span>{{ props.row.reservedBooks.uniqueBookMark}}</span>
+                  <span>{{ props.row.uniqueBookMark}}</span>
                 </el-form-item>
               </el-row>
             </el-col>
@@ -71,17 +71,13 @@
     name: "UserReserved",
     data() {
       return {
-        tableData: [
-          {
-            reservedBooks:[]
-          }
-        ]
+        tableData: []
       }
     },
     created() {//初始化操作
       this.axios.get('/user/userinfo').then(resp => {
         if (resp.status === 200) {
-          this.tableData.push(resp.data);
+          this.tableData.push(resp.data.reservedBooks);
         } else {
           this.$message(resp.data.message);
         }
