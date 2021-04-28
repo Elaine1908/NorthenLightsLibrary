@@ -42,13 +42,7 @@ export default {
     }
   },
   created() {//初始化操作
-    // const _this = this;
-    this.axios.get('/useradmin/getBookTypeAndCopy', {
-      params: {//暂时未用到 还未做分页
-        requestedPage: 0,
-        pageSize: 9999
-      }
-    }).then(resp => {
+    this.axios.get('/useradmin/getBookTypeAndCopy').then(resp => {
       if (resp.status === 200) {
         this.bookList = resp.data;
         this.$message.success(resp.data.message)

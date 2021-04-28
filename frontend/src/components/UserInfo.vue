@@ -25,18 +25,13 @@
     name: "UserInfo",
     data() {
       return {
-        userInfo: [{
-          username: 'hello',
-          credit: 100,
-          role: 'hello'
-        }]
+        userInfo: []
       }
     },
     created() {//初始化操作
       this.axios.get('/user/userinfo').then(resp => {
         if (resp.status === 200) {
-          this.userInfo[0] = resp.data;
-          console.log(this.userInfo)
+          this.userInfo= resp.data;
           console.log(resp.data)
         } else {
           this.$message(resp.data.message);

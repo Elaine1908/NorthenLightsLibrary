@@ -56,16 +56,11 @@
         <el-table-column prop="operation" label="操作">
           <template slot-scope="scope">
             <template v-if="scope.row.action == 'view'">
-              <el-button size="mini" @click="click_edit(scope.row, scope.$index)">编辑</el-button>
               <el-button size="mini" @click="click_delete(scope.row, scope.$index)">删除</el-button>
             </template>
             <template v-else-if="scope.row.action == 'add'">
               <el-button size="mini" @click="click_add( scope.row, scope.$index)">新增</el-button>
               <el-button size="mini" @click="click_reset(scope.row, scope.$index)">重置</el-button>
-            </template>
-            <template v-else>
-              <el-button size="mini" @click="click_save(scope.row, scope.$index)">保存</el-button>
-              <el-button size="mini" @click="click_cancle(scope.row, scope.$index)">取消</el-button>
             </template>
           </template>
         </el-table-column>
@@ -195,39 +190,6 @@
         this.resetField('form',index);
       },
 
-      //编辑-保存操作
-      click_save(item,index) {
-        if( !this.validateField('form',index) ) return;
-        item.action = "view";
-        this.$axios.post('/superadmin/addAdmin', {//编辑的接口没有
-          username: item.username,
-          password:'111111',//默认管理员密码为111111 后续通过修改密码修改
-          email: item.email
-        }).then(data => {
-          if(data.status==200) {
-            let itemClone = JSON.parse(JSON.stringify(item));
-            itemClone.id = this.form.datas.length;
-            itemClone.action = "view";
-            this.form.datas.push(itemClone);
-            this.resetField('form', index);
-            this.$message.success('编辑成功');
-          }
-        }).catch(err => {
-          this.$message.error(err.response.data.message)
-        })
-      },
-
-      //编辑-取消操作
-      click_cancle(item,index) {
-        this.resetField('form',index);
-        item.action = "view";
-      },
-
-      //编辑操作
-      click_edit(item,index) {
-        item.action = "edit";
-      },
-
       //删除操作 还没有删除的接口
       click_delete(item,index) {
         this.$confirm("确定删除该条数据(ID" + item.id + ")吗?", "提示", {
@@ -242,7 +204,7 @@
             .catch(() => {});
       },
 
-    },
+    }
   }
 </script>
 
