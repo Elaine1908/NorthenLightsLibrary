@@ -31,7 +31,7 @@
     created() {//初始化操作
       this.axios.get('/user/userinfo').then(resp => {
         if (resp.status === 200) {
-          this.userInfo= resp.data;
+          this.userInfo.push(resp.data);
           console.log(resp.data)
         } else {
           this.$message(resp.data.message);

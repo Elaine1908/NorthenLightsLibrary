@@ -37,7 +37,14 @@ const routes = [
       {
         path: 'show',
         name: 'Show',
-        component: () => import('@/components/Show')
+        component: () => import('@/components/Show'),
+        children:[
+          {
+            path:'showCopy',
+            name:'ShowCopy',
+            component: () => import('@/components/ShowCopy')
+          }
+        ]
       },
       {
         path: 'user',

@@ -91,25 +91,7 @@ export default {
       form: {
         username: ''
       },
-      tableData: [{
-        name: '好滋好味鸡蛋仔',
-        author: 'hello',
-        uniqueBookMark: '123123',
-        imagePath: '123123',
-        borrowDate: 'hello'
-      }, {
-        name: '好滋好味鸡蛋仔',
-        author: 'hello',
-        uniqueBookMark: '123123',
-        imagePath: '123123',
-        borrowDate: 'hello'
-      }, {
-        name: '好滋好味鸡蛋仔',
-        author: 'hello',
-        uniqueBookMark: '123123',
-        imagePath: '123123',
-        borrowDate: 'hello'
-      }],
+      tableData: [],
       multipleSelection: []
     }
   },
