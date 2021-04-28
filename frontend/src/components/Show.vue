@@ -55,11 +55,18 @@
           author: '',
           isbn:''
         },
-        bookList:[{
-          imagePathToFrontEnd:"https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
-        }],
+        bookList:[],
         currentDate: new Date(),
       }
+    },
+    created() {
+      this.axios.get('/useradmin/getAllBookType').then(resp => {
+        if (resp.status === 200){
+          this.bookList=resp.data.bookTypeList;
+        } else {
+          this.$message(resp.data.message);
+        }
+      })
     },
     methods: {
       onSubmit() {
