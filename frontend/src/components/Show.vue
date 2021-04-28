@@ -79,7 +79,7 @@
               }
             }).then(resp => {
           if (resp.status === 200) {
-            this.bookList = resp.data.;
+            this.bookList = resp.data.bookTypeList;
             this.$message.success(resp.data.message)
           }
         }).then(err => {
