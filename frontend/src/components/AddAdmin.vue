@@ -183,10 +183,18 @@
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning"
-        })
-            .then(() => {
-              //模拟删除一条数据
-              this.form.datas.splice(index,1);
+        }).then(() => {
+              this.$axios.post('/superadmin/deleteAdmin', {
+                username: item.username
+              }).then(data => {
+                if(data.status==200) {
+                  //模拟删除一条数据
+                  this.form.datas.splice(index,1);
+                  this.$message.success('删除成功');
+                }
+              }).catch(err => {
+                this.$message.error(err.response.data.message)
+              })
             })
             .catch(() => {});
       },
