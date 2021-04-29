@@ -14,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
 
 
@@ -29,7 +30,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private UserDetailsServiceImpl userDetailsService;
 
     @Autowired
-    private AuthenticationEntryPoint myAuthenticationFailEntryPoint;
+    private AccessDeniedHandler accessDeniedHandler;
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        return new MyAccessDenied();
+    }
 
     @Bean
     public AuthenticationEntryPoint authenticationEntryPoint() {
@@ -70,6 +76,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        //设置请求被spring security拦截时的自定义信息
+
         http.authorizeRequests()
                 .antMatchers("/superadmin/**").hasAnyAuthority("superadmin")
                 .antMatchers("/admin/**").hasAnyAuthority("superadmin", "admin")
@@ -80,11 +88,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/student").hasAnyAuthority("student").and()
                 .addFilter(new JwtLoginFilter(authenticationManager())).csrf().disable()
                 .addFilter(new JwtAuthenticationFilter(authenticationManager()))
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and().exceptionHandling().authenticationEntryPoint(authenticationEntryPoint()).accessDeniedHandler(accessDeniedHandler);
 
 
-        //设置请求被spring security拦截时的自定义信息
-        http.exceptionHandling().authenticationEntryPoint(myAuthenticationFailEntryPoint);
     }
 
     @Bean

@@ -31,4 +31,6 @@ public class MyAuthenticationFailEntryPointImpl implements AuthenticationEntryPo
         httpServletResponse.setStatus(403);
 
     }
+
+
 }

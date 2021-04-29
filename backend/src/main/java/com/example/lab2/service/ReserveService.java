@@ -9,6 +9,7 @@ import com.example.lab2.entity.User;
 import com.example.lab2.exception.bookcopy.BookCopyNotAvailableException;
 import com.example.lab2.exception.notfound.BookCopyNotFoundException;
 import com.example.lab2.exception.notfound.UserNotFoundException;
+import com.example.lab2.exception.reserve.AdminReserveBookException;
 import com.example.lab2.exception.reserve.ReserveTooManyException;
 import com.example.lab2.exception.reserve.ReservedByOtherException;
 import com.example.lab2.response.GeneralResponse;
@@ -42,6 +43,11 @@ public class ReserveService {
         //如果找不到用户就抛出异常显示用户不存在
         if (!userReserving.isPresent()) {
             throw new UserNotFoundException("用户不存在！");
+        }
+
+        //管理员不能预约图书
+        if (userReserving.get().isAdmin()) {
+            throw new AdminReserveBookException("管理员不能借阅图书");
         }
 
         //在数据库中找找看这个副本

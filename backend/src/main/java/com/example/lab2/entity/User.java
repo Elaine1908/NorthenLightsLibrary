@@ -110,4 +110,9 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+
+    public boolean isAdmin() {
+        return User.ADMIN.equals(this.getRole()) || User.SUPERADMIN.equals(this.getRole());
+    }
 }

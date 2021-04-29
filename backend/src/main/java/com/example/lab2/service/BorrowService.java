@@ -156,6 +156,9 @@ public class BorrowService {
         if (!userOptional.isPresent()) {
             throw new UserNotFoundException("用户不存在！");
         }
+        if (userOptional.get().isAdmin()) {
+            throw new AdminBorrowBookException("管理员不能借书！");
+        }
 
         StringBuilder messageBuilder = new StringBuilder();
 
