@@ -51,7 +51,7 @@
         <el-table-column prop="operation" label="操作">
           <template slot-scope="scope">
             <template v-if="scope.row.action == 'view'">
-              <el-button size="mini" @click="click_delete(scope.row, scope.$index)">删除</el-button>
+              <el-button size="mini" @click="click_delete(scope.row, scope.$index)" v-if="scope.row.role!='superadmin'">删除</el-button>
             </template>
             <template v-else-if="scope.row.action == 'add'">
               <el-button size="mini" @click="click_add( scope.row, scope.$index)">新增</el-button>
@@ -177,7 +177,7 @@
         this.resetField('form',index);
       },
 
-      //删除操作 还没有删除的接口
+      //删除操作
       click_delete(item,index) {
         this.$confirm("确定删除该条数据(ID" + item.id + ")吗?", "提示", {
           confirmButtonText: "确定",
