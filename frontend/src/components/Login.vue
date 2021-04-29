@@ -87,7 +87,7 @@
             { required: true, message: '请选择身份', trigger: 'blur' }
           ],
           libraryID: [
-            { required: true, message: '请选择所在分馆', trigger: 'blur'}
+            { required: true, validator: validateLibraryID, trigger: 'blur'}
           ]
         }
       }
@@ -104,7 +104,7 @@
             })
                 .then(resp => {
                   if (resp.status === 200 && resp.headers.hasOwnProperty('token')) {
-                    this.$router.replace({path: '/'});
+                    this.$router.push({path: '/home'});
                     //更新 vuex 的 state的值, 必须通过 mutations 提供的方法才可以
                     // 通过 commit('方法名') 就可以出发 mutations 中的指定方法
                     this.$store.commit({
