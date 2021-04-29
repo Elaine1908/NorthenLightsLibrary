@@ -13,5 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class UserDTO {
     private String username;
     private String email;
+    private String role;
 
 }

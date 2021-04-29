@@ -11,6 +11,7 @@ import com.example.lab2.exception.auth.password.PasswordTooWeakException;
 import com.example.lab2.exception.auth.password.WrongPasswordException;
 import com.example.lab2.exception.notfound.UserNotFoundException;
 import com.example.lab2.request.auth.AddAdminRequest;
+import com.example.lab2.request.auth.DeleteAdminRequest;
 import com.example.lab2.response.GeneralResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -145,6 +146,27 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         return map;
 
+
+    }
+
+    public GeneralResponse deleteAdmin(DeleteAdminRequest deleteAdminRequest){
+        //用户不存在
+        Optional<User> user = userRepository.findByName(deleteAdminRequest.getUsername());
+        if (!user.isPresent()) {
+            throw new UserNotFoundException("管理员不存在！");
+        }
+        //用户是超级管理员
+        if(user.get().getRole().equals("superadmin")){
+            throw new UserNotFoundException("此用户是超级管理员，不能删除！");
+        }
+        //用户不是admin
+        if(!user.get().getRole().equals("admin")){
+            throw new UserNotFoundException("此用户不是管理员！");
+        }
+
+        //删除管理员
+        userRepository.delete(user.get());
+        return new GeneralResponse("删除管理员 "+ deleteAdminRequest.getUsername() +" 成功");
 
     }
 

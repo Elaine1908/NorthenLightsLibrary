@@ -2,6 +2,7 @@ package com.example.lab2.controller;
 import com.example.lab2.dto.UserDTO;
 import com.example.lab2.exception.auth.RegisterException;
 import com.example.lab2.request.auth.AddAdminRequest;
+import com.example.lab2.request.auth.DeleteAdminRequest;
 import com.example.lab2.service.UserDetailsServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -46,6 +47,18 @@ public class SuperAdminController {
         //把结果发回给前端
         return ResponseEntity.ok(map);
 
+    }
+
+
+    @PostMapping("/deleteAdmin")
+    public ResponseEntity<?> deleteAdmin(@RequestBody @Valid DeleteAdminRequest deleteAdminRequest , BindingResult bindingResult){
+        //如果从前端接口传来的信息存在不合法参数
+        if (bindingResult.hasFieldErrors()) {
+            throw new RegisterException(
+                    Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage()
+            );
+        }
+        return ResponseEntity.ok(userDetailsService.deleteAdmin(deleteAdminRequest));
     }
 
     @RequestMapping("/showAdmin")
