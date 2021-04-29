@@ -46,6 +46,7 @@
 </template>
 
 <script>
+
   export default {
     name: "Show",
     data() {
@@ -87,7 +88,11 @@
         })
       },
       showCopy(isbn){
-        this.$router.push({path:'/home/showCopy',query:{isbn:isbn}});
+        if(this.$store.state.login) {
+          this.$router.push({path: '/home/showCopy', query: {isbn: isbn}});
+        }else {
+          this.$message("请先登录");
+        }
       }
     }
   }
