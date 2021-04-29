@@ -10,8 +10,8 @@
   <el-form-item label="ISBN" prop="isbn">
     <el-input v-model="form.isbn"></el-input>
   </el-form-item>
-  <el-form-item label="校区" prop="campusID" placeholder="请选择校区">
-    <el-select v-model="form.campusID">
+  <el-form-item label="校区" prop="libraryID" placeholder="请选择校区">
+    <el-select v-model="form.libraryID">
       <el-option label="邯郸" value="1"></el-option>
       <el-option label="枫林" value="2"></el-option>
       <el-option label="江湾" value="4"></el-option>
@@ -34,14 +34,14 @@ export default {
     return {
       form: {
         isbn: '',
-        campusID: '',
+        libraryID: '',
         number: ''
       },
       rules: {
         isbn: [
           {required: true, message: '请填写ISBN', trigger: 'blur'}
         ],
-        campusID: [
+        libraryID: [
           {required: true, message: '请填写校区', trigger: 'blur'}
         ],
         number: [
@@ -56,7 +56,7 @@ export default {
         if (valid) {
           this.$axios.post('/admin/addBookCopy', {
             isbn: this.form.isbn,
-            campusID: this.form.campusID,
+            libraryID: this.form.libraryID,
             number: this.form.number
           }).then(data => {
             if (data.status === 200) {
