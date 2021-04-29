@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -53,15 +54,41 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
         try {
             User user = new ObjectMapper().readValue(request.getInputStream(), User.class);
             request.setAttribute("libraryID", user.getLibraryID());
-            return authenticationManager.authenticate(
+
+            //尝试登录
+            Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
                             user.getUsername(),
                             user.getPassword(),
                             new ArrayList<>()
                     )
             );
+
+            //获得登陆后的用户用户
+            User loginUser = (User) authentication.getPrincipal();
+
+            //如果是管理员的话，前端必须输入libraryID
+            Long libraryID = user.getLibraryID();
+            if ((loginUser.getRole().equals(User.ADMIN) || loginUser.getRole().equals(User.SUPERADMIN))
+                    && libraryID == null) {
+                throw new AuthenticationException("管理员登录时必须选择工作的图书馆！") {
+                    @Override
+                    public String getMessage() {
+                        return super.getMessage();
+                    }
+                };
+            }
+
+            return authentication;
+
+
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new AuthenticationException("未知错误") {
+                @Override
+                public String getMessage() {
+                    return super.getMessage();
+                }
+            };
         }
 
     }
@@ -92,7 +119,7 @@ public class JwtLoginFilter extends UsernamePasswordAuthenticationFilter {
         response.setStatus(403);
         response.setContentType("application/json; charset=utf-8");
 
-        String jsonString = JSONObject.toJSONString(new GeneralResponse("用户名或密码错误！"));
+        String jsonString = JSONObject.toJSONString(new GeneralResponse(failed.getMessage()));
         response.getWriter().write(jsonString);
     }
 }
