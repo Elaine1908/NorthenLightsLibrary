@@ -29,7 +29,7 @@
                       <h2 style="margin-bottom: 5px;line-height: 20px">{{o.name}}</h2>
                       <h3 style="margin-bottom: 5px;line-height: 15px">{{o.author}}</h3>
                       <p style="margin-bottom: 20px;line-height: 10px">{{o.description}}</p>
-                      <el-button type="text" class="button" @click="showCopy">预约</el-button>
+                      <el-button type="text" class="button" @click="showCopy(o.isbn)">预约</el-button>
                       <div class="bottom clearfix">
                         <time class="time">{{ currentDate }}</time>
                       </div>
@@ -55,7 +55,16 @@
           author: '',
           isbn:''
         },
-        bookList:[],
+        bookList:[
+          {
+            imagePathToFrontEnd:'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png',
+            isbn:'666'
+          },
+          {
+            name:'hhh',
+            isbn:'888'
+          }
+        ],
         currentDate: new Date(),
       }
     },
@@ -86,8 +95,8 @@
           this.$message.error(err.response.data.message)
         })
       },
-      showCopy(){
-        this.$router.push({path:'/home/showCopy'});
+      showCopy(isbn){
+        this.$router.push({path:'/home/showCopy',query:{isbn:isbn}});
       }
     }
   }
