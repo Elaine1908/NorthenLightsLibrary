@@ -55,16 +55,7 @@
           author: '',
           isbn:''
         },
-        bookList:[
-          {
-            imagePathToFrontEnd:'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png',
-            isbn:'666'
-          },
-          {
-            name:'hhh',
-            isbn:'888'
-          }
-        ],
+        bookList:[],
         currentDate: new Date(),
       }
     },

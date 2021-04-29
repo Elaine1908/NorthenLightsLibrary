@@ -19,7 +19,7 @@
       <el-table-column
               prop="uniqueBookMark"
               label="ISBN"
-              width="120">
+              width="200">
         <template slot-scope="scope">{{ scope.row.uniqueBookMark }}</template>
       </el-table-column>
       <el-table-column
@@ -41,7 +41,7 @@
         <template slot-scope="scope">{{ scope.row.borrower }}</template>
       </el-table-column>
       <el-table-column>
-        <el-button @click="reserve(scope.row.uniqueBookMark)">预约</el-button>
+        <el-button slot-scope="scope" class="button" @click="reserve(scope.row.uniqueBookMark)">预约</el-button>
       </el-table-column>
     </el-table>
   </div>
@@ -52,12 +52,7 @@
     name: "ShowCopy",
     data() {
       return {
-        tableData: [{
-          uniqueBookMark: this.$route.query.isbn,
-          name: '王小虎',
-          status: '上海市普陀区金沙江路 1518 弄'
-        }
-        ]
+        tableData: []
       }
     },
     created() {
@@ -74,11 +69,9 @@
       })
     },
     methods: {
-      reserve(uniqueBookMark){
+      reserve:function(uniqueBookMark){
         this.$axios.post('/user/reserveBook',{
-          params:{
-            uniqueBookMark:uniqueBookMark
-          }
+          uniqueBookMark:uniqueBookMark
         }).then(data => {
           this.$message.success(data.data.message)
         }).catch(err => {
