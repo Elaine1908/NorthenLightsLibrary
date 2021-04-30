@@ -75,9 +75,9 @@
           prop="borrowDate">
       </el-table-column>
     </el-table>
-    <el-form-item>
-      <el-button type="primary" v-if="showTable" @click="submitReservation">提交预约</el-button>
-    </el-form-item>
+    <div class="fetch-form button" v-if="showTable">
+      <el-button type="primary" @click="submitReservation">提交取书</el-button>
+    </div>
   </div>
 </template>
 
@@ -170,5 +170,9 @@ export default {
 .fetch-form {
   width: 40%;
   text-align: left;
+}
+.button {
+  margin-left: 100px;
+  margin-top: 22px;
 }
 </style>
