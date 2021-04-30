@@ -79,6 +79,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         //设置请求被spring security拦截时的自定义信息
 
         http.authorizeRequests()
+                .antMatchers("/useradmin/getAllBookType").permitAll()
+                .antMatchers("/useradmin/getBookType").permitAll()
                 .antMatchers("/superadmin/**").hasAnyAuthority("superadmin")
                 .antMatchers("/admin/**").hasAnyAuthority("superadmin", "admin")
                 .antMatchers("/useradmin/**").hasAnyAuthority("teacher", "student", "admin", "superadmin")
