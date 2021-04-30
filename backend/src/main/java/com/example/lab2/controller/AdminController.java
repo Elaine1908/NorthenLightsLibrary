@@ -93,11 +93,6 @@ public class AdminController {
                     ;
         }
 
-        //从jwt中读取出管理员的上班地点，并缺省设置添加副本的library为管理员上班的library
-        String token = request.getHeader("token");
-        Long libraryID = JwtUtils.getLibraryID(token);
-        addBookCopyRequest.setLibraryID(libraryID + "");
-
         GeneralResponse generalResponse = uploadService.addBookCopy(addBookCopyRequest);
         return ResponseEntity.ok(generalResponse);
     }
@@ -105,16 +100,18 @@ public class AdminController {
 
     /**
      * 管理员输入副本号后前端页面显示副本信息的接口
+     *
      * @param isbn
      * @return
      */
     @GetMapping("/showBookToUser")
-    public ResponseEntity<?> showBookToUser(@RequestParam("isbn")String isbn){
+    public ResponseEntity<HashMap<String, Object>> showBookToUser(@RequestParam("isbn") String isbn) {
         HashMap<String, Object> result = new HashMap<>();
         ShowBookCopyDTO bookCopy = searchService.getBookCopyByIsbn(isbn);
-        result.put("book",bookCopy);
+        result.put("book", bookCopy);
         return ResponseEntity.ok(result);
     }
+
     /**
      * 管理员把书借给用户的接口
      *
@@ -156,13 +153,14 @@ public class AdminController {
 
     /**
      * 管理员把用户预约的书借出
+     *
      * @param borrowReservedBookRequest
      * @param bindingResult
      * @param httpServletRequest
      * @return
      */
     @PostMapping("/lendReservedBookToUser")
-    public ResponseEntity<?> lendReservedBookToUser(@Valid @RequestBody BorrowReservedBookRequest borrowReservedBookRequest,
+    public ResponseEntity<GeneralResponse> lendReservedBookToUser(@Valid @RequestBody BorrowReservedBookRequest borrowReservedBookRequest,
                                                     BindingResult bindingResult,
                                                     HttpServletRequest httpServletRequest) {
 
@@ -179,7 +177,7 @@ public class AdminController {
         GeneralResponse generalResponse = borrowService.lendReservedBookToUser(
                 borrowReservedBookRequest.getUsername(),
                 borrowReservedBookRequest.getUniqueBookMarkList(),
-                adminLibraryID,admin
+                adminLibraryID, admin
         );
 
         //把结果返回给前端
@@ -188,8 +186,8 @@ public class AdminController {
     }
 
     @PostMapping("/receiveBookFromUser")
-    public ResponseEntity<?> receiveBookFromUser(@Valid @RequestBody ReturnBookRequest returnBookRequest,BindingResult bindingResult,
-                                                 HttpServletRequest httpServletRequest){
+    public ResponseEntity<GeneralResponse> receiveBookFromUser(@Valid @RequestBody ReturnBookRequest returnBookRequest, BindingResult bindingResult,
+                                                               HttpServletRequest httpServletRequest) {
 
         if (bindingResult.hasFieldErrors()) {
             throw new IllegalArgumentException(Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage());
@@ -201,7 +199,7 @@ public class AdminController {
         //得到admin的账号
         String admin = JwtUtils.getUserName(token);
 
-        GeneralResponse generalResponse = normalUserService.returnBooks(returnBookRequest.getUniqueBookMarkList(),adminLibraryID,admin);
+        GeneralResponse generalResponse = normalUserService.returnBooks(returnBookRequest.getUniqueBookMarkList(), adminLibraryID, admin);
 
         //把结果返回给前端
         return ResponseEntity.ok(generalResponse);
