@@ -207,9 +207,10 @@ export default {
             url: '/admin/uploadNewBook',
             method: 'post',
             data: fd
-          }).then((rep) => {
-            this.$message.success(rep.data.message)
+          }).then((resp) => {
+            this.$message.success(resp.data.message)
             this.$router.push('/home/show')
+            this.$router.go(0)
           }).catch((err) => {
             this.$message.error(err.response.data.message)
           })

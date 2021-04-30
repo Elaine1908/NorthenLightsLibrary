@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import Storage from "../assets/js/Storage";
 
 Vue.use(Vuex)
 
