@@ -29,7 +29,8 @@
                       <h2 style="margin-bottom: 5px;line-height: 20px">{{o.name}}</h2>
                       <h3 style="margin-bottom: 5px;line-height: 15px">{{o.author}}</h3>
                       <p style="margin-bottom: 20px;line-height: 10px">{{o.description}}</p>
-                      <el-button type="text" class="button" @click="showCopy(o.isbn)">预约</el-button>
+                      <el-button type="text" class="button" @click="showCopy(o.isbn)" v-if="roleShow=='student'">预约</el-button>
+                      <el-button type="text" class="button" @click="showCopy(o.isbn)" v-else="roleShow=='admin'||roleShow=='superadmin'">查看详情</el-button>
                       <div class="bottom clearfix">
                         <time class="time">{{ currentDate }}</time>
                       </div>
@@ -58,6 +59,7 @@
         },
         bookList:[],
         currentDate: new Date(),
+        roleShow:localStorage.getItem('role')
       }
     },
     created() {
@@ -90,13 +92,10 @@
         })
       },
       showCopy(isbn){
-        if(localStorage.getItem('login')) {
-          this.$router.push({path: '/home/showCopy', query: {isbn: isbn}});
-          if (localStorage.getItem('role') !== 'student') {
-            this.$message.error('您不是读者，无法预约')
-          }
-        }else {
+        if(!localStorage.getItem('login')) {
           this.$message.error("请先登录");
+        }else{
+          this.$router.push({path: '/home/showCopy', query: {isbn: isbn}});
         }
       }
     }

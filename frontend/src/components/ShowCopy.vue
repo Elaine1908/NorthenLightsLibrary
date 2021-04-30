@@ -41,7 +41,7 @@
         <template slot-scope="scope">{{ scope.row.borrower }}</template>
       </el-table-column>
       <el-table-column>
-        <el-button slot-scope="scope" class="button" @click="reserve(scope.row.uniqueBookMark)">预约</el-button>
+        <el-button slot-scope="scope" class="button" @click="reserve(scope.row.uniqueBookMark)" v-if="roleShow=='student'">预约</el-button>
       </el-table-column>
     </el-table>
   </div>
@@ -52,7 +52,8 @@
     name: "ShowCopy",
     data() {
       return {
-        tableData: []
+        tableData: [],
+        roleShow:localStorage.getItem('role')
       }
     },
     created() {
@@ -83,12 +84,7 @@
       if (!localStorage.getItem('login')) {
         this.$message.error('请先登录')
         this.$router.push('/login')
-      }
-      else if (localStorage.getItem('role') !== 'student') {
-        this.$message.error('您不是读者，无法访问该页面')
-        this.$router.push('/login')
-      }
-      else if (parseInt(localStorage.getItem('exp')) < ((new Date().getTime())/1000)) {
+      } else if (parseInt(localStorage.getItem('exp')) < ((new Date().getTime())/1000)) {
         this.$message.error('登录过期，请先登录')
         this.$router.push('/login')
       }

@@ -8,7 +8,7 @@
         <el-menu-item index="/login" v-else>登录</el-menu-item>
         <el-menu-item index="/register" v-if="!isLogin">注册</el-menu-item>
         <el-menu-item index="/modifyPassword" v-if="isLogin">修改密码</el-menu-item>
-        <el-menu-item index="/home/user" v-if="isLogin">个人信息</el-menu-item>
+        <el-menu-item index="/home/user" v-if="isStudent">个人信息</el-menu-item>
       </el-submenu>
       <el-menu-item index="/home/admin" v-if="isAdmin">
         管理员
@@ -29,7 +29,8 @@ export default {
       activeIndex: '',
       isLogin: localStorage.getItem('login'),
       username: localStorage.getItem('login') ? localStorage.getItem('username') : '未登录',
-      isAdmin: localStorage.getItem('login') && (localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'superadmin')
+      isAdmin: localStorage.getItem('login') && (localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'superadmin'),
+      isStudent:localStorage.getItem('login') && (localStorage.getItem('role') === 'student')
     };
   },
   methods: {
