@@ -13,7 +13,7 @@
       <el-menu-item index="/home/admin" v-if="isAdmin">
         管理员
       </el-menu-item>
-      <span class="username"><i class="el-icon-user"></i>{{this.username}}</span>
+      <span class="username"><i class="el-icon-user"></i>{{this.identity}}{{this.username}}</span>
     </el-menu>
     <router-view class="upload-form"/>
   </div>
@@ -30,7 +30,8 @@
         isLogin: localStorage.getItem('login'),
         username: localStorage.getItem('login') ? localStorage.getItem('username') : '未登录',
         isAdmin: localStorage.getItem('login') && (localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'superadmin'),
-        isStudent:localStorage.getItem('login') && (localStorage.getItem('role') === 'student')
+        isStudent:localStorage.getItem('login') && (localStorage.getItem('role') === 'student'),
+        identity: localStorage.getItem('login') ? (localStorage.getItem('role') + ': ') : ''
       };
     },
     methods: {
