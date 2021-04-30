@@ -27,7 +27,16 @@
 
 <script>
   export default {
-    name: "User"
+    name: "User",
+    mounted() {
+      if (!localStorage.getItem('login')) {
+        this.$message.error('请先登录')
+        this.$router.push('/login')
+      } else if (localStorage.getItem('exp') > ((new Date().getTime())/1000)) {
+        this.$message.error('登录过期，请先登录')
+        this.$router.push('/login')
+      }
+    }
   }
 </script>
 

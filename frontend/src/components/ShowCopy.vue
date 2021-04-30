@@ -78,6 +78,18 @@
           this.$message.error(err.response.data.message)
         })
       }
+    },
+    mounted() {
+      if (!localStorage.getItem('login')) {
+        this.$message.error('请先登录')
+        this.$router.push('/login')
+      } else if (localStorage.getItem('role') !== 'admin' && localStorage.getItem('role') !== 'superadmin') {
+        this.$message.error('您不是管理员，无法访问该页面')
+        this.$router.push('/login')
+      } else if (parseInt(localStorage.getItem('exp')) < ((new Date().getTime())/1000)) {
+        this.$message.error('登录过期，请先登录')
+        this.$router.push('/login')
+      }
     }
   }
 </script>

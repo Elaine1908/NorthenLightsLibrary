@@ -67,6 +67,8 @@
         } else {
           this.$message(resp.data.message);
         }
+      }).catch(err => {
+        this.$message.error(err.response.data.message)
       })
     },
     methods: {
@@ -88,10 +90,13 @@
         })
       },
       showCopy(isbn){
-        if(this.$store.state.login) {
+        if(localStorage.getItem('login')) {
           this.$router.push({path: '/home/showCopy', query: {isbn: isbn}});
+          if (localStorage.getItem('role') !== 'student') {
+            this.$message.error('您不是读者，无法预约')
+          }
         }else {
-          this.$message("请先登录");
+          this.$message.error("请先登录");
         }
       }
     }

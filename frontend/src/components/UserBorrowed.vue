@@ -68,7 +68,7 @@
         if (resp.status === 200){
           this.tableData=resp.data.borrowedBooks;
         } else {
-          this.$message(resp.data.message);
+          this.$message.error(resp.data.message);
         }
       })
     }

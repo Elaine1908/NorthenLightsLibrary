@@ -25,7 +25,7 @@
           <i class="el-icon-notebook-1"></i>
           <span slot="title">添加副本</span>
         </el-menu-item>
-        <el-menu-item index="/home/admin/addAdmin" v-if="this.$store.state.identity === 1">
+        <el-menu-item index="/home/admin/addAdmin" v-if="isSuperAdmin">
           <i class="el-icon-s-custom"></i>
           <span slot="title">新管理员</span>
         </el-menu-item>
@@ -40,8 +40,25 @@
 <script>
 export default {
   name: "Admin",
+  data() {
+    return {
+      isSuperAdmin: localStorage.getItem('role') === 'superadmin'
+    }
+  },
   methods: {
 
+  },
+  mounted() {
+    if (!localStorage.getItem('login')) {
+      this.$message.error('请先登录')
+      this.$router.push('/login')
+    } else if (localStorage.getItem('role') !== 'admin' && localStorage.getItem('role') !== 'superadmin') {
+      this.$message.error('您不是管理员，无法访问该页面')
+      this.$router.push('/login')
+    } else if (parseInt(localStorage.getItem('exp')) < ((new Date().getTime())/1000)) {
+      this.$message.error('登录过期，请先登录')
+      this.$router.push('/login')
+    }
   }
 }
 </script>

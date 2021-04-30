@@ -30,12 +30,12 @@
         </el-form-item>
         <el-form-item label="登陆身份" prop="identity">
           <el-radio-group v-model="ruleForm.identity">
-            <el-radio :label="2">普通管理员</el-radio>
-            <el-radio :label="1">超级管理员</el-radio>
-            <el-radio :label="3">普通读者</el-radio>
+            <el-radio label="admin">普通管理员</el-radio>
+            <el-radio label="superadmin">超级管理员</el-radio>
+            <el-radio label="student">普通读者</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item v-if="this.ruleForm.identity === 1 || this.ruleForm.identity === 2" label="所在分馆" prop="libraryID">
+        <el-form-item v-if="this.ruleForm.identity === 'admin' || this.ruleForm.identity === 'superadmin'" label="所在分馆" prop="libraryID">
           <el-radio-group v-model="ruleForm.libraryID">
             <el-radio :label="1">邯郸</el-radio>
             <el-radio :label="2">枫林</el-radio>
@@ -63,7 +63,7 @@
   export default {
     data() {
       let validateLibraryID = (rule, value, callback) => {
-        if ((this.ruleForm.identity === 1 || this.ruleForm.identity === 2) && value === 0) {
+        if ((this.ruleForm.identity === 'admin' || this.ruleForm.identity === 'superadmin') && value === 0) {
           callback(new Error('请选择所在分馆'))
         }
         callback()
@@ -96,7 +96,7 @@
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            let libraryID = (this.ruleForm.identity === 3) ? 0 : this.ruleForm.libraryID;
+            let libraryID = (this.ruleForm.identity === 'student') ? 0 : this.ruleForm.libraryID;
             this.$axios.post('/auth/login', {
               username: this.ruleForm.username,
               password: this.ruleForm.password,
@@ -104,7 +104,6 @@
             })
                 .then(resp => {
                   if (resp.status === 200 && resp.headers.hasOwnProperty('token')) {
-                    this.$router.push({path: '/home'});
                     //更新 vuex 的 state的值, 必须通过 mutations 提供的方法才可以
                     // 通过 commit('方法名') 就可以出发 mutations 中的指定方法
                     this.$store.commit({
@@ -115,7 +114,11 @@
                       campusID: libraryID,
                       loginIdentity: this.ruleForm.identity
                     });
-                    this.$message.success('登陆成功')
+                    this.$router.push({path: '/home'});
+                    //this.$router.go(0)
+                    if (localStorage.getItem('role') !== this.ruleForm.identity) {
+                      this.$message.info('你刚刚以' + localStorage.getItem('role') + '身份登录')
+                    }
                   } else{
                     this.$message.info(resp.data.message);
                   }

@@ -10,10 +10,10 @@
         <el-menu-item index="/modifyPassword" v-if="isLogin">修改密码</el-menu-item>
         <el-menu-item index="/home/user" v-if="isLogin">个人信息</el-menu-item>
       </el-submenu>
-      <el-menu-item index="/home/admin">
+      <el-menu-item index="/home/admin" v-if="isAdmin">
         管理员
       </el-menu-item>
-      <span class="username"><i class="el-icon-user"></i></span>
+      <span class="username"><i class="el-icon-user"></i>{{this.username}}</span>
     </el-menu>
     <router-view class="upload-form"/>
   </div>
@@ -27,7 +27,9 @@ export default {
   data() {
     return {
       activeIndex: '',
-      isLogin: localStorage.getItem('login')
+      isLogin: localStorage.getItem('login'),
+      username: localStorage.getItem('login') ? localStorage.getItem('username') : '未登录',
+      isAdmin: localStorage.getItem('login') && (localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'superadmin')
     };
   },
   methods: {
@@ -36,6 +38,7 @@ export default {
     },
     logout(){
       this.$store.commit("doLogout");
+      this.$router.push('/home/show')
       this.$router.go(0)
     }
   },
@@ -47,7 +50,10 @@ export default {
     } else if (/^\/home\/user*/.test(this.$route.path)) {
       this.activeIndex = '/home/user'
     }
-    this.isLogin = localStorage.getItem('login')
+    if (parseInt(localStorage.getItem('exp')) < ((new Date().getTime())/1000)) {
+      this.$store.commit('doLogout')
+      this.$router.push('/home/show')
+    }
   }
 }
 </script>

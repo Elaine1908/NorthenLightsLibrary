@@ -36,6 +36,8 @@
         } else {
           this.$message(resp.data.message);
         }
+      }).catch(err => {
+        this.$message.error(err.response.data.message)
       })
     }
   }
