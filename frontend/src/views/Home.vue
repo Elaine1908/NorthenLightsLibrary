@@ -13,7 +13,7 @@
       <el-menu-item index="/home/admin" v-if="isAdmin">
         管理员
       </el-menu-item>
-      <span class="username"><i class="el-icon-user"></i>{{this.username}}</span>
+      <span class="username"><i class="el-icon-user"></i>{{this.identity}}{{this.username}}</span>
     </el-menu>
     <router-view class="upload-form"/>
   </div>
@@ -29,7 +29,8 @@ export default {
       activeIndex: '',
       isLogin: localStorage.getItem('login'),
       username: localStorage.getItem('login') ? localStorage.getItem('username') : '未登录',
-      isAdmin: localStorage.getItem('login') && (localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'superadmin')
+      isAdmin: localStorage.getItem('login') && (localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'superadmin'),
+      identity: localStorage.getItem('login') ? (localStorage.getItem('role') + ': ') : ''
     };
   },
   methods: {
@@ -39,7 +40,6 @@ export default {
     logout(){
       this.$store.commit("doLogout");
       this.$router.push('/home/show')
-      this.$router.go(0)
     }
   },
   mounted: function () {
