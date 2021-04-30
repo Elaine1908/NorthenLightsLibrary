@@ -120,18 +120,18 @@ export default {
       this.multipleSelection = val
     },
     submitReservation() {
-      if (this.multipleSelection === []) {
+      if (this.multipleSelection.length === 0) {
         this.$message.error('请至少选择一本书籍再提交')
       } else {
         let reservationList = new Array(this.multipleSelection.length);
         for (let i = 0; i < reservationList.length; i++) {
-          reservationList[i] = this.multipleSelection.uniqueBookMark;
+          reservationList[i] = this.multipleSelection[i].uniqueBookMark;
         }
+        console.log(reservationList)
         this.$axios.post('/admin/lendReservedBookToUser', {
           username: this.submittedUsername,
           uniqueBookMarkList: reservationList
         }).then(data => {
-          this.$router.go(0);
           this.$message.success(data.data.message)
         }).catch(err => {
           this.$message.error(err.response.data.message)
