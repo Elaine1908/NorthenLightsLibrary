@@ -106,24 +106,25 @@
                   if (resp.status === 200 && resp.headers.hasOwnProperty('token')) {
                     //更新 vuex 的 state的值, 必须通过 mutations 提供的方法才可以
                     // 通过 commit('方法名') 就可以出发 mutations 中的指定方法
-                    this.$store.commit({
-                      type: 'doLogin',
-                      token: resp.headers.token,
-                      username: this.ruleForm.username,
-                      identity: resp.data.message,
-                      campusID: libraryID,
-                      loginIdentity: this.ruleForm.identity
-                    });
-                    this.$router.push({path: '/home'});
-                    //this.$router.go(0)
-                    if (localStorage.getItem('role') !== this.ruleForm.identity) {
-                      this.$message.info('你刚刚以' + localStorage.getItem('role') + '身份登录')
+                    if (resp.data.message !== this.ruleForm.identity) {
+                      this.$message.error('所选身份与实际身份不一致，请重新登陆')
                     }
-                  } else{
-                    this.$message.info(resp.data.message);
+                    else {
+                      this.$store.commit({
+                        type: 'doLogin',
+                        token: resp.headers.token,
+                        username: this.ruleForm.username,
+                        identity: resp.data.message,
+                        campusID: libraryID,
+                        loginIdentity: this.ruleForm.identity
+                      });
+                      this.$router.push({path: '/home'});
+                    }
                   }
-                })
-                .catch(error => {
+                  else{
+                    this.$message.success(resp.data.message);
+                  }
+                }).catch(error => {
                   this.$message.error(error.response.data.message)
                 })
           } else {
@@ -133,9 +134,6 @@
       },
       resetForm(formName) {
         this.$refs[formName].resetFields();
-      },
-      linkToRegister() {
-        this.$router.push('/register')
       }
     }
   }
