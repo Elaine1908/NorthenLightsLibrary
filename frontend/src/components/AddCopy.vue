@@ -14,8 +14,8 @@
     <el-select v-model="form.libraryID">
       <el-option label="邯郸" value="1"></el-option>
       <el-option label="枫林" value="2"></el-option>
-      <el-option label="江湾" value="4"></el-option>
       <el-option label="张江" value="3"></el-option>
+      <el-option label="江湾" value="4"></el-option>
     </el-select>
   </el-form-item>
   <el-form-item label="副本数量" prop="number">
@@ -34,7 +34,7 @@ export default {
     return {
       form: {
         isbn: '',
-        libraryID: '',
+        libraryID: localStorage.getItem('libraryID'),
         number: ''
       },
       rules: {
@@ -60,8 +60,8 @@ export default {
             number: this.form.number
           }).then(data => {
             if (data.status === 200) {
-              this.$router.go(0)
               this.$message.success(data.data.message)
+              this.$refs.form.resetFields()
             }
           }).catch(err => {
             this.$message.error(err.response.data.message)
@@ -80,7 +80,7 @@ export default {
     }
     else if (localStorage.getItem('role') !== 'admin' && localStorage.getItem('role') !== 'superadmin') {
       this.$message.error('您不是管理员，无法访问该页面')
-      this.$router.push('/login')
+      this.$router.push('/home/show')
     }
     else if (parseInt(localStorage.getItem('exp')) < ((new Date().getTime())/1000)) {
       this.$message.error('登录过期，请先登录')

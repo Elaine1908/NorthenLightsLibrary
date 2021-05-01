@@ -13,7 +13,11 @@
       <el-menu-item index="/home/admin" v-if="isAdmin">
         管理员
       </el-menu-item>
-      <span class="username"><i class="el-icon-user"></i>{{this.identity}}{{this.username}}</span>
+      <div class="userInfo">
+        <span><i class="el-icon-user"></i>{{this.identity}}{{this.username}}</span>
+        <br>
+        <span>{{this.library}}</span>
+      </div>
     </el-menu>
     <router-view class="upload-form"/>
   </div>
@@ -25,13 +29,33 @@
   export default {
     name: 'Home',
     data() {
+      let lib = ''
+      if (localStorage.getItem('login')
+          && (localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'superadmin')) {
+        switch (localStorage.getItem('libraryID')) {
+          case '1':
+            lib = '邯郸';
+            break;
+          case '2':
+            lib = '枫林';
+            break;
+          case '3':
+            lib = '张江';
+            break;
+          case '4':
+          default:
+            lib = '江湾';
+        }
+      }
       return {
         activeIndex: '',
         isLogin: localStorage.getItem('login'),
         username: localStorage.getItem('login') ? localStorage.getItem('username') : '未登录',
-        isAdmin: localStorage.getItem('login') && (localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'superadmin'),
+        isAdmin: localStorage.getItem('login')
+            && (localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'superadmin'),
         isStudent:localStorage.getItem('login') && (localStorage.getItem('role') === 'student'),
-        identity: localStorage.getItem('login') ? (localStorage.getItem('role') + ': ') : ''
+        identity: localStorage.getItem('login') ? (localStorage.getItem('role') + ': ') : '',
+        library: lib
       };
     },
     methods: {
@@ -40,7 +64,6 @@
       },
       logout(){
         this.$store.commit("doLogout");
-        this.$router.push('/home/show')
         this.$router.go(0)
       }
     },
@@ -76,7 +99,7 @@
   .is-active {
     font-weight: bold;
   }
-  .username {
+  .userInfo {
     float: right;
     color: gray;
     font-size: x-small;

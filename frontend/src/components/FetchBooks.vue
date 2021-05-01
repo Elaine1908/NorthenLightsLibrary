@@ -127,12 +127,13 @@ export default {
         for (let i = 0; i < reservationList.length; i++) {
           reservationList[i] = this.multipleSelection[i].uniqueBookMark;
         }
-        console.log(reservationList)
         this.$axios.post('/admin/lendReservedBookToUser', {
           username: this.submittedUsername,
           uniqueBookMarkList: reservationList
         }).then(data => {
-          this.$message.success(data.data.message)
+          this.$message.info(data.data.message)
+          this.$refs.form.resetFields()
+          this.showTable = false
         }).catch(err => {
           this.$message.error(err.response.data.message)
         })
@@ -145,7 +146,7 @@ export default {
       this.$router.push('/login')
     } else if (localStorage.getItem('role') !== 'admin' && localStorage.getItem('role') !== 'superadmin') {
       this.$message.error('您不是管理员，无法访问该页面')
-      this.$router.push('/login')
+      this.$router.push('/home/show')
     } else if (parseInt(localStorage.getItem('exp')) < ((new Date().getTime())/1000)) {
       this.$message.error('登录过期，请先登录')
       this.$router.push('/login')

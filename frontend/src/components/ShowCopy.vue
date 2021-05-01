@@ -58,12 +58,16 @@
     },
     created() {
       this.axios.get('/useradmin/getBookTypeAndCopy',{
-        params:{
-          isbn:this.$route.query.isbn
+        params: {
+          isbn: this.$route.query.isbn
         }
       }).then(resp => {
         if (resp.status === 200){
-          this.tableData=resp.data.bookCopies;
+          this.tableData = resp.data.bookCopies;
+          for (let i = 0; i < this.tableData.length; i++) {
+            this.tableData[i].name = resp.data.name
+            this.tableData[i].author = resp.data.author
+          }
         } else {
           this.$message(resp.data.message);
         }

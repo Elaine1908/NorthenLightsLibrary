@@ -56,8 +56,8 @@ export default {
           this.$axios.post('/admin/receiveBookFromUser', {
             uniqueBookMarkList: isbnList
           }).then(data => {
-            this.$router.go(0)
-            this.$message.success(data.data.message)
+            this.$message.info(data.data.message)
+            this.$refs.form.resetFields()
           }).catch(err => {
             this.$message.error(err.response.data.message)
           })
@@ -74,7 +74,7 @@ export default {
       this.$router.push('/login')
     } else if (localStorage.getItem('role') !== 'admin' && localStorage.getItem('role') !== 'superadmin') {
       this.$message.error('您不是管理员，无法访问该页面')
-      this.$router.push('/login')
+      this.$router.push('/home/show')
     } else if (parseInt(localStorage.getItem('exp')) < ((new Date().getTime())/1000)) {
       this.$message.error('登录过期，请先登录')
       this.$router.push('/login')

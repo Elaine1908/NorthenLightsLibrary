@@ -22,10 +22,16 @@ export default new Vuex.Store({
       localStorage.setItem('username', tokenContent.username)
       localStorage.setItem('role', tokenContent.role)
       localStorage.setItem('exp', tokenContent.exp)
-      localStorage.setItem('login', true)
+      localStorage.setItem('login', 'true')
+      if (tokenContent.role === 'admin' || tokenContent.role === 'superadmin') {
+        localStorage.setItem('libraryID', tokenContent.libraryID)
+      }
     },
     // 退出
     doLogout(state) {
+      if (localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'superadmin') {
+        localStorage.removeItem('libraryID')
+      }
       localStorage.removeItem('token')
       localStorage.removeItem('username')
       localStorage.removeItem('role')

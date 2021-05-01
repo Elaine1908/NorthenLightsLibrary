@@ -39,8 +39,8 @@
           <el-radio-group v-model="ruleForm.libraryID">
             <el-radio :label="1">邯郸</el-radio>
             <el-radio :label="2">枫林</el-radio>
-            <el-radio :label="3">江湾</el-radio>
-            <el-radio :label="4">张江</el-radio>
+            <el-radio :label="3">张江</el-radio>
+            <el-radio :label="4">江湾</el-radio>
           </el-radio-group>
         </el-form-item>
           <el-button

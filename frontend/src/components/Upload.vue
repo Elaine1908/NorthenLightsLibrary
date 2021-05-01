@@ -86,9 +86,9 @@ import {request} from '../plugins/axios.js'
 export default {
   name: "Upload",
   data() {
-    let validateCampusID = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('请填写校区'))
+    let validBookCover = (rule, value, callback) => {
+      if (this.fileList.length === 0) {
+        callback(new Error('请上传图片'))
       } else {
         callback()
       }
@@ -142,7 +142,7 @@ export default {
       },
       rules: {
         bookCover: [
-          {required: true, message: '请上传图片', trigger: 'change', type: 'object'}
+          {required: true, validator: validBookCover, trigger: 'change', type: 'object'}
         ],
         name: [
           {required: true, validator: validateBookName, trigger: 'blur'},
@@ -194,23 +194,26 @@ export default {
       this.isShowUpload = true;//显示上传组件
     },
     onSubmit() {
-      let fd = new FormData();
-      fd.append('bookcoverimage', this.fileList[0].raw);
-      fd.append('name', this.form.name);
-      fd.append('author', this.form.author);
-      fd.append('description', this.form.description);
-      fd.append('isbn', this.form.isbn);
-      fd.append('publicationDate', this.form.publishDate);
       this.$refs.form.validate(valid => {
         if (valid) {
+          let fd = new FormData();
+          fd.append('bookcoverimage', this.fileList[0].raw);
+          fd.append('name', this.form.name);
+          fd.append('author', this.form.author);
+          fd.append('description', this.form.description);
+          fd.append('isbn', this.form.isbn);
+          fd.append('publicationDate', this.form.publishDate);
           request({
             url: '/admin/uploadNewBook',
             method: 'post',
             data: fd
           }).then((resp) => {
             this.$message.success(resp.data.message)
-            this.$router.push('/home/show')
-            this.$router.go(0)
+            this.$refs.form.resetFields()
+            this.fileList = []
+            this.form.localUrl = ''
+            this.isShowImgUpload = false;//隐藏本地预览
+            this.isShowUpload = true;//显示上传组件
           }).catch((err) => {
             this.$message.error(err.response.data.message)
           })
@@ -226,7 +229,7 @@ export default {
       this.$router.push('/login')
     } else if (localStorage.getItem('role') !== 'admin' && localStorage.getItem('role') !== 'superadmin') {
       this.$message.error('您不是管理员，无法访问该页面')
-      this.$router.push('/login')
+      this.$router.push('/home/show')
     } else if (parseInt(localStorage.getItem('exp')) < ((new Date().getTime())/1000)) {
       this.$message.error('登录过期，请先登录')
       this.$router.push('/login')
