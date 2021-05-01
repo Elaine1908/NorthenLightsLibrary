@@ -33,6 +33,10 @@ public class BookType implements Comparable<BookType> {
 
     private String name;
     private String author;
+
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    @Column(columnDefinition = "text")
     private String description;
     private Date publicationDate;
     private String imagePathToFrontEnd;
