@@ -146,6 +146,7 @@ public class BorrowService {
 
     }
 
+    @Transactional(rollbackFor = {Exception.class, RuntimeException.class})
     public GeneralResponse lendReservedBookToUser(String username,
                                                   List<String> booklist,
                                                   Long adminLibraryID,
