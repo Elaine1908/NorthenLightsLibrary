@@ -9,6 +9,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 @Getter
 @Setter
@@ -21,16 +22,12 @@ public class UploadNewBookRequest {
     private MultipartFile bookcoverimage;
 
     @NotNull(message = "isbn不能为空")
-    @Pattern(regexp = ".+",message = "isbn不能为空")
     private String isbn;
     @NotNull(message = "书名不能为空")
-    @Pattern(regexp = ".+",message = "书名不能为空")
     private String name;
     @NotNull(message = "书本的作者不能为空")
-    @Pattern(regexp = ".+",message = "书本的作者不能为空")
     private String author;
     @NotNull(message = "书本的描述不能为空")
-    @Pattern(regexp = ".+",message = "书本的描述不能为空")
     private String description;
     @NotNull(message = "出版日期不能为空")
     @Pattern(regexp = "((((19|20)\\d{2})-(0?[13578]|1[02])-(0?[1-9]|[12]\\d|3[01]))|(((19|20)\\d{2})-(0?[469]|11)-(0?[1-9]|[12]\\d|30))|(((19|20)\\d{2})-0?2-(0?[1-9]|1\\d|2[0-8]))|((((19|20)([13579][26]|[2468][048]|0[48]))|(2000))-0?2-(0?[1-9]|[12]\\d)))",
@@ -50,6 +47,7 @@ public class UploadNewBookRequest {
         b.setAuthor(author);
         b.setDescription(description);
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        formatter.setTimeZone(TimeZone.getTimeZone("GMT+:08:00"));
         try {
             b.setPublicationDate(formatter.parse(this.publicationDate));
         } catch (ParseException parseException) {
