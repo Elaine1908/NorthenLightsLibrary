@@ -112,7 +112,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
 
         //添加当前用户所有的权限（其实只有一个罢了）
-        authorities.add(new SimpleGrantedAuthority(user.get().getRole()));
+        user.ifPresent(value -> authorities.add(new SimpleGrantedAuthority(value.getRole())));
+
 
         //将更新好的用户权限数组赋给用户对象
         user.get().setAuthorities(authorities);
@@ -149,28 +150,28 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     }
 
-    public GeneralResponse deleteAdmin(DeleteAdminRequest deleteAdminRequest){
+    public GeneralResponse deleteAdmin(DeleteAdminRequest deleteAdminRequest) {
         //用户不存在
         Optional<User> user = userRepository.findByName(deleteAdminRequest.getUsername());
         if (!user.isPresent()) {
             throw new UserNotFoundException("管理员不存在！");
         }
         //用户是超级管理员
-        if(user.get().getRole().equals("superadmin")){
+        if (user.get().getRole().equals("superadmin")) {
             throw new UserNotFoundException("此用户是超级管理员，不能删除！");
         }
         //用户不是admin
-        if(!user.get().getRole().equals("admin")){
+        if (!user.get().getRole().equals("admin")) {
             throw new UserNotFoundException("此用户不是管理员！");
         }
 
         //删除管理员
         userRepository.delete(user.get());
-        return new GeneralResponse("删除管理员 "+ deleteAdminRequest.getUsername() +" 成功");
+        return new GeneralResponse("删除管理员 " + deleteAdminRequest.getUsername() + " 成功");
 
     }
 
-    public List<UserDTO> showAdmin(){
+    public List<UserDTO> showAdmin() {
         return userRepository.getAllAdmin();
     }
 }
