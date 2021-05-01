@@ -6,44 +6,37 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     // 保存登录状态
-    login: true,
-    username:'未登录',
-    identity: 1,
-    campusID: 1,
-    token: localStorage.getItem('token') || null
+    token: localStorage.getItem('token') || null,
+    username: localStorage.getItem('username') || null,
+    role: localStorage.getItem('role') || null,
+    exp: localStorage.getItem('exp') || null,
+    login: localStorage.getItem('login') || false
   },
   // mutations: 专门书写方法,用来更新 state 中的值
   mutations: {
     // 登录
     doLogin(state, payload) {
-      state.login = true;
-      localStorage.setItem('token', payload.token)
-      state.username = payload.username;
-      switch (payload.identity) {
-        case 'admin':
-          state.identity = 2;
-          break;
-        case 'superadmin':
-          state.identity = 1;
-          break;
-        case 'teacher':
-        case 'student':
-          state.identity = 3;
-      }
-      if (state.identity !== payload.loginIdentity) {
-        this.$message.info('您填写的身份与账号不匹配，已经以' + payload.identity + '的身份登录')
-      }
-      state.campusID = payload.campusID;
       let jwt = require('jsonwebtoken')
-      console.log(jwt.decode(payload.token))
+      let tokenContent = jwt.decode(payload.token)
+      localStorage.setItem('token', payload.token)
+      localStorage.setItem('username', tokenContent.username)
+      localStorage.setItem('role', tokenContent.role)
+      localStorage.setItem('exp', tokenContent.exp)
+      localStorage.setItem('login', 'true')
+      if (tokenContent.role === 'admin' || tokenContent.role === 'superadmin') {
+        localStorage.setItem('libraryID', tokenContent.libraryID)
+      }
     },
     // 退出
     doLogout(state) {
-      state.login = false;
+      if (localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'superadmin') {
+        localStorage.removeItem('libraryID')
+      }
       localStorage.removeItem('token')
-      state.username='未登录';
-      state.identity = 0;
-      state.campusID = 0
+      localStorage.removeItem('username')
+      localStorage.removeItem('role')
+      localStorage.removeItem('exp')
+      localStorage.removeItem('login')
     }
   }
 })

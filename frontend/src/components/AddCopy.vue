@@ -10,12 +10,12 @@
   <el-form-item label="ISBN" prop="isbn">
     <el-input v-model="form.isbn"></el-input>
   </el-form-item>
-  <el-form-item label="校区" prop="campusID" placeholder="请选择校区">
-    <el-select v-model="form.campusID">
+  <el-form-item label="校区" prop="libraryID" placeholder="请选择校区">
+    <el-select v-model="form.libraryID">
       <el-option label="邯郸" value="1"></el-option>
       <el-option label="枫林" value="2"></el-option>
-      <el-option label="江湾" value="4"></el-option>
       <el-option label="张江" value="3"></el-option>
+      <el-option label="江湾" value="4"></el-option>
     </el-select>
   </el-form-item>
   <el-form-item label="副本数量" prop="number">
@@ -34,14 +34,14 @@ export default {
     return {
       form: {
         isbn: '',
-        campusID: '',
+        libraryID: localStorage.getItem('libraryID'),
         number: ''
       },
       rules: {
         isbn: [
           {required: true, message: '请填写ISBN', trigger: 'blur'}
         ],
-        campusID: [
+        libraryID: [
           {required: true, message: '请填写校区', trigger: 'blur'}
         ],
         number: [
@@ -56,12 +56,12 @@ export default {
         if (valid) {
           this.$axios.post('/admin/addBookCopy', {
             isbn: this.form.isbn,
-            campusID: this.form.campusID,
+            libraryID: this.form.libraryID,
             number: this.form.number
           }).then(data => {
             if (data.status === 200) {
-              this.$router.go(0)
               this.$message.success(data.data.message)
+              this.$refs.form.resetFields()
             }
           }).catch(err => {
             this.$message.error(err.response.data.message)
@@ -71,6 +71,20 @@ export default {
           this.$message.error('请填写完整所有内容')
         }
       })
+    }
+  },
+  mounted() {
+    if (!localStorage.getItem('login')) {
+      this.$message.error('请先登录')
+      this.$router.push('/login')
+    }
+    else if (localStorage.getItem('role') !== 'admin' && localStorage.getItem('role') !== 'superadmin') {
+      this.$message.error('您不是管理员，无法访问该页面')
+      this.$router.push('/home/show')
+    }
+    else if (parseInt(localStorage.getItem('exp')) < ((new Date().getTime())/1000)) {
+      this.$message.error('登录过期，请先登录')
+      this.$router.push('/login')
     }
   }
 }

@@ -29,7 +29,8 @@
                       <h2 style="margin-bottom: 5px;line-height: 20px">{{o.name}}</h2>
                       <h3 style="margin-bottom: 5px;line-height: 15px">{{o.author}}</h3>
                       <p style="margin-bottom: 20px;line-height: 10px">{{o.description}}</p>
-                      <el-button type="text" class="button" @click="showCopy">预约</el-button>
+                      <el-button type="text" class="button" @click="showCopy(o.isbn)" v-if="roleShow=='student'">预约</el-button>
+                      <el-button type="text" class="button" @click="showCopy(o.isbn)" v-else="roleShow=='admin'||roleShow=='superadmin'">查看详情</el-button>
                       <div class="bottom clearfix">
                         <time class="time">{{ currentDate }}</time>
                       </div>
@@ -46,6 +47,7 @@
 </template>
 
 <script>
+
   export default {
     name: "Show",
     data() {
@@ -55,11 +57,21 @@
           author: '',
           isbn:''
         },
-        bookList:[{
-          imagePathToFrontEnd:"https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"
-        }],
+        bookList:[],
         currentDate: new Date(),
+        roleShow:localStorage.getItem('role')
       }
+    },
+    created() {
+      this.axios.get('/useradmin/getAllBookType').then(resp => {
+        if (resp.status === 200){
+          this.bookList=resp.data.bookTypeList;
+        } else {
+          this.$message(resp.data.message);
+        }
+      }).catch(err => {
+        this.$message.error(err.response.data.message)
+      })
     },
     methods: {
       onSubmit() {
@@ -72,15 +84,19 @@
               }
             }).then(resp => {
           if (resp.status === 200) {
-            this.bookList = resp.data.;
+            this.bookList = resp.data.bookTypeList;
             this.$message.success(resp.data.message)
           }
         }).then(err => {
           this.$message.error(err.response.data.message)
         })
       },
-      showCopy(){
-        this.$router.push({path:'/home/showCopy'});
+      showCopy(isbn){
+        if(!localStorage.getItem('login')) {
+          this.$message.error("请先登录");
+        }else{
+          this.$router.push({path: '/home/showCopy', query: {isbn: isbn}});
+        }
       }
     }
   }

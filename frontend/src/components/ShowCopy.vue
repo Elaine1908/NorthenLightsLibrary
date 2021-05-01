@@ -4,12 +4,7 @@
             ref="multipleTable"
             :data="tableData"
             tooltip-effect="dark"
-            style="width: 100%"
-            @selection-change="handleSelectionChange">
-      <el-table-column
-              type="selection"
-              width="55">
-      </el-table-column>
+            style="width: 100%">
       <el-table-column
               label="书名"
               width="120">
@@ -19,27 +14,36 @@
               prop="author"
               label="作者"
               width="120">
+        <template slot-scope="scope">{{ scope.row.author }}</template>
+      </el-table-column>
+      <el-table-column
+              prop="uniqueBookMark"
+              label="ISBN"
+              width="200">
+        <template slot-scope="scope">{{ scope.row.uniqueBookMark }}</template>
       </el-table-column>
       <el-table-column
               prop="libraryName"
               label="所在分馆"
               width="120">
+        <template slot-scope="scope">{{ scope.row.libraryName }}</template>
       </el-table-column>
       <el-table-column
               prop="status"
               label="状态"
               width="120">
+        <template slot-scope="scope">{{ scope.row.status }}</template>
       </el-table-column>
       <el-table-column
-              prop="uniqueBookMark"
-              label="ISBN"
-              show-overflow-tooltip>
+              prop="borrower"
+              label="借书者"
+              width="120">
+        <template slot-scope="scope">{{ scope.row.borrower }}</template>
+      </el-table-column>
+      <el-table-column>
+        <el-button slot-scope="scope" class="button" @click="reserve(scope.row.uniqueBookMark)" v-if="roleShow=='student'">预约</el-button>
       </el-table-column>
     </el-table>
-    <div style="margin-top: 20px">
-      <el-button @click="toggleSelection()">取消选择</el-button>
-      <el-button @click="reserve">预约</el-button>
-    </div>
   </div>
 </template>
 
@@ -48,40 +52,45 @@
     name: "ShowCopy",
     data() {
       return {
-        tableData: [{
-          uniqueBookMark: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        },
-          {
-            uniqueBookMark: '2016-05-03',
-            name: '王小虎',
-            address: '上海市普陀区金沙江路 1518 弄'
-          }
-        ],
-        multipleSelection: []
+        tableData: [],
+        roleShow:localStorage.getItem('role')
       }
     },
-    methods: {
-      toggleSelection(rows) {
-        if (rows) {
-          rows.forEach(row => {
-            this.$refs.multipleTable.toggleRowSelection(row);
-          });
-        } else {
-          this.$refs.multipleTable.clearSelection();
+    created() {
+      this.axios.get('/useradmin/getBookTypeAndCopy',{
+        params: {
+          isbn: this.$route.query.isbn
         }
-      },
-      handleSelectionChange(val) {
-        this.multipleSelection = val;
-      },
-      reserve(){
-        this.$axios.post('/user/reserveBook', {
+      }).then(resp => {
+        if (resp.status === 200){
+          this.tableData = resp.data.bookCopies;
+          for (let i = 0; i < this.tableData.length; i++) {
+            this.tableData[i].name = resp.data.name
+            this.tableData[i].author = resp.data.author
+          }
+        } else {
+          this.$message(resp.data.message);
+        }
+      })
+    },
+    methods: {
+      reserve:function(uniqueBookMark){
+        this.$axios.post('/user/reserveBook',{
+          uniqueBookMark:uniqueBookMark
         }).then(data => {
           this.$message.success(data.data.message)
         }).catch(err => {
           this.$message.error(err.response.data.message)
         })
+      }
+    },
+    mounted() {
+      if (!localStorage.getItem('login')) {
+        this.$message.error('请先登录')
+        this.$router.push('/login')
+      } else if (parseInt(localStorage.getItem('exp')) < ((new Date().getTime())/1000)) {
+        this.$message.error('登录过期，请先登录')
+        this.$router.push('/login')
       }
     }
   }

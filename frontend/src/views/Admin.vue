@@ -25,7 +25,7 @@
           <i class="el-icon-notebook-1"></i>
           <span slot="title">添加副本</span>
         </el-menu-item>
-        <el-menu-item index="/home/admin/addAdmin" v-if="this.$store.state.identity === 1">
+        <el-menu-item index="/home/admin/addAdmin" v-if="isSuperAdmin">
           <i class="el-icon-s-custom"></i>
           <span slot="title">新管理员</span>
         </el-menu-item>
@@ -40,9 +40,12 @@
 <script>
 export default {
   name: "Admin",
-  methods: {
-
-  }
+  data() {
+    return {
+      isSuperAdmin: localStorage.getItem('role') === 'superadmin'
+    }
+  },
+  methods: {}
 }
 </script>
 

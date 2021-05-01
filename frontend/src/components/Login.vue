@@ -30,17 +30,17 @@
         </el-form-item>
         <el-form-item label="登陆身份" prop="identity">
           <el-radio-group v-model="ruleForm.identity">
-            <el-radio :label="2">普通管理员</el-radio>
-            <el-radio :label="1">超级管理员</el-radio>
-            <el-radio :label="3">普通读者</el-radio>
+            <el-radio label="admin">普通管理员</el-radio>
+            <el-radio label="superadmin">超级管理员</el-radio>
+            <el-radio label="student">普通读者</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item v-if="this.ruleForm.identity === 1 || this.ruleForm.identity === 2" label="所在分馆" prop="libraryID">
+        <el-form-item v-if="this.ruleForm.identity === 'admin' || this.ruleForm.identity === 'superadmin'" label="所在分馆" prop="libraryID">
           <el-radio-group v-model="ruleForm.libraryID">
             <el-radio :label="1">邯郸</el-radio>
             <el-radio :label="2">枫林</el-radio>
-            <el-radio :label="3">江湾</el-radio>
-            <el-radio :label="4">张江</el-radio>
+            <el-radio :label="3">张江</el-radio>
+            <el-radio :label="4">江湾</el-radio>
           </el-radio-group>
         </el-form-item>
           <el-button
@@ -63,7 +63,7 @@
   export default {
     data() {
       let validateLibraryID = (rule, value, callback) => {
-        if ((this.ruleForm.identity === 1 || this.ruleForm.identity === 2) && value === 0) {
+        if ((this.ruleForm.identity === 'admin' || this.ruleForm.identity === 'superadmin') && value === 0) {
           callback(new Error('请选择所在分馆'))
         }
         callback()
@@ -87,7 +87,7 @@
             { required: true, message: '请选择身份', trigger: 'blur' }
           ],
           libraryID: [
-            { required: true, message: '请选择所在分馆', trigger: 'blur'}
+            { required: true, validator: validateLibraryID, trigger: 'blur'}
           ]
         }
       }
@@ -96,7 +96,7 @@
       submitForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            let libraryID = (this.ruleForm.identity === 3) ? 0 : this.ruleForm.libraryID;
+            let libraryID = (this.ruleForm.identity === 'student') ? 0 : this.ruleForm.libraryID;
             this.$axios.post('/auth/login', {
               username: this.ruleForm.username,
               password: this.ruleForm.password,
@@ -104,23 +104,27 @@
             })
                 .then(resp => {
                   if (resp.status === 200 && resp.headers.hasOwnProperty('token')) {
-                    this.$router.replace({path: '/'});
                     //更新 vuex 的 state的值, 必须通过 mutations 提供的方法才可以
                     // 通过 commit('方法名') 就可以出发 mutations 中的指定方法
-                    this.$store.commit({
-                      type: 'doLogin',
-                      token: resp.headers.token,
-                      username: this.ruleForm.username,
-                      identity: resp.data.message,
-                      campusID: libraryID,
-                      loginIdentity: this.ruleForm.identity
-                    });
-                    this.$message.success('登陆成功')
-                  } else{
-                    this.$message.info(resp.data.message);
+                    if (resp.data.message !== this.ruleForm.identity) {
+                      this.$message.error('所选身份与实际身份不一致，请重新登陆')
+                    }
+                    else {
+                      this.$store.commit({
+                        type: 'doLogin',
+                        token: resp.headers.token,
+                        username: this.ruleForm.username,
+                        identity: resp.data.message,
+                        campusID: libraryID,
+                        loginIdentity: this.ruleForm.identity
+                      });
+                      this.$router.push({path: '/home'});
+                    }
                   }
-                })
-                .catch(error => {
+                  else{
+                    this.$message.success(resp.data.message);
+                  }
+                }).catch(error => {
                   this.$message.error(error.response.data.message)
                 })
           } else {
@@ -130,9 +134,6 @@
       },
       resetForm(formName) {
         this.$refs[formName].resetFields();
-      },
-      linkToRegister() {
-        this.$router.push('/register')
       }
     }
   }

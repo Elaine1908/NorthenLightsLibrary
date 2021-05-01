@@ -75,9 +75,9 @@
           prop="borrowDate">
       </el-table-column>
     </el-table>
-    <el-form-item>
-      <el-button type="primary" v-if="showTable" @click="submitReservation">提交预约</el-button>
-    </el-form-item>
+    <div class="fetch-form button" v-if="showTable">
+      <el-button type="primary" @click="submitReservation">提交取书</el-button>
+    </div>
   </div>
 </template>
 
@@ -120,23 +120,36 @@ export default {
       this.multipleSelection = val
     },
     submitReservation() {
-      if (this.multipleSelection === []) {
+      if (this.multipleSelection.length === 0) {
         this.$message.error('请至少选择一本书籍再提交')
       } else {
         let reservationList = new Array(this.multipleSelection.length);
         for (let i = 0; i < reservationList.length; i++) {
-          reservationList[i] = this.multipleSelection.uniqueBookMark;
+          reservationList[i] = this.multipleSelection[i].uniqueBookMark;
         }
         this.$axios.post('/admin/lendReservedBookToUser', {
           username: this.submittedUsername,
           uniqueBookMarkList: reservationList
         }).then(data => {
-          this.$router.go(0);
-          this.$message.success(data.data.message)
+          this.$message.info(data.data.message)
+          this.$refs.form.resetFields()
+          this.showTable = false
         }).catch(err => {
           this.$message.error(err.response.data.message)
         })
       }
+    }
+  },
+  mounted() {
+    if (!localStorage.getItem('login')) {
+      this.$message.error('请先登录')
+      this.$router.push('/login')
+    } else if (localStorage.getItem('role') !== 'admin' && localStorage.getItem('role') !== 'superadmin') {
+      this.$message.error('您不是管理员，无法访问该页面')
+      this.$router.push('/home/show')
+    } else if (parseInt(localStorage.getItem('exp')) < ((new Date().getTime())/1000)) {
+      this.$message.error('登录过期，请先登录')
+      this.$router.push('/login')
     }
   }
 }
@@ -158,5 +171,9 @@ export default {
 .fetch-form {
   width: 40%;
   text-align: left;
+}
+.button {
+  margin-left: 100px;
+  margin-top: 22px;
 }
 </style>
