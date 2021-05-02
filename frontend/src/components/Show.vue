@@ -26,9 +26,10 @@
                   <el-card :body-style="{ padding: '0px' }">
                     <img :src="o.imagePathToFrontEnd" class="image">
                     <div style="padding: 14px;">
-                      <h2 style="margin-bottom: 5px;line-height: 20px">{{o.name}}</h2>
-                      <h3 style="margin-bottom: 5px;line-height: 15px">{{o.author}}</h3>
-                      <p style="margin-bottom: 20px;line-height: 10px">{{o.description}}</p>
+                      <h2 style="margin-bottom: 5px;line-height: 20px;font-size: 20px">{{o.name}}</h2>
+                      <h3 style="margin-bottom: 5px;line-height: 15px;font-size: 15px">作者:{{o.author}}</h3>
+                      <h3 style="margin-bottom: 5px;line-height: 15px;font-size: 15px">ISBN:{{o.isbn}}</h3>
+                      <p style="margin-bottom: 20px;line-height: 20px;font-size: 15px">{{o.description}}</p>
                       <el-button type="text" class="button" @click="showCopy(o.isbn)" v-if="roleShow=='student'">预约</el-button>
                       <el-button type="text" class="button" @click="showCopy(o.isbn)" v-else="roleShow=='admin'||roleShow=='superadmin'">查看详情</el-button>
                       <div class="bottom clearfix">
