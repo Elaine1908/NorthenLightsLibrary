@@ -99,11 +99,11 @@
         })
       },
       showCopy(isbn){
-        // if(!localStorage.getItem('login')) {
-        //   this.$message.error("请先登录");
-        // }else{
+        if(!localStorage.getItem('login')) {
+          this.$message.error("请先登录");
+        }else{
           this.$router.push({path: '/home/showCopy', query: {isbn: isbn}});
-        // }
+        }
       },
       showAll(){
         this.axios.get('/useradmin/getAllBookType').then(resp => {
