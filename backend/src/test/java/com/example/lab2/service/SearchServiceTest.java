@@ -83,7 +83,7 @@ public class SearchServiceTest {
     @Transactional
     public void testGetBookTypeAndCopy() throws Exception {
         //先添加一个booktype
-        MultipartFile multipartFile = new MockMultipartFile("test", "1.jpg", "content-type", new FileInputStream("/home/haojie/Pictures/1.jpg"));
+        MultipartFile multipartFile = new MockMultipartFile("test", "1.jpg", "content-type", new FileInputStream("D:\\OneDrive\\MyLaptop\\Pictures\\3.PNG"));
         UploadNewBookRequest uploadNewBookRequest = new UploadNewBookRequest(
                 multipartFile,
                 "isbntestttt",
@@ -158,7 +158,7 @@ public class SearchServiceTest {
     @Test
     @Transactional
     public void testGetBookTypeByISBN() throws Exception {
-        MultipartFile multipartFile = new MockMultipartFile("test", "1.jpg", "content-type", new FileInputStream("/home/haojie/Pictures/1.jpg"));
+        MultipartFile multipartFile = new MockMultipartFile("test", "1.jpg", "content-type", new FileInputStream("D:\\OneDrive\\MyLaptop\\Pictures\\3.PNG"));
         UploadNewBookRequest uploadNewBookRequest = new UploadNewBookRequest(
                 multipartFile,
                 "isbntestttt",
@@ -253,7 +253,7 @@ public class SearchServiceTest {
     @Test
     @Transactional
     public void testGetBookTypeByName() throws Exception {
-        MultipartFile multipartFile = new MockMultipartFile("test", "1.jpg", "content-type", new FileInputStream("/home/haojie/Pictures/1.jpg"));
+        MultipartFile multipartFile = new MockMultipartFile("test", "1.jpg", "content-type", new FileInputStream("D:\\OneDrive\\MyLaptop\\Pictures\\3.PNG"));
         for (char i = 'a'; i <= 'z'; i++) {
             for (char j = i; j <= 'z'; j++) {
                 UploadNewBookRequest uploadNewBookRequest = new UploadNewBookRequest(
@@ -281,7 +281,7 @@ public class SearchServiceTest {
     @Test
     @Transactional
     public void testGetBookTypeByNameAndAuthor() throws Exception {
-        MultipartFile multipartFile = new MockMultipartFile("test", "1.jpg", "content-type", new FileInputStream("/home/haojie/Pictures/1.jpg"));
+        MultipartFile multipartFile = new MockMultipartFile("test", "1.jpg", "content-type", new FileInputStream("D:\\OneDrive\\MyLaptop\\Pictures\\3.PNG"));
         for (char i = 'a'; i <= 'z'; i++) {
             for (char j = i; j <= 'z'; j++) {
                 UploadNewBookRequest uploadNewBookRequest = new UploadNewBookRequest(

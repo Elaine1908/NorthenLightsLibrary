@@ -74,8 +74,8 @@ public class BorrowServiceTest {
     public void testLendBookToNonexistentUser() {
         BookCopy bookCopy = new BookCopy(
                 BookCopy.AVAILABLE,
-                "isbn",
-                "uniqueBookMark",
+                "1111111111",
+                "1111111111-1",
                 (long) 0,
                 null,
                 null,
@@ -85,7 +85,7 @@ public class BorrowServiceTest {
         bookkCopyRepository.save(bookCopy);
 
         assertThrows(UserNotFoundException.class, () -> {
-            borrowService.lendBookToUser("uniqueBookMark", "non_existent_user", (long) 3,"admin");
+            borrowService.lendBookToUser("1111111111-1", "non_existent_user", (long) 3,"admin");
 
         });
 
@@ -96,8 +96,8 @@ public class BorrowServiceTest {
     public void testLentBookNotInThisLibraryToUser() {
         BookCopy bookCopy = new BookCopy(
                 BookCopy.AVAILABLE,
-                "isbn",
-                "uniqueBookMark",
+                "1111111111",
+                "1111111111-1",
                 (long) 1,
                 null,
                 null,
@@ -113,7 +113,7 @@ public class BorrowServiceTest {
         userRepository.save(user);
         bookkCopyRepository.save(bookCopy);
         assertThrows(BookCopyNotHereException.class, () -> {
-            borrowService.lendBookToUser("uniqueBookMark", "newUser", (long) 0,"admin");
+            borrowService.lendBookToUser("1111111111-1", "newUser", (long) 0,"admin");
         });
 
 
@@ -124,8 +124,8 @@ public class BorrowServiceTest {
     public void testLendReservedBookToUser() {
         BookCopy bookCopy = new BookCopy(
                 BookCopy.AVAILABLE,
-                "isbn",
-                "uniqueBookMark",
+                "1111111111",
+                "1111111111-1",
                 (long) 1,
                 null,
                 null,
@@ -141,7 +141,7 @@ public class BorrowServiceTest {
         userRepository.save(user);
         bookkCopyRepository.save(bookCopy);
 
-        BookCopy bookCopyFromDB = bookkCopyRepository.getBookCopyByUniqueBookMark("uniqueBookMark").get();
+        BookCopy bookCopyFromDB = bookkCopyRepository.getBookCopyByUniqueBookMark("1111111111-1").get();
 
         Reservation reservation = new Reservation(
                 (long) 345, bookCopyFromDB.getBookCopyID(), new Date()
@@ -150,7 +150,7 @@ public class BorrowServiceTest {
         reservationRepository.save(reservation);
 
         assertThrows(BookCopyReservedException.class, () -> {
-            borrowService.lendBookToUser("uniqueBookMark", "newUser", (long) 1,"admin");
+            borrowService.lendBookToUser("1111111111-1", "newUser", (long) 1,"admin");
         });
 
     }
@@ -160,8 +160,8 @@ public class BorrowServiceTest {
     public void testLendBorrowedBookToUser() {
         BookCopy bookCopy = new BookCopy(
                 BookCopy.AVAILABLE,
-                "isbn",
-                "uniqueBookMark",
+                "1111111111",
+                "1111111111-1",
                 (long) 1,
                 null,
                 null,
@@ -178,12 +178,12 @@ public class BorrowServiceTest {
         bookkCopyRepository.save(bookCopy);
 
         Borrow borrow = new Borrow(
-                (long) 345, "uniqueBookMark", new Date()
+                (long) 345, "1111111111-1", new Date()
         );
         borrowRepository.save(borrow);
 
         assertThrows(BookCopyIsBorrowedException.class, () -> {
-            borrowService.lendBookToUser("uniqueBookMark", "newUser", (long) 1,"admin");
+            borrowService.lendBookToUser("1111111111-1", "newUser", (long) 1,"admin");
         });
 
 
@@ -194,8 +194,8 @@ public class BorrowServiceTest {
     public void testLendBookToUserNormal() {
         BookCopy bookCopy = new BookCopy(
                 BookCopy.AVAILABLE,
-                "isbn",
-                "uniqueBookMark",
+                "1111111111",
+                "1111111111-1",
                 (long) 1,
                 null,
                 null,
@@ -211,14 +211,14 @@ public class BorrowServiceTest {
         userRepository.save(user);
         bookkCopyRepository.save(bookCopy);
 
-        borrowService.lendBookToUser("uniqueBookMark", "newUser", (long) 1,"admin");
+        borrowService.lendBookToUser("1111111111-1", "newUser", (long) 1,"admin");
 
-        Borrow borrowFromDb = borrowRepository.getBorrowByUniqueBookMark("uniqueBookMark").get();
+        Borrow borrowFromDb = borrowRepository.getBorrowByUniqueBookMark("1111111111-1").get();
         User userFromDb = userRepository.getUserByUsername("newUser");
-        BookCopy bookCopyFromDb = bookkCopyRepository.getBookCopyByUniqueBookMark("uniqueBookMark").get();
+        BookCopy bookCopyFromDb = bookkCopyRepository.getBookCopyByUniqueBookMark("1111111111-1").get();
 
         assertEquals(borrowFromDb.getUserID().longValue(), userFromDb.getUser_id());
-        assertEquals(borrowFromDb.getUniqueBookMark(), "uniqueBookMark");
+        assertEquals(borrowFromDb.getUniqueBookMark(), "1111111111-1");
         assertEquals(bookCopyFromDb.getStatus(), BookCopy.BORROWED);
         assertNotNull(bookCopyFromDb.getLastRentDate());
 
@@ -260,8 +260,8 @@ public class BorrowServiceTest {
     public void lendOnlyOneReservedBookToUser_BookNotReserved() {
         BookCopy bookCopy = new BookCopy(
                 BookCopy.AVAILABLE,
-                "isbn",
-                "uniqueBookMark",
+                "1111111111",
+                "1111111111-1",
                 (long) 1,
                 null,
                 null,
@@ -283,7 +283,7 @@ public class BorrowServiceTest {
 
         assertThrows(NotReservedException.class, () -> {
             borrowService.lendOnlyOneReservedBookToUser(
-                    "uniqueBookMark",
+                    "1111111111-1",
                     (long) 0,
                     libraries,
 
@@ -298,8 +298,8 @@ public class BorrowServiceTest {
     public void lendOnlyOneReservedBookToUser_BookReservedByOther() {
         BookCopy bookCopy = new BookCopy(
                 BookCopy.AVAILABLE,
-                "isbn",
-                "uniqueBookMark",
+                "1111111111",
+                "1111111111-1",
                 (long) 1,
                 null,
                 null,
@@ -318,7 +318,7 @@ public class BorrowServiceTest {
         bookkCopyRepository.save(bookCopy);
 
         User userFromDb = userRepository.getUserByUsername("newUser");
-        BookCopy bookCopyFromDb = bookkCopyRepository.getBookCopyByUniqueBookMark("uniqueBookMark").get();
+        BookCopy bookCopyFromDb = bookkCopyRepository.getBookCopyByUniqueBookMark("1111111111-1").get();
 
         Reservation reservation = new Reservation(
                 new SecureRandom().nextLong(), bookCopyFromDb.getBookCopyID(), new Date()
@@ -330,7 +330,7 @@ public class BorrowServiceTest {
 
         assertThrows(ReservedByOtherException.class, () -> {
             borrowService.lendOnlyOneReservedBookToUser(
-                    "uniqueBookMark",
+                    "1111111111-1",
                     (long) 0,
                     libraries,
 
@@ -346,8 +346,8 @@ public class BorrowServiceTest {
     public void lendOnlyOneReservedBookToUser_LibraryWrong() {
         BookCopy bookCopy = new BookCopy(
                 BookCopy.AVAILABLE,
-                "isbn",
-                "uniqueBookMark",
+                "1111111111",
+                "1111111111-1",
                 (long) 1,
                 null,
                 null,
@@ -366,7 +366,7 @@ public class BorrowServiceTest {
         bookkCopyRepository.save(bookCopy);
 
         User userFromDb = userRepository.getUserByUsername("newUser");
-        BookCopy bookCopyFromDb = bookkCopyRepository.getBookCopyByUniqueBookMark("uniqueBookMark").get();
+        BookCopy bookCopyFromDb = bookkCopyRepository.getBookCopyByUniqueBookMark("1111111111-1").get();
 
         Reservation reservation = new Reservation(
                 user.getUser_id(), bookCopyFromDb.getBookCopyID(), new Date()
@@ -378,7 +378,7 @@ public class BorrowServiceTest {
 
         assertThrows(BookCopyNotHereException.class, () -> {
             borrowService.lendOnlyOneReservedBookToUser(
-                    "uniqueBookMark",
+                    "1111111111-1",
                     new SecureRandom().nextLong(),
                     libraries,
 
@@ -394,8 +394,8 @@ public class BorrowServiceTest {
     public void lendOnlyOneReservedBookToUser_Success() {
         BookCopy bookCopy = new BookCopy(
                 BookCopy.AVAILABLE,
-                "isbn",
-                "uniqueBookMark",
+                "1111111111",
+                "1111111111-1",
                 (long) 1,
                 null,
                 null,
@@ -414,7 +414,7 @@ public class BorrowServiceTest {
         bookkCopyRepository.save(bookCopy);
 
         User userFromDb = userRepository.getUserByUsername("newUser");
-        BookCopy bookCopyFromDb = bookkCopyRepository.getBookCopyByUniqueBookMark("uniqueBookMark").get();
+        BookCopy bookCopyFromDb = bookkCopyRepository.getBookCopyByUniqueBookMark("1111111111-1").get();
 
         Reservation reservation = new Reservation(
                 user.getUser_id(), bookCopyFromDb.getBookCopyID(), new Date()
@@ -425,7 +425,7 @@ public class BorrowServiceTest {
         List<Library> libraries = libraryRepository.findAll();
 
         borrowService.lendOnlyOneReservedBookToUser(
-                "uniqueBookMark",
+                "1111111111-1",
                 (long) 1,
                 libraries,
 
@@ -436,12 +436,12 @@ public class BorrowServiceTest {
         Optional<Reservation> reservationFromDB = reservationRepository.getReservationByBookCopyID(bookCopyFromDb.getBookCopyID());
         assertFalse(reservationFromDB.isPresent());
 
-        bookCopyFromDb = bookkCopyRepository.getBookCopyByUniqueBookMark("uniqueBookMark").get();
+        bookCopyFromDb = bookkCopyRepository.getBookCopyByUniqueBookMark("1111111111-1").get();
         assertEquals(bookCopyFromDb.getStatus(), BookCopy.BORROWED);
 
-        Optional<Borrow> borrowOptional = borrowRepository.getBorrowByUniqueBookMark("uniqueBookMark");
+        Optional<Borrow> borrowOptional = borrowRepository.getBorrowByUniqueBookMark("1111111111-1");
         assertEquals(borrowOptional.get().getUserID().longValue(), userFromDb.getUser_id());
-        assertEquals(borrowOptional.get().getUniqueBookMark(), "uniqueBookMark");
+        assertEquals(borrowOptional.get().getUniqueBookMark(), "1111111111-1");
         assertNotNull(borrowOptional.get().getBorrowDate());
 
     }

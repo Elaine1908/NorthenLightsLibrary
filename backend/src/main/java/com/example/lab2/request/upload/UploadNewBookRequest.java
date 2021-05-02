@@ -22,6 +22,7 @@ public class UploadNewBookRequest {
     private MultipartFile bookcoverimage;
 
     @NotNull(message = "isbn不能为空")
+    @Pattern(regexp = "[0-9]{10}|(978)[0-9]{10}", message = "isbn格式不正确，isbn必须是10位数字，或以978开头的13位数字")
     private String isbn;
     @NotNull(message = "书名不能为空")
     private String name;
