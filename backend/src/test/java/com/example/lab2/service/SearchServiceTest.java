@@ -196,7 +196,7 @@ public class SearchServiceTest {
     @Test
     @Transactional
     public void testGetBookTypeByAuthor() throws Exception {
-        MultipartFile multipartFile = new MockMultipartFile("test", "1.jpg", "content-type", new FileInputStream("/home/haojie/Pictures/1.jpg"));
+        MultipartFile multipartFile = new MockMultipartFile("test", "1.jpg", "content-type", new FileInputStream("D:\\OneDrive\\MyLaptop\\Pictures\\3.PNG"));
         UploadNewBookRequest uploadNewBookRequest = new UploadNewBookRequest(
                 multipartFile,
                 "isbntestttt",
@@ -227,13 +227,24 @@ public class SearchServiceTest {
 
         );
 
+        UploadNewBookRequest uploadNewBookRequest4 = new UploadNewBookRequest(
+                multipartFile,
+                "isbntestttt222",
+                "nametest2",
+                "nfvonfv",
+                "descriptiontest",
+                "2000-10-06"
+
+        );
+
         uploadService.handleUpload(uploadNewBookRequest);
         uploadService.handleUpload(uploadNewBookRequest2);
         uploadService.handleUpload(uploadNewBookRequest3);
+        uploadService.handleUpload(uploadNewBookRequest4);
 
-        List<BookType> bookTypeList = searchService.getBookType(null, "author1", null);
+        List<BookType> bookTypeList = searchService.getBookType(null, "author", null);
 
-        assertEquals(bookTypeList.size(), 2);
+        assertEquals(bookTypeList.size(), 3);
 
 
     }

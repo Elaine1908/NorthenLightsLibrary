@@ -84,7 +84,7 @@ public class SearchService {
         List<BookType> isbnList = bookTypeRepository.getAllBookTypeByISBN(isbn);
 
         //根据author查到的BookType的List
-        List<BookType> authorList = bookTypeRepository.getAllBookTypeByAuthor(author);
+        List<BookType> authorList = bookTypeRepository.getAllBookTypeByAuthorFuzzySearch(author);
 
         //根据bookName查到的BookType的List
         List<BookType> bookNameList = bookTypeRepository.getAllBookTypeByNameFuzzySearch(bookName);
@@ -95,13 +95,13 @@ public class SearchService {
         set.addAll(bookNameList);
 
         //用set取交集
-        if (!isbn.isBlank()) {
+        if (isbn != null && !isbn.isBlank()) {
             set.retainAll(isbnList);
         }
-        if (!author.isBlank()) {
+        if (author != null && !author.isBlank()) {
             set.retainAll(authorList);
         }
-        if (!bookName.isBlank()) {
+        if (bookName != null && !bookName.isBlank()) {
             set.retainAll(bookNameList);
         }
 
