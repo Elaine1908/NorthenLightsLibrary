@@ -44,8 +44,7 @@ export default {
     return {
       isSuperAdmin: localStorage.getItem('role') === 'superadmin'
     }
-  },
-  methods: {}
+  }
 }
 </script>
 

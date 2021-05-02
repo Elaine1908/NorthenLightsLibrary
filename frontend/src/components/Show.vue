@@ -20,14 +20,14 @@
                   <el-input v-model="formInline.isbn" placeholder="ISBN"></el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary" @click="onSubmit">查询</el-button>
+                  <el-button type="primary" @click="search">查询</el-button>
                 </el-form-item>
               </el-form>
             </div>
             <div>
               <el-row>
-                <el-col :span="6" v-for="(o, index) in bookList" :offset="index > 0 ? 2 : 0">
-                  <el-card :body-style="{ padding: '0px' }">
+                <el-col :span="6" v-for="(o, index) in bookList" :offset="index%3 > 0 ? 2 : 0">
+                  <el-card :body-style="{ padding: '0px' }" style="margin-bottom: 50px">
                     <img :src="o.imagePathToFrontEnd" class="image">
                     <div style="padding: 14px;">
                       <h2 style="margin-bottom: 5px;line-height: 20px;font-size: 20px">{{o.name}}</h2>
@@ -69,18 +69,10 @@
       }
     },
     created() {
-      this.axios.get('/useradmin/getAllBookType').then(resp => {
-        if (resp.status === 200){
-          this.bookList=resp.data.bookTypeList;
-        } else {
-          this.$message(resp.data.message);
-        }
-      }).catch(err => {
-        this.$message.error(err.response.data.message)
-      })
+      this.showAll();
     },
     methods: {
-      onSubmit() {
+      search() {
         this.axios.get('/useradmin/getBookType',
             {
               params:{
