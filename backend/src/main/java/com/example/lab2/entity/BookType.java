@@ -70,13 +70,15 @@ public class BookType implements Comparable<BookType> {
                 this.bookID == ((BookType) o).bookID &&
                         this.name.equals(bookType.name) &&
                         this.author.equals(bookType.author) &&
-                        this.description.equals(bookType.getDescription());
+                        this.description.equals(bookType.getDescription()) &&
+                        this.isbn.equals(bookType.isbn) &&
+                        this.imagePath.equals(bookType.imagePath);
 
 
     }
 
     @Override
     public int compareTo(BookType bookType) {
-        return this.name.compareTo(bookType.name);
+        return (int) (this.bookID - bookType.bookID);
     }
 }

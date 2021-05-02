@@ -26,6 +26,9 @@ public interface BookTypeRepository extends JpaRepository<BookType, Long> {
     @Query("select b_t from BookType b_t where b_t.author=:author")
     public List<BookType> getAllBookTypeByAuthor(@Param("author") String author);
 
+    @Query("select b_t from BookType b_t where b_t.author LIKE CONCAT('%',?1,'%')")
+    public List<BookType> getAllBookTypeByAuthorFuzzySearch(@Param("author") String author);
+
     @Query("select b_t from BookType b_t where b_t.name LIKE CONCAT('%',?1,'%')")
     public List<BookType> getAllBookTypeByNameFuzzySearch(@Param("bookName") String bookName);
 
