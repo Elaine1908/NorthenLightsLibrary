@@ -270,7 +270,29 @@ TreeSet的内部实现是红黑树，但是我一开始实现BookType类的compa
 
 #### 前端
 
-**等xxy和zsy来写。。。。。**
+**问题1**:Show页面刚开始没有想到瀑布式布局 导致每次新上传一本书显示的位置都出其不意 这个lab采用的瀑布式布局纯靠css实现 不涉及js 相对简单
+
+```css
+.masonry {
+    width: 100%;
+    margin: 20px auto;
+    columns: 3;
+    column-gap: 30px;
+  }
+  .item {
+    width: 80%;
+    break-inside: avoid;
+    margin-bottom: 30px;
+  }
+```
+
+**问题2**:AddAdmin页面由于需要在表格中动态添加新表单和数据 刚开始遇到了一点问题 后面通过设置action属性解决了这个问题  已添加的数据用view来静态显示 而添加数据行即第一行用add来表示
+
+**问题3**:UserInfo页面由于没有主要到后端传过来的是对象 刚开始用的是等号赋值就无法正确拉取信息 后面改成了push就能正确得到后端传过来的信息
+
+```js
+this.userInfo.push(resp.data);
+```
 
 
 
@@ -290,4 +312,4 @@ TreeSet的内部实现是红黑树，但是我一开始实现BookType类的compa
 
 ### 周思瑜的小组实验总结
 
-等TA来写。。。。
+其实这次lab前端的锅比较少 也非常感谢后端的同学分担了很多！！！再有就是elemen-ui真的挺好用 导致前端本就不多的活更少了......Bug主要出在前后端的数据交互这一块的函数的数组赋值上以及nginx的配置问题 再次感谢组长的保姆级教程
