@@ -20,9 +20,7 @@
 
 ## 利⽤Git给Lab3截⽌⽇期前的最后⼀次commit打tag的截图
 
-To Do......等小组成员全部上传了自己的实验总结以后再补上~
-
-
+![tag](pictures\lab3\tag.PNG)
 
 ## 项⽬各个⻚⾯的截图
 
