@@ -220,9 +220,9 @@ fb37b37 Merge branch 'backend'
 
 #### 后端
 
-**问题1：**有一段时间当用户的请求被Spring Security拦截的时候，发回给前端的是默认的信息“Forbidden”。之后通过设置authenticationEntryPoint和accessDeniedHandler实现了自定义信息的提示。
+**问题1**:有一段时间当用户的请求被Spring Security拦截的时候，发回给前端的是默认的信息“Forbidden”。之后通过设置authenticationEntryPoint和accessDeniedHandler实现了自定义信息的提示。
 
-**问题2：**一开始使用jpa的时候，在数据库中书本的描述的类型被设置成了VARCHAR(255)，导致上传新书的时候如果书本的描述稍微长一些就插入表失败了。之后使用
+**问题2**:一开始使用jpa的时候，在数据库中书本的描述的类型被设置成了VARCHAR(255)，导致上传新书的时候如果书本的描述稍微长一些就插入表失败了。之后使用
 
 ```java
 @Lob
@@ -233,7 +233,7 @@ private String description;
 
 将描述在数据库中的类型设置为了TEXT，最多可以接受长度为65535的描述
 
-**问题3：**我发现SpringBoot将Date对象转换成json的时候，默认会使用UTC+0的时间，这比UTC+8（北京时间）慢了8小时。需要在application.properties中设置
+**问题3**:我发现SpringBoot将Date对象转换成json的时候，默认会使用UTC+0的时间，这比UTC+8（北京时间）慢了8小时。需要在application.properties中设置
 
 ```
 spring.jackson.time-zone=GMT+8
@@ -241,7 +241,7 @@ spring.jackson.time-zone=GMT+8
 
 就可以显示正常。
 
-**问题4：**一样是时区的问题。上传新书页面中的“出版日期”条目上传的是格式为“yyyy-mm-dd”格式的字符串。这个字符串在后端使用SimpleDateFormat解析的时候默认会被解析成UTC+0的时间，导致时间不正确，需要使用
+**问题4**:一样是时区的问题。上传新书页面中的“出版日期”条目上传的是格式为“yyyy-mm-dd”格式的字符串。这个字符串在后端使用SimpleDateFormat解析的时候默认会被解析成UTC+0的时间，导致时间不正确，需要使用
 
 ```java
 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -256,11 +256,15 @@ formatter.setTimeZone(TimeZone.getTimeZone("GMT+:08:00"));
 
 TreeSet的内部实现是红黑树，但是我一开始实现BookType类的compareTo方法的时候，直接调用了BookType类中name（书名）的compareTo的方法，这导致了两本名字一样的书被认为是同一本书，最后只得到了一本。解决方法是修改compareTo方法，直接返回this.bookid-that.bookid，因为bookid是唯一的。
 
-**问题6：**一开始在Service层中遇到异常情况，抛出的异常过于泛化（比如借书时遇到异常统统抛出BorrowException，预约时遇到异常统统抛出ReserveException)，导致测试的时候不好测。后来细化了异常类，在对应的时候抛出对应的异常，比如ReservedByOtherException，ReserveTooManyException。
+**问题6**:一开始在Service层中遇到异常情况，抛出的异常过于泛化（比如借书时遇到异常统统抛出BorrowException，预约时遇到异常统统抛出ReserveException)，导致测试的时候不好测。后来细化了异常类，在对应的时候抛出对应的异常，比如ReservedByOtherException，ReserveTooManyException。
 
+**问题7**:在实现用户修改密码功能时，原先我的想法是前端通过post请求传来用户名和新密码，然而这样可能会导致用户误填他人账号修改密码的安全性问题。最后的实现修改为从jwt的token中提取用户名，保证了发送修改密码请求和登录的用户是同一个人。
 
+**问题8**:在实现现场借书/现场还书/现场取预约书的功能时，为了在出现异常的情况下保证数据的一致性，使用了springboot事务管理的@Transactional注解。如果不配置rollbackFor属性,那么事务只会在遇到RuntimeException的时候才会回滚,加上rollbackFor=Exception.class,可以让事务在遇到非运行时异常（即后端的所有自定义异常）时也回滚。
 
-**剩下的等zyw来写。。。。。**
+**问题9**:同样在实现*批量*借书/还书功能时，为了保证一整个序列的书籍的事务不被其中某个异常打断，原先我搜索到的方法是在@Transactional注解中加上Propagation.REQUIRES_NEW，但是失败了。后来组长把这个循环抽成一个函数，每调用一次开一个单独的事务，一次处理一个副本，如果出问题就抛异常并回滚；然后在含循环的函数里面通过try catch 检测抛出的异常，如果抛出异常直接在service层处理掉，写到给前端的提示里，而不是将抛异常到ExceptionalController里面处理，最后成功解决了这个问题。
+
+**问题10**:在向前端传输数据的时候，原本所有的副本数据都使用BookDTO类来封装传输，导致该类有很多参数各异的构造方法（一些是共同的参数，比如书名作者；还有一些是特有的参数，比如展示副本需要书籍描述，展示用户借阅的书需要归还时间等），代码阅读性不强。最后单独创建了BorrowedBookCopyDTO,ReservedBookDTO,ShowBookCopyDTO不同的类来对应不同的传送数据请求。
 
 
 
@@ -278,7 +282,7 @@ TreeSet的内部实现是红黑树，但是我一开始实现BookType类的compa
 
 ### 朱亦文的小组实验总结
 
-等TA来写。。。。
+通过本次lab，我对于代码框架设计，springboot机制和单元测试有了更深入的了解，也体会到了约定和及时更新接口文档的重要性。在真正着手开始写代码的时候才发现原先约定好的接口文档有许多不合适的地方，而此时前端有些已经开工，导致了不必要的返工。希望下次开工前可以思考得更加全面。感谢组长在后端功能实现和nginx使用上给我的帮助，最后几天一起测试不断修缮的前端也辛苦了（
 
 ### 项心叶的小组实验总结
 
