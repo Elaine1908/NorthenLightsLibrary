@@ -77,7 +77,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         //设置请求被spring security拦截时的自定义信息
-
         http.authorizeRequests()
                 .antMatchers("/useradmin/getAllBookType").permitAll()
                 .antMatchers("/useradmin/getBookType").permitAll()

@@ -32,7 +32,6 @@ import java.util.Objects;
  */
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin(allowCredentials = "true", originPatterns = "*")
 public class UserController {
     @Autowired
     private UserRepository userRepository;

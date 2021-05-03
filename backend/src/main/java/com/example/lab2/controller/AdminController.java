@@ -33,7 +33,6 @@ import java.util.Objects;
 
 @RestController
 @RequestMapping("/admin")
-@CrossOrigin(allowCredentials = "true", originPatterns = "*")
 public class AdminController {
 
     @Resource(name = "uploadService")

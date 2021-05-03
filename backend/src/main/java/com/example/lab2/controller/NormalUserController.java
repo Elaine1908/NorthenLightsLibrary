@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/user")
-@CrossOrigin(allowCredentials = "true", originPatterns = "*")
 public class NormalUserController {
 
     @Resource(name = "normalUserService")

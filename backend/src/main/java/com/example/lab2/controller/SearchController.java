@@ -19,7 +19,6 @@ import java.util.*;
  * 从数据库中读取书的控制器
  */
 @RestController
-@CrossOrigin(allowCredentials = "true", originPatterns = "*")
 public class SearchController {
 
     @Autowired
