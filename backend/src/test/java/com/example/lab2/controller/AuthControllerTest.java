@@ -3,7 +3,7 @@ package com.example.lab2.controller;
 import org.junit.jupiter.api.Test;
 
 
-class UserControllerTest {
+class AuthControllerTest {
 
     @Test
     void tryRegister() {

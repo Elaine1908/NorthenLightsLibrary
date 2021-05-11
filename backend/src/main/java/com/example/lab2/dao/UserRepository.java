@@ -29,6 +29,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select u from User u where u.username=:username")
     User getUserByUsername(@Param("username") String username);
 
+    @Query("select u from User u where u.email=:email")
+    Optional<User> findUserByEmail(@Param("email") String email);
+
     @Query("select new com.example.lab2.dto.UserDTO(u.username,u.email,u.role) from User u where u.role='superadmin' OR u.role='admin'")
     List<UserDTO> getAllAdmin();
 }

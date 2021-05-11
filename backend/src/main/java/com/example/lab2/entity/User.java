@@ -23,6 +23,8 @@ public class User implements UserDetails {
     public static final String SUPERADMIN = "superadmin";
     public static final String ADMIN = "admin";
     public static final String TEACHER = "teacher";
+    public static final String POSTGRADUATE = "postgraduate";
+    public static final String UNDERGRADUATE = "undergraduate";
     public static final String STUDENT = "student";
 
     public static final int MAX_CREDIT = 100;
