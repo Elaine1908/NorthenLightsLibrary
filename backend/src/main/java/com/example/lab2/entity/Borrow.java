@@ -29,4 +29,11 @@ public class Borrow {
         this.uniqueBookMark = uniqueBookMark;
         this.borrowDate = borrowDate;
     }
+
+    public Borrow(Long userID, String uniqueBookMark, Date borrowDate, Date deadline) {
+        this.userID = userID;
+        this.uniqueBookMark = uniqueBookMark;
+        this.borrowDate = borrowDate;
+        this.deadline = deadline;
+    }
 }

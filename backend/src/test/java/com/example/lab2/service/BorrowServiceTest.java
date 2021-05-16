@@ -49,6 +49,9 @@ public class BorrowServiceTest {
     @Autowired
     LibraryRepository libraryRepository;
 
+    @Autowired
+    UserConfigurationRepository userConfigurationRepository;
+
     @Test
     @Transactional
     public void testLendNonExistentBookToUser() {
@@ -57,14 +60,14 @@ public class BorrowServiceTest {
                 "newUser",
                 "password",
                 "zhj@email.com",
-                User.STUDENT,
+                User.POSTGRADUATE,
                 User.MAX_CREDIT
         );
 
         userRepository.save(user);
 
         assertThrows(BookCopyNotFoundException.class, () -> {
-            borrowService.lendBookToUser("non_existent_book", "newUser", (long) 3,"admin");
+            borrowService.lendBookToUser("non_existent_book", "newUser", (long) 3, "admin");
         });
 
     }
@@ -85,7 +88,7 @@ public class BorrowServiceTest {
         bookkCopyRepository.save(bookCopy);
 
         assertThrows(UserNotFoundException.class, () -> {
-            borrowService.lendBookToUser("1111111111-1", "non_existent_user", (long) 3,"admin");
+            borrowService.lendBookToUser("1111111111-1", "non_existent_user", (long) 3, "admin");
 
         });
 
@@ -107,13 +110,13 @@ public class BorrowServiceTest {
                 "newUser",
                 "password",
                 "zhj@email.com",
-                User.STUDENT,
+                User.POSTGRADUATE,
                 User.MAX_CREDIT
         );
         userRepository.save(user);
         bookkCopyRepository.save(bookCopy);
         assertThrows(BookCopyNotHereException.class, () -> {
-            borrowService.lendBookToUser("1111111111-1", "newUser", (long) 0,"admin");
+            borrowService.lendBookToUser("1111111111-1", "newUser", (long) 0, "admin");
         });
 
 
@@ -135,7 +138,7 @@ public class BorrowServiceTest {
                 "newUser",
                 "password",
                 "zhj@email.com",
-                User.STUDENT,
+                User.POSTGRADUATE,
                 User.MAX_CREDIT
         );
         userRepository.save(user);
@@ -150,7 +153,7 @@ public class BorrowServiceTest {
         reservationRepository.save(reservation);
 
         assertThrows(BookCopyReservedException.class, () -> {
-            borrowService.lendBookToUser("1111111111-1", "newUser", (long) 1,"admin");
+            borrowService.lendBookToUser("1111111111-1", "newUser", (long) 1, "admin");
         });
 
     }
@@ -171,7 +174,7 @@ public class BorrowServiceTest {
                 "newUser",
                 "password",
                 "zhj@email.com",
-                User.STUDENT,
+                User.POSTGRADUATE,
                 User.MAX_CREDIT
         );
         userRepository.save(user);
@@ -183,7 +186,7 @@ public class BorrowServiceTest {
         borrowRepository.save(borrow);
 
         assertThrows(BookCopyIsBorrowedException.class, () -> {
-            borrowService.lendBookToUser("1111111111-1", "newUser", (long) 1,"admin");
+            borrowService.lendBookToUser("1111111111-1", "newUser", (long) 1, "admin");
         });
 
 
@@ -205,18 +208,21 @@ public class BorrowServiceTest {
                 "newUser",
                 "password",
                 "zhj@email.com",
-                User.STUDENT,
+                User.POSTGRADUATE,
                 User.MAX_CREDIT
         );
         userRepository.save(user);
         bookkCopyRepository.save(bookCopy);
 
-        borrowService.lendBookToUser("1111111111-1", "newUser", (long) 1,"admin");
+        borrowService.lendBookToUser("1111111111-1", "newUser", (long) 1, "admin");
 
         Borrow borrowFromDb = borrowRepository.getBorrowByUniqueBookMark("1111111111-1").get();
         User userFromDb = userRepository.getUserByUsername("newUser");
         BookCopy bookCopyFromDb = bookkCopyRepository.getBookCopyByUniqueBookMark("1111111111-1").get();
+        Optional<UserConfiguration> userConfigurationOptional = userConfigurationRepository.findUserConfigurationByRole(user.getRole());
+        long timegap = borrowFromDb.getDeadline().getTime() - borrowFromDb.getBorrowDate().getTime();
 
+        assertEquals(timegap,1000*userConfigurationOptional.get().getMaxBorrowTime());
         assertEquals(borrowFromDb.getUserID().longValue(), userFromDb.getUser_id());
         assertEquals(borrowFromDb.getUniqueBookMark(), "1111111111-1");
         assertEquals(bookCopyFromDb.getStatus(), BookCopy.BORROWED);
@@ -233,7 +239,7 @@ public class BorrowServiceTest {
                 "newUser",
                 "password",
                 "zhj@email.com",
-                User.STUDENT,
+                User.POSTGRADUATE,
                 User.MAX_CREDIT
         );
         userRepository.save(user);
@@ -271,7 +277,7 @@ public class BorrowServiceTest {
                 "newUser",
                 "password",
                 "zhj@email.com",
-                User.STUDENT,
+                User.POSTGRADUATE,
                 User.MAX_CREDIT
         );
         userRepository.save(user);
@@ -309,7 +315,7 @@ public class BorrowServiceTest {
                 "newUser",
                 "password",
                 "zhj@email.com",
-                User.STUDENT,
+                User.POSTGRADUATE,
                 User.MAX_CREDIT
         );
 
@@ -357,7 +363,7 @@ public class BorrowServiceTest {
                 "newUser",
                 "password",
                 "zhj@email.com",
-                User.STUDENT,
+                User.POSTGRADUATE,
                 User.MAX_CREDIT
         );
 
@@ -405,7 +411,7 @@ public class BorrowServiceTest {
                 "newUser",
                 "password",
                 "zhj@email.com",
-                User.STUDENT,
+                User.POSTGRADUATE,
                 User.MAX_CREDIT
         );
 
@@ -439,7 +445,11 @@ public class BorrowServiceTest {
         bookCopyFromDb = bookkCopyRepository.getBookCopyByUniqueBookMark("1111111111-1").get();
         assertEquals(bookCopyFromDb.getStatus(), BookCopy.BORROWED);
 
+        UserConfiguration userConfiguration = userConfigurationRepository.findUserConfigurationByRole(user.getRole()).get();
+
         Optional<Borrow> borrowOptional = borrowRepository.getBorrowByUniqueBookMark("1111111111-1");
+        long timeGap = borrowOptional.get().getDeadline().getTime() - borrowOptional.get().getBorrowDate().getTime();
+        assertEquals(timeGap, userConfiguration.getMaxBorrowTime() * 1000);
         assertEquals(borrowOptional.get().getUserID().longValue(), userFromDb.getUser_id());
         assertEquals(borrowOptional.get().getUniqueBookMark(), "1111111111-1");
         assertNotNull(borrowOptional.get().getBorrowDate());

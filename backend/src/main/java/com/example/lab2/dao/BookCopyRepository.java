@@ -26,7 +26,7 @@ public interface BookCopyRepository extends JpaRepository<BookCopy, Long> {
             " where b_c.isbn=:isbn")
     public List<BookCopyDTO> getBookCopiesByISBN(@Param("isbn") String isbn);//显示一本书及其副本信息
 
-    @Query("select new com.example.lab2.dto.BorrowedBookCopyDTO(borrow.borrowDate,b_t.isbn,b_t.author,b_t.name,b_c.uniqueBookMark,b_t.imagePathToFrontEnd)" +
+    @Query("select new com.example.lab2.dto.BorrowedBookCopyDTO(borrow.borrowDate,b_t.isbn,b_t.author,b_t.name,b_c.uniqueBookMark,b_t.imagePathToFrontEnd,borrow.deadline)" +
             "from Borrow borrow left join BookCopy b_c on borrow.uniqueBookMark=b_c.uniqueBookMark left join BookType b_t on b_t.isbn=b_c.isbn left join User  u on u.user_id=borrow.userID where u.username=:username")
     public List<BorrowedBookCopyDTO> getBorrowedBookCopiesByUsername(@Param("username") String username);//显示用户借阅的书本信息
 

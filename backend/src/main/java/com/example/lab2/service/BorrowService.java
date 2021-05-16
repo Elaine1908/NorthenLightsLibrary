@@ -2,11 +2,13 @@ package com.example.lab2.service;
 
 import com.example.lab2.dao.*;
 import com.example.lab2.entity.*;
+import com.example.lab2.exception.auth.RoleNotAllowedException;
 import com.example.lab2.exception.bookcopy.BookCopyIsBorrowedException;
 import com.example.lab2.exception.bookcopy.BookCopyNotAvailableException;
 import com.example.lab2.exception.bookcopy.BookCopyNotHereException;
 import com.example.lab2.exception.bookcopy.BookCopyReservedException;
 import com.example.lab2.exception.borrow.AdminBorrowBookException;
+import com.example.lab2.exception.borrow.BorrowToManyException;
 import com.example.lab2.exception.notfound.BookCopyNotFoundException;
 import com.example.lab2.exception.notfound.LibraryNotFoundException;
 import com.example.lab2.exception.notfound.UserNotFoundException;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -40,6 +43,9 @@ public class BorrowService {
 
     @Autowired
     BorrowRepository borrowRepository;
+
+    @Autowired
+    UserConfigurationRepository userConfigurationRepository;
 
     /**
      * 管理员给用户借书的service层
@@ -68,6 +74,15 @@ public class BorrowService {
             throw new AdminBorrowBookException("不能把书借给一个管理员！");
         }
 
+        //获得用户最多能借阅多长时间
+        Optional<UserConfiguration> userConfigurationOptional = userConfigurationRepository.findUserConfigurationByRole(
+                userOptional.get().getRole()
+        );
+
+        if (userConfigurationOptional.isEmpty()) {
+            throw new RoleNotAllowedException("用户角色错误");
+        }
+
         //检验书的副本存不存在
         Optional<BookCopy> bookCopyOptional = bookkCopyRepository.getBookCopyByUniqueBookMark(uniqueBookMark);
         if (!bookCopyOptional.isPresent()) {
@@ -87,6 +102,15 @@ public class BorrowService {
             //这本书的libraryid在图书馆列表里找不到？
             throw new LibraryNotFoundException("系统错误，找不到这个图书馆");
 
+        }
+
+        //检查用户是否借阅了太多书,如果是的话给出提示
+        long currentBorrowCount = borrowRepository.getBorrowCountByUsername(userOptional.get().getUsername());
+        if (currentBorrowCount >= userConfigurationOptional.get().getMaxBookBorrow()) {
+            throw new BorrowToManyException(
+                    String.format("您系统设置您最大可以借阅%d本书，你已经借阅了%d本书，不能再借阅了"
+                            , userConfigurationOptional.get().getMaxBookBorrow(), currentBorrowCount)
+            );
         }
 
         synchronized (BorrowService.class) {
@@ -111,10 +135,12 @@ public class BorrowService {
             //如果能运行到这里，说明一切条件都满足了！
             //新建borrow对象
             Date currentDate = new Date();
+            Date deadline = new Date(currentDate.getTime() + 1000 * userConfigurationOptional.get().getMaxBorrowTime());
             Borrow newBorrow = new Borrow(
                     userOptional.get().getUser_id(),
                     uniqueBookMark,
-                    currentDate
+                    currentDate,
+                    deadline
             );
 
             //得到管理员的ID
@@ -212,6 +238,13 @@ public class BorrowService {
             throw new NotReservedException(uniqueBookMark + "还没有被预约");
         }
 
+        //获得这个用户的最大借阅时间和最多能借多少本书
+        Optional<UserConfiguration> userConfiguration = userConfigurationRepository.findUserConfigurationByRole(user.getRole());
+        if (userConfiguration.isEmpty()) {
+            throw new RoleNotAllowedException("角色错误");
+        }
+
+
         //看看这本书是不是这个人预约的
         if (!reservationOptional.get().getUserID().equals(user.getUser_id())) {
             throw new ReservedByOtherException(uniqueBookMark + "不是" + user.getUsername() + "预约的");
@@ -241,10 +274,12 @@ public class BorrowService {
 
         //新建borrow对象
         Date currentDate = new Date();
+        Date deadline = new Date(currentDate.getTime() + userConfiguration.get().getMaxBorrowTime() * 1000);
         Borrow newBorrow = new Borrow(
                 user.getUser_id(),
                 uniqueBookMark,
-                currentDate
+                currentDate,
+                deadline
         );
 
         //得到管理员的ID
