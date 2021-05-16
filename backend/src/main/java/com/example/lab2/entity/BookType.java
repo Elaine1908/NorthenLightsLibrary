@@ -45,6 +45,9 @@ public class BookType implements Comparable<BookType> {
     @Column
     private String imagePath;
 
+    @Column
+    private long price;
+
 
     /**
      * 将hashcode设置成isbn的hashcode

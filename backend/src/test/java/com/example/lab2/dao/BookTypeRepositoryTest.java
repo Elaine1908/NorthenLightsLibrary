@@ -42,7 +42,8 @@ public class BookTypeRepositoryTest {
                 "张三",
                 "authortest",
                 "descriptiontest",
-                "2000-10-06"
+                "2000-10-06",
+                1000
 
         );
 
@@ -52,7 +53,8 @@ public class BookTypeRepositoryTest {
                 "三脚猫",
                 "authortest",
                 "descriptiontest",
-                "2000-10-06"
+                "2000-10-06",
+                1000
 
         );
 
@@ -62,7 +64,8 @@ public class BookTypeRepositoryTest {
                 "李四",
                 "authortest",
                 "descriptiontest",
-                "2000-10-06"
+                "2000-10-06",
+                1000
 
         );
 

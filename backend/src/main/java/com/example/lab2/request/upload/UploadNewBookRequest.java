@@ -35,6 +35,8 @@ public class UploadNewBookRequest {
             message = "出版日期必须符合规范！")
     private String publicationDate;
 
+    @NotNull(message = "书本的价格不能为空")
+    private long price;
 
     /**
      * 根据request中的信息，生成一个book对象
@@ -47,6 +49,7 @@ public class UploadNewBookRequest {
         b.setName(name);
         b.setAuthor(author);
         b.setDescription(description);
+        b.setPrice(price);
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         formatter.setTimeZone(TimeZone.getTimeZone("GMT+:08:00"));
         try {

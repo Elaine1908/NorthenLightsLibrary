@@ -53,7 +53,8 @@ public class UploadServiceTest {
                 "nametest",
                 "authortest",
                 "descriptiontest",
-                "2000-10-06"
+                "2000-10-06",
+                1000
 
         );
 
@@ -83,7 +84,8 @@ public class UploadServiceTest {
                 "nametest",
                 "authortest",
                 "descriptiontest",
-                "2000-10-06"
+                "2000-10-06",
+                1000
 
         );
 
@@ -119,7 +121,8 @@ public class UploadServiceTest {
                 "nametest",
                 "authortest",
                 "descriptiontest",
-                "2000-10-06"
+                "2000-10-06",
+                1000
 
         );
 
@@ -171,7 +174,8 @@ public class UploadServiceTest {
                 "nametest",
                 "authortest",
                 "descriptiontest",
-                "2000-10-06"
+                "2000-10-06",
+                1000
 
         );
 
@@ -199,7 +203,8 @@ public class UploadServiceTest {
                 "nametest",
                 "authortest",
                 "descriptiontest",
-                "2000-10-06"
+                "2000-10-06",
+                1000
 
         );
 
