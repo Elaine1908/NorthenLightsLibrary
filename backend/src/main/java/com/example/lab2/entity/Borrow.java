@@ -22,6 +22,7 @@ public class Borrow {
     private Long userID;
     private String uniqueBookMark;
     private Date borrowDate;
+    private Date deadline;
 
     public Borrow(Long userID, String uniqueBookMark, Date borrowDate) {
         this.userID = userID;

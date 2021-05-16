@@ -61,17 +61,17 @@ public class InitializeController {
         } catch (Exception ignored) {
         }
 
-        /*各种角色的借阅时长，预约时长，最多借阅多少本书的设置。默认统一最多借阅10本书，预约时长7天，借阅时长30天*/
+        /*各种角色的借阅时长，预约时长，最多借阅多少本书的设置。默认统一最多借阅10本书，预约时长30天，借阅时长30天*/
 
         //教师的最多借阅多少书，借阅时长，预约时长的设置
         UserConfiguration teacherConfiguration = new UserConfiguration(
-                User.TEACHER, 10, 604800, 2592000
+                User.TEACHER, 10, 2592000, 2592000
         );
         UserConfiguration undergraduateConfiguration = new UserConfiguration(
-                User.UNDERGRADUATE, 10, 604800, 2592000
+                User.UNDERGRADUATE, 10, 2592000, 2592000
         );
         UserConfiguration postgraduateConfiguration = new UserConfiguration(
-                User.POSTGRADUATE, 10, 604800, 2592000
+                User.POSTGRADUATE, 10, 2592000, 2592000
         );
 
 

@@ -2,6 +2,7 @@ package com.example.lab2.service;
 
 import com.example.lab2.dao.BookCopyRepository;
 import com.example.lab2.dao.ReservationRepository;
+import com.example.lab2.dao.UserConfigurationRepository;
 import com.example.lab2.dao.UserRepository;
 import com.example.lab2.entity.BookCopy;
 import com.example.lab2.entity.Reservation;
@@ -37,6 +38,9 @@ public class ReserveServiceTest {
     @Autowired
     ReservationRepository reservationRepository;
 
+    @Autowired
+    UserConfigurationRepository userConfigurationRepository;
+
     @Transactional
     @Test
     public void testReserveNonExistentBook() {
@@ -44,7 +48,7 @@ public class ReserveServiceTest {
                 "newUser",
                 "password",
                 "zhj@email.com",
-                User.STUDENT,
+                User.TEACHER,
                 User.MAX_CREDIT
         );
 
@@ -96,7 +100,7 @@ public class ReserveServiceTest {
                 "newUser",
                 "password",
                 "zhj@email.com",
-                User.STUDENT,
+                User.TEACHER,
                 User.MAX_CREDIT
         );
 
@@ -128,7 +132,7 @@ public class ReserveServiceTest {
                 "newUser",
                 "password",
                 "zhj@email.com",
-                User.STUDENT,
+                User.TEACHER,
                 User.MAX_CREDIT
         );
 
@@ -144,6 +148,13 @@ public class ReserveServiceTest {
 
         Reservation reservation = reservationRepository.getReservationByBookCopyID(bcFromDB.getBookCopyID()).get();
 
+        long timeGap = reservation.getDeadline().getTime() - reservation.getReservationDate().getTime();
+
+        long reserveTime = userConfigurationRepository.findUserConfigurationByRole(
+                userFromDb.getRole()
+        ).get().getMaxReserveTime();
+
+        assertEquals(timeGap, reserveTime * 1000);
         assertEquals(reservation.getBookCopyID(), bcFromDB.getBookCopyID());
         assertEquals(reservation.getUserID().longValue(), userFromDb.getUser_id());
 

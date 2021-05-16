@@ -6,6 +6,8 @@ import com.example.lab2.dto.ReservedBookCopyDTO;
 import com.example.lab2.entity.BookCopy;
 import com.example.lab2.entity.Reservation;
 import com.example.lab2.entity.User;
+import com.example.lab2.entity.UserConfiguration;
+import com.example.lab2.exception.auth.RoleNotAllowedException;
 import com.example.lab2.exception.bookcopy.BookCopyNotAvailableException;
 import com.example.lab2.exception.notfound.BookCopyNotFoundException;
 import com.example.lab2.exception.notfound.UserNotFoundException;
@@ -33,6 +35,9 @@ public class ReserveService {
     @Autowired
     BookCopyRepository bookkCopyRepository;
 
+    @Autowired
+    UserConfigurationRepository userConfigurationRepository;
+
 
     @Transactional(rollbackFor = {Exception.class, RuntimeException.class})
     public GeneralResponse reserveBook(String uniqueBookMark, String username) {
@@ -48,6 +53,13 @@ public class ReserveService {
         //管理员不能预约图书
         if (userReserving.get().isAdmin()) {
             throw new AdminReserveBookException("管理员不能借阅图书");
+        }
+
+        //得到当前用户的UserConfiguration,里面包含了最长预约时间
+        Optional<UserConfiguration> userConfiguration = userConfigurationRepository.findUserConfigurationByRole(
+                userReserving.get().getRole());
+        if (userConfiguration.isEmpty()) {
+            throw new RoleNotAllowedException("用户角色错误");
         }
 
         //在数据库中找找看这个副本
@@ -84,9 +96,11 @@ public class ReserveService {
             bc.setLastReservationDate(currentDate);
             bookkCopyRepository.save(bc);
 
+            Date deadLine = new Date(currentDate.getTime() + 1000 * userConfiguration.get().getMaxReserveTime());
+
             //在预约表里插入一个新的预约
             Reservation newReservation = new Reservation(
-                    userReserving.get().getUser_id(), bc.getBookCopyID(), currentDate
+                    userReserving.get().getUser_id(), bc.getBookCopyID(), currentDate, deadLine
             );
             reservationRepository.save(newReservation);
 

@@ -33,7 +33,7 @@ public interface BookCopyRepository extends JpaRepository<BookCopy, Long> {
     @Query("select b_c from BookCopy b_c where b_c.uniqueBookMark=:uniqueBookMark")
     public Optional<BookCopy> getBookCopyByUniqueBookMark(@Param("uniqueBookMark") String uniqueBookMark);
 
-    @Query("select new com.example.lab2.dto.ReservedBookCopyDTO(rv.reservationDate,bt.isbn,bt.author,bt.name,bc.uniqueBookMark,l.libraryName,bt.imagePathToFrontEnd) " +
+    @Query("select new com.example.lab2.dto.ReservedBookCopyDTO(rv.reservationDate,bt.isbn,bt.author,bt.name,bc.uniqueBookMark,l.libraryName,bt.imagePathToFrontEnd,rv.deadline) " +
             "from Reservation rv left join BookCopy bc on rv.bookCopyID=bc.bookCopyID left join BookType bt on bt.isbn=bc.isbn left join User u on u.user_id=rv.userID left join Library l on l.libraryID=bc.libraryID where u.username=:username")
     public List<ReservedBookCopyDTO> getAllReservedBooksByUsername(@Param("username") String username);
 
