@@ -1,9 +1,11 @@
 package com.example.lab2.controller;
 
 import com.example.lab2.dao.LibraryRepository;
+import com.example.lab2.dao.UserConfigurationRepository;
 import com.example.lab2.dao.UserRepository;
 import com.example.lab2.entity.Library;
 import com.example.lab2.entity.User;
+import com.example.lab2.entity.UserConfiguration;
 import com.example.lab2.response.GeneralResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,6 +27,13 @@ public class InitializeController {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    UserConfigurationRepository userConfigurationRepository;
+
+    /**
+     * @return
+     * @author haojie
+     */
     @PostConstruct
     public ResponseEntity<String> hello() {
 
@@ -49,6 +58,34 @@ public class InitializeController {
                 100);
         try {
             userRepository.save(admin);
+        } catch (Exception ignored) {
+        }
+
+        /*各种角色的借阅时长，预约时长，最多借阅多少本书的设置。默认统一最多借阅10本书，预约时长7天，借阅时长30天*/
+
+        //教师的最多借阅多少书，借阅时长，预约时长的设置
+        UserConfiguration teacherConfiguration = new UserConfiguration(
+                User.TEACHER, 10, 604800, 2592000
+        );
+        UserConfiguration undergraduateConfiguration = new UserConfiguration(
+                User.UNDERGRADUATE, 10, 604800, 2592000
+        );
+        UserConfiguration postgraduateConfiguration = new UserConfiguration(
+                User.POSTGRADUATE, 10, 604800, 2592000
+        );
+
+
+        //将数据存储到数据库中
+        try {
+            userConfigurationRepository.save(teacherConfiguration);
+        } catch (Exception ignored) {
+        }
+        try {
+            userConfigurationRepository.save(undergraduateConfiguration);
+        } catch (Exception ignored) {
+        }
+        try {
+            userConfigurationRepository.save(postgraduateConfiguration);
         } catch (Exception ignored) {
         }
 

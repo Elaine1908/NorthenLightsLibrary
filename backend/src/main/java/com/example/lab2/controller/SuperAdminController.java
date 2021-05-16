@@ -1,15 +1,15 @@
 package com.example.lab2.controller;
+
 import com.example.lab2.dto.UserDTO;
+import com.example.lab2.entity.UserConfiguration;
 import com.example.lab2.exception.auth.RegisterException;
 import com.example.lab2.request.auth.AddAdminRequest;
 import com.example.lab2.request.auth.DeleteAdminRequest;
+import com.example.lab2.service.UserConfigurationService;
 import com.example.lab2.service.UserDetailsServiceImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -23,6 +23,9 @@ public class SuperAdminController {
 
     @Resource(name = "userService")
     UserDetailsServiceImpl userDetailsService;
+
+    @Resource(name = "userConfigurationService")
+    UserConfigurationService userConfigurationService;
 
     /**
      * 添加管理员的接口
@@ -51,7 +54,7 @@ public class SuperAdminController {
 
 
     @PostMapping("/deleteAdmin")
-    public ResponseEntity<?> deleteAdmin(@RequestBody @Valid DeleteAdminRequest deleteAdminRequest , BindingResult bindingResult){
+    public ResponseEntity<?> deleteAdmin(@RequestBody @Valid DeleteAdminRequest deleteAdminRequest, BindingResult bindingResult) {
         //如果从前端接口传来的信息存在不合法参数
         if (bindingResult.hasFieldErrors()) {
             throw new RegisterException(
@@ -62,11 +65,26 @@ public class SuperAdminController {
     }
 
     @RequestMapping("/showAdmin")
-    public ResponseEntity<?> showAdmin(){
+    public ResponseEntity<?> showAdmin() {
         List<UserDTO> admins = userDetailsService.showAdmin();
         HashMap<String, Object> result = new HashMap<>();
-        result.put("admin",admins);
+        result.put("admin", admins);
         return ResponseEntity.ok(result);
+    }
+
+    /**
+     * 获得所有种类用户的最长借书时间，最长预约时间和最大借书数量
+     *
+     * @return
+     * @author haojie
+     */
+    @GetMapping("/userConfiguration")
+    public ResponseEntity<HashMap<String, List<UserConfiguration>>> getAllUserConfiguration() {
+        HashMap<String, List<UserConfiguration>> res = new HashMap<>();
+        res.put("userConfigurationList",
+                userConfigurationService.getAllUserConfiguration());
+        return ResponseEntity.ok(res);
+
     }
 }
 
