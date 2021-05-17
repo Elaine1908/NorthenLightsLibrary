@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.PushBuilder;
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -185,7 +186,7 @@ public class AdminController {
     }
 
     @PostMapping("/receiveBookFromUser")
-    public ResponseEntity<GeneralResponse> receiveBookFromUser(@Valid @RequestBody ReturnBookRequest returnBookRequest, BindingResult bindingResult,
+    public ResponseEntity<List<String>> receiveBookFromUser(@Valid @RequestBody ReturnBookRequest returnBookRequest, BindingResult bindingResult,
                                                                HttpServletRequest httpServletRequest) {
 
         if (bindingResult.hasFieldErrors()) {
@@ -198,9 +199,9 @@ public class AdminController {
         //得到admin的账号
         String admin = JwtUtils.getUserName(token);
 
-        GeneralResponse generalResponse = normalUserService.returnBooks(returnBookRequest.getUniqueBookMarkList(), adminLibraryID, admin);
+        List<String> resList = normalUserService.returnBooks(returnBookRequest.getUniqueBookMarkList(), adminLibraryID, admin);
 
         //把结果返回给前端
-        return ResponseEntity.ok(generalResponse);
+        return ResponseEntity.ok(resList);
     }
 }

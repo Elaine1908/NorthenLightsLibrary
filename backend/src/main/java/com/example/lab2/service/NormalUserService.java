@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -62,9 +63,9 @@ public class NormalUserService {
 
     }
 
-    public GeneralResponse returnBooks(List<ReturnSingleBookRequest> books, Long adminLibraryID, String admin) {
+    public List<String> returnBooks(List<ReturnSingleBookRequest> books, Long adminLibraryID, String admin) {
 
-        StringBuilder messageBuilder = new StringBuilder();
+        List<String> stringList = new ArrayList<>();
 
         //还书成功的数目
         int successfulCount = 0;
@@ -76,23 +77,25 @@ public class NormalUserService {
                 String res = this.returnOnlyOneBook(returnSingleBookRequest, adminLibraryID, admin);
 
                 //如果没有抛出异常，说明成功
-                messageBuilder.append(res).append("\r\n");
+                stringList.add(res);
 
                 successfulCount += 1;
 
             } catch (RuntimeException e) {
 
                 //还书失败，提示用户
-                messageBuilder.append(e.getMessage()).append("\r\n");
+                stringList.add(e.getMessage());
 
             }
 
         }
 
-        messageBuilder.append("共成功还掉了").append(successfulCount).append("本图书\r\n");
+        stringList.add(String.format(
+                "共成功还掉了%d本图书", successfulCount
+        ));
 
         //返回结果
-        return new GeneralResponse(messageBuilder.toString());
+        return stringList;
     }
 
     /**
