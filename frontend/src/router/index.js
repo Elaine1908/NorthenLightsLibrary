@@ -64,6 +64,11 @@ const routes = [
             path: 'userReserved',
             name: 'UserReserved',
             component: () => import('@/components/UserReserved')
+          },
+          {
+            path: 'userRecord',
+            name: 'UserRecord',
+            component: () => import('@/components/UserRecord')
           }
         ]
       },
@@ -97,6 +102,16 @@ const routes = [
             path: 'addCopy',
             name: 'AddCopy',
             component: () => import('@/components/AddCopy')
+          },
+          {
+            path: 'adminRecord',
+            name: 'AdminRecord',
+            component: () => import('@/components/AdminRecord')
+          },
+          {
+            path: 'timeSet',
+            name: 'TimeSet',
+            component: () => import('@/components/TimeSet')
           },
           {
             path: 'addAdmin',

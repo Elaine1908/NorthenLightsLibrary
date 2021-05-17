@@ -25,6 +25,14 @@
           <i class="el-icon-notebook-1"></i>
           <span slot="title">添加副本</span>
         </el-menu-item>
+        <el-menu-item index="/home/admin/adminRecord">
+          <i class="el-icon-s-custom"></i>
+          <span slot="title">操作查询</span>
+        </el-menu-item>
+        <el-menu-item index="/home/admin/timeSet" v-if="isSuperAdmin">
+          <i class="el-icon-s-custom"></i>
+          <span slot="title">设置时长</span>
+        </el-menu-item>
         <el-menu-item index="/home/admin/addAdmin" v-if="isSuperAdmin">
           <i class="el-icon-s-custom"></i>
           <span slot="title">新管理员</span>

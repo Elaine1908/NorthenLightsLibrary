@@ -17,6 +17,10 @@
           <i class="el-icon-document"></i>
           <span slot="title">预约书籍</span>
         </el-menu-item>
+        <el-menu-item index="/home/user/userRecord">
+          <i class="el-icon-document"></i>
+          <span slot="title">操作记录</span>
+        </el-menu-item>
       </el-menu>
     </el-col>
     <el-col class="content">

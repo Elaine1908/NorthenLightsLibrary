@@ -7,6 +7,7 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "chokidar": "^3.5.1",
     "core-js": "^3.6.5",
     "element-ui": "^2.4.5",
     "jsonwebtoken": "^8.5.1",
