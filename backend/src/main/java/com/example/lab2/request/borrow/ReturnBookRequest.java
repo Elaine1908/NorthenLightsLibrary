@@ -18,5 +18,5 @@ import java.util.List;
 @Valid
 public class ReturnBookRequest {
     @NotNull(message = "取的预约书不能为空")
-    private List<String> uniqueBookMarkList;
+    private List<ReturnSingleBookRequest> uniqueBookMarkList;
 }

@@ -1,27 +1,28 @@
 package com.example.lab2.service;
 
-import com.example.lab2.dao.BookCopyRepository;
-import com.example.lab2.dao.BorrowRepository;
-import com.example.lab2.dao.ReservationRepository;
-import com.example.lab2.dao.UserRepository;
-import com.example.lab2.entity.BookCopy;
-import com.example.lab2.entity.Borrow;
-import com.example.lab2.entity.Reservation;
-import com.example.lab2.entity.User;
+import com.example.lab2.dao.*;
+import com.example.lab2.entity.*;
 import com.example.lab2.exception.borrow.NotBorrowedException;
 import com.example.lab2.exception.notfound.BookCopyNotFoundException;
 import com.example.lab2.exception.notfound.LibraryNotFoundException;
+import com.example.lab2.request.borrow.ReturnSingleBookRequest;
+import com.example.lab2.request.upload.UploadNewBookRequest;
 import com.example.lab2.response.GeneralResponse;
 import com.example.lab2.response.UserInfoResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.Date;
 import java.util.List;
@@ -50,6 +51,12 @@ public class NormalUserServiceTest {
 
     @Resource(name = "normalUserService")
     NormalUserService normalUserService;
+
+    @Resource(name = "uploadService")
+    UploadService uploadService;
+
+    @Autowired
+    FineRepository fineRepository;
 
     @Test
     @Transactional
@@ -102,11 +109,12 @@ public class NormalUserServiceTest {
 
     @Transactional
     @Test
-
     public void testReturnOnlyOneBook_BookCopyNotFound() {
         assertThrows(BookCopyNotFoundException.class, () -> {
             normalUserService.returnOnlyOneBook(
-                    "non_exisitend", (long) 4, "admin"
+                    new ReturnSingleBookRequest(
+                            "non_existent", "ok"
+                    ), (long) 4, "admin"
             );
 
         });
@@ -116,7 +124,6 @@ public class NormalUserServiceTest {
 
     @Transactional
     @Test
-
     public void testReturnOnlyOneBook_BookCopyNotBorrowed() {
         BookCopy bookCopy = new BookCopy(
                 BookCopy.AVAILABLE,
@@ -131,18 +138,10 @@ public class NormalUserServiceTest {
         bookCopyRepository.save(bookCopy);
         assertThrows(NotBorrowedException.class, () -> {
             normalUserService.returnOnlyOneBook(
-                    "uniqueBookMark",
+                    new ReturnSingleBookRequest("uniqueBookMark", "ok"),
                     (long) 0,
-                  "admin"
+                    "admin"
             );
-        });
-        bookCopyRepository.save(bookCopy);
-
-        assertThrows(NotBorrowedException.class, () -> {
-            normalUserService.returnOnlyOneBook(
-                    "uniqueBookMark", (long) 4, "admin"
-            );
-
         });
 
 
@@ -180,7 +179,7 @@ public class NormalUserServiceTest {
 
         assertThrows(LibraryNotFoundException.class, () -> {
             normalUserService.returnOnlyOneBook(
-                    "uniqueBookMark", (long) 9999, "admin"
+                    new ReturnSingleBookRequest("uniqueBookMark", "ok"), (long) 9999, "admin"
             );
 
         });
@@ -220,7 +219,7 @@ public class NormalUserServiceTest {
 
         assertThrows(LibraryNotFoundException.class, () -> {
             normalUserService.returnOnlyOneBook(
-                    "uniqueBookMark", (long) 9999, "non_existient_admin"
+                    new ReturnSingleBookRequest("uniqueBookMark", "ok"), (long) 9999, "non_existient_admin"
             );
 
         });
@@ -231,7 +230,7 @@ public class NormalUserServiceTest {
 
     @Transactional
     @Test
-    public void testReturnOnlyOneBook_Success() {
+    public void testReturnOnlyOneBook_OK() throws IOException {
         BookCopy bookCopy = new BookCopy(
                 BookCopy.BORROWED,
                 "isbn",
@@ -248,17 +247,30 @@ public class NormalUserServiceTest {
                 User.STUDENT,
                 User.MAX_CREDIT
         );
+        MultipartFile multipartFile = new MockMultipartFile("test", "1.jpg", "content-type", new FileInputStream("D:\\OneDrive\\MyLaptop\\Pictures\\wxh.png"));
+        UploadNewBookRequest uploadNewBookRequest = new UploadNewBookRequest(
+                multipartFile,
+                "isbn",
+                "nametest",
+                "authortest",
+                "descriptiontest",
+                "2000-10-06",
+                1000
+
+        );
+
+        uploadService.handleUpload(uploadNewBookRequest);
         userRepository.save(user);
         bookCopyRepository.save(bookCopy);
 
         User userFromDB = userRepository.getUserByUsername("newUser");
 
-        Borrow borrow = new Borrow(userFromDB.getUser_id(), "uniqueBookMark", new Date());
+        Borrow borrow = new Borrow(userFromDB.getUser_id(), "uniqueBookMark", new Date(), new Date(System.currentTimeMillis() + (long) 30 * 24 * 3600 * 1000));
 
         borrowRepository.save(borrow);
 
         normalUserService.returnOnlyOneBook(
-                "uniqueBookMark", (long) 4, "admin"
+                new ReturnSingleBookRequest("uniqueBookMark", "ok"), (long) 4, "admin"
         );
 
         Optional<Borrow> borrowOptional = borrowRepository.getBorrowByUniqueBookMark("uniqueBookMark");
@@ -280,8 +292,205 @@ public class NormalUserServiceTest {
 
     @Transactional
     @Test
+    public void testReturnOnlyOneBook_OK_OverTime() throws IOException {
+        BookCopy bookCopy = new BookCopy(
+                BookCopy.BORROWED,
+                "isbn",
+                "uniqueBookMark",
+                (long) 1,
+                null,
+                null,
+                (long) 1
+        );
+        User user = new User(
+                "newUser",
+                "password",
+                "zhj@email.com",
+                User.STUDENT,
+                User.MAX_CREDIT
+        );
+        MultipartFile multipartFile = new MockMultipartFile("test", "1.jpg", "content-type", new FileInputStream("D:\\OneDrive\\MyLaptop\\Pictures\\wxh.png"));
+        UploadNewBookRequest uploadNewBookRequest = new UploadNewBookRequest(
+                multipartFile,
+                "isbn",
+                "nametest",
+                "authortest",
+                "descriptiontest",
+                "2000-10-06",
+                1000
+
+        );
+
+        uploadService.handleUpload(uploadNewBookRequest);
+        userRepository.save(user);
+        bookCopyRepository.save(bookCopy);
+
+        User userFromDB = userRepository.getUserByUsername("newUser");
+
+        Borrow borrow = new Borrow(userFromDB.getUser_id(), "uniqueBookMark", new Date(), new Date(System.currentTimeMillis()-100));
+
+        borrowRepository.save(borrow);
+
+        System.out.println(normalUserService.returnOnlyOneBook(
+                new ReturnSingleBookRequest("uniqueBookMark", "ok"), (long) 4, "admin"
+        ));
+
+        Optional<Borrow> borrowOptional = borrowRepository.getBorrowByUniqueBookMark("uniqueBookMark");
+        assertFalse(borrowOptional.isPresent());
+
+        BookCopy bookCopyFromDB = bookCopyRepository.getBookCopyByUniqueBookMark("uniqueBookMark").get();
+
+        assertEquals(bookCopyFromDB.getStatus(), BookCopy.AVAILABLE);
+        assertEquals(bookCopyFromDB.getUniqueBookMark(), "uniqueBookMark");
+
+        assertEquals(bookCopyFromDB.getLibraryID().longValue(), 4);
+
+        assertNotNull(bookCopyFromDB.getLastReturnDate());
+
+        User admin = userRepository.getUserByUsername("admin");
+        assertEquals(admin.getUser_id(), bookCopy.getAdminID().longValue());
+
+        List<Fine> fineList = fineRepository.getFineByUserID(userFromDB.getUser_id());
+        assertEquals(fineList.get(0).getMoney(), 1000 / 4);
+
+    }
+
+
+    @Transactional
+    @Test
+    public void testReturnOnlyOneBook_Damaged_OverTime() throws IOException {
+        BookCopy bookCopy = new BookCopy(
+                BookCopy.BORROWED,
+                "isbn",
+                "uniqueBookMark",
+                (long) 1,
+                null,
+                null,
+                (long) 1
+        );
+        User user = new User(
+                "newUser",
+                "password",
+                "zhj@email.com",
+                User.STUDENT,
+                User.MAX_CREDIT
+        );
+        MultipartFile multipartFile = new MockMultipartFile("test", "1.jpg", "content-type", new FileInputStream("D:\\OneDrive\\MyLaptop\\Pictures\\wxh.png"));
+        UploadNewBookRequest uploadNewBookRequest = new UploadNewBookRequest(
+                multipartFile,
+                "isbn",
+                "nametest",
+                "authortest",
+                "descriptiontest",
+                "2000-10-06",
+                1000
+
+        );
+
+        uploadService.handleUpload(uploadNewBookRequest);
+        userRepository.save(user);
+        bookCopyRepository.save(bookCopy);
+
+        User userFromDB = userRepository.getUserByUsername("newUser");
+
+        Borrow borrow = new Borrow(userFromDB.getUser_id(), "uniqueBookMark", new Date(), new Date(System.currentTimeMillis() + (long) 1));
+
+        borrowRepository.save(borrow);
+
+        System.out.println(normalUserService.returnOnlyOneBook(
+                new ReturnSingleBookRequest("uniqueBookMark", "damaged"), (long) 4, "admin"
+        ));
+
+        Optional<Borrow> borrowOptional = borrowRepository.getBorrowByUniqueBookMark("uniqueBookMark");
+        assertFalse(borrowOptional.isPresent());
+
+        BookCopy bookCopyFromDB = bookCopyRepository.getBookCopyByUniqueBookMark("uniqueBookMark").get();
+
+        assertEquals(bookCopyFromDB.getStatus(), BookCopy.DAMAGED);
+        assertEquals(bookCopyFromDB.getUniqueBookMark(), "uniqueBookMark");
+
+        assertEquals(bookCopyFromDB.getLibraryID().longValue(), 4);
+
+        assertNotNull(bookCopyFromDB.getLastReturnDate());
+
+        User admin = userRepository.getUserByUsername("admin");
+        assertEquals(admin.getUser_id(), bookCopy.getAdminID().longValue());
+
+        List<Fine> fineList = fineRepository.getFineByUserID(userFromDB.getUser_id());
+        assertEquals(fineList.get(0).getMoney(), 1000 / 2);
+
+    }
+
+
+    @Transactional
+    @Test
+    public void testReturnOnlyOneBook_Lost_OverTime() throws IOException {
+        BookCopy bookCopy = new BookCopy(
+                BookCopy.BORROWED,
+                "isbn",
+                "uniqueBookMark",
+                (long) 1,
+                null,
+                null,
+                (long) 1
+        );
+        User user = new User(
+                "newUser",
+                "password",
+                "zhj@email.com",
+                User.STUDENT,
+                User.MAX_CREDIT
+        );
+        MultipartFile multipartFile = new MockMultipartFile("test", "1.jpg", "content-type", new FileInputStream("D:\\OneDrive\\MyLaptop\\Pictures\\wxh.png"));
+        UploadNewBookRequest uploadNewBookRequest = new UploadNewBookRequest(
+                multipartFile,
+                "isbn",
+                "nametest",
+                "authortest",
+                "descriptiontest",
+                "2000-10-06",
+                1000
+
+        );
+
+        uploadService.handleUpload(uploadNewBookRequest);
+        userRepository.save(user);
+        bookCopyRepository.save(bookCopy);
+
+        User userFromDB = userRepository.getUserByUsername("newUser");
+
+        Borrow borrow = new Borrow(userFromDB.getUser_id(), "uniqueBookMark", new Date(), new Date(System.currentTimeMillis() + (long) 1));
+
+        borrowRepository.save(borrow);
+
+        System.out.println(normalUserService.returnOnlyOneBook(
+                new ReturnSingleBookRequest("uniqueBookMark", "lost"), (long) 4, "admin"
+        ));
+
+        Optional<Borrow> borrowOptional = borrowRepository.getBorrowByUniqueBookMark("uniqueBookMark");
+        assertFalse(borrowOptional.isPresent());
+
+        BookCopy bookCopyFromDB = bookCopyRepository.getBookCopyByUniqueBookMark("uniqueBookMark").get();
+
+        assertEquals(bookCopyFromDB.getStatus(), BookCopy.LOST);
+        assertEquals(bookCopyFromDB.getUniqueBookMark(), "uniqueBookMark");
+
+        assertEquals(bookCopyFromDB.getLibraryID().longValue(), 4);
+
+        assertNotNull(bookCopyFromDB.getLastReturnDate());
+
+        User admin = userRepository.getUserByUsername("admin");
+        assertEquals(admin.getUser_id(), bookCopy.getAdminID().longValue());
+
+        List<Fine> fineList = fineRepository.getFineByUserID(userFromDB.getUser_id());
+        assertEquals(fineList.get(0).getMoney(), 1000 );
+
+    }
+
+    @Transactional
+    @Test
     public void testReturnBooks_Success() {
-        BookCopy bookCopy1 = new BookCopy(
+      /*  BookCopy bookCopy1 = new BookCopy(
                 BookCopy.BORROWED,
                 "isbn",
                 "uniqueBookMark1",
@@ -359,7 +568,7 @@ public class NormalUserServiceTest {
         assertFalse(borrowRepository.getBorrowByUniqueBookMark("uniqueBookMark1").isPresent());
         assertFalse(borrowRepository.getBorrowByUniqueBookMark("uniqueBookMark2").isPresent());
         assertFalse(borrowRepository.getBorrowByUniqueBookMark("uniqueBookMark3").isPresent());
-        assertFalse(borrowRepository.getBorrowByUniqueBookMark("uniqueBookMark4").isPresent());
+        assertFalse(borrowRepository.getBorrowByUniqueBookMark("uniqueBookMark4").isPresent());*/
 
     }
 
