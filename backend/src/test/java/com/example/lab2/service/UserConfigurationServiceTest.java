@@ -48,14 +48,14 @@ public class UserConfigurationServiceTest {
         });
     }
 
-    @Test
+   /* @Test
     @Transactional
     public void testSetUserConfiguration_InvalidParam(){
         SetUserConfigurationRequest userConfigurationRequest = new SetUserConfigurationRequest("teacher","10","0360","360");
         assertThrows(SetConfigurationException.class, () -> {
             userConfigurationService.setUserConfiguration(userConfigurationRequest);
         });
-    }
+    }*/
 
     @Test
     @Transactional

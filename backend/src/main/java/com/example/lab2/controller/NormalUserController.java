@@ -21,4 +21,6 @@ public class NormalUserController {
         String username = JwtUtils.getUserName(token);
         return ResponseEntity.ok(normalUserService.userInfo(username));
     }
+
+
 }
