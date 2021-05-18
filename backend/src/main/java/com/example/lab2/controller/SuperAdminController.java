@@ -5,6 +5,7 @@ import com.example.lab2.entity.UserConfiguration;
 import com.example.lab2.exception.auth.RegisterException;
 import com.example.lab2.request.auth.AddAdminRequest;
 import com.example.lab2.request.auth.DeleteAdminRequest;
+import com.example.lab2.request.auth.SetUserConfigurationRequest;
 import com.example.lab2.service.UserConfigurationService;
 import com.example.lab2.service.UserDetailsServiceImpl;
 import org.springframework.http.ResponseEntity;
@@ -88,8 +89,26 @@ public class SuperAdminController {
     }
 
     /**
-     * 设置借阅时长
+     * 设置所有种类用户的最长借书时间，最长预约时间和最大借书数量
+     *  @return
+     *  @author yiwen
      */
+    @PostMapping("/setUserConfiguration")
+    public ResponseEntity<HashMap<String, String>> setUserConfiguration(@RequestBody @Valid SetUserConfigurationRequest setUserConfigurationRequest
+            , BindingResult bindingResult){
+
+        //如果从前端接口传来的信息存在不合法参数
+        if (bindingResult.hasFieldErrors()) {
+            throw new RegisterException(
+                    Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage()
+            );
+        }
+
+
+        HashMap<String, String> map = userConfigurationService.setUserConfiguration(setUserConfigurationRequest);
+
+        return ResponseEntity.ok(map);
+    }
 }
 
 
