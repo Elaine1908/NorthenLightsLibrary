@@ -3,6 +3,7 @@ package com.example.lab2.controller;
 import com.example.lab2.dto.UserDTO;
 import com.example.lab2.entity.UserConfiguration;
 import com.example.lab2.exception.auth.RegisterException;
+import com.example.lab2.exception.auth.SetConfigurationException;
 import com.example.lab2.request.auth.AddAdminRequest;
 import com.example.lab2.request.auth.DeleteAdminRequest;
 import com.example.lab2.request.auth.SetUserConfigurationRequest;
@@ -99,7 +100,7 @@ public class SuperAdminController {
 
         //如果从前端接口传来的信息存在不合法参数
         if (bindingResult.hasFieldErrors()) {
-            throw new RegisterException(
+            throw new SetConfigurationException(
                     Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage()
             );
         }

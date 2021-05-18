@@ -22,7 +22,11 @@ public class UserConfigurationService {
         return userConfigurationRepository.findAll();
     }
 
+    //用于测试
+    public Optional<UserConfiguration> getSingleUserConfiguration(String role){return userConfigurationRepository.findUserConfigurationByRole(role);}
+
     public HashMap<String, String> setUserConfiguration(SetUserConfigurationRequest setUserConfigurationRequest){
+
         //用户种类不存在
         if(userConfigurationRepository.findUserConfigurationByRole(setUserConfigurationRequest.getRole()).isEmpty()){
             throw new UserTypeNotFoundException("该用户种类不存在");
