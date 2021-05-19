@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * 还书，书状态已经丢失的业务
@@ -54,12 +55,14 @@ public class ReturnLostBookTransaction extends ReturnBookTransaction {
         String reason = String.format("借阅%s%s丢失罚款",
                 bookTypeOptional.get().getName(), bookCopy.getUniqueBookMark());
 
+        String randomUUID = UUID.randomUUID().toString();
+
         //创建罚款对象
-        Fine fine = new Fine(fineAmount, userOptional.get().getUser_id(), reason, currentDate);
+        Fine fine = new Fine(fineAmount, userOptional.get().getUser_id(), reason, currentDate, randomUUID);
         fineRepository.save(fine);
 
         //创建罚款记录对象
-        FineRecord fineRecord = new FineRecord(userOptional.get().getUser_id(),currentDate,fineAmount,FineRecord.UNPAID,reason);
+        FineRecord fineRecord = new FineRecord(userOptional.get().getUser_id(), currentDate, fineAmount, FineRecord.UNPAID, reason, randomUUID);
         fineRecordRepository.save(fineRecord);
 
         return String.format("还书%s%s成功，由于书本丢失，%s被罚款%.2f元",

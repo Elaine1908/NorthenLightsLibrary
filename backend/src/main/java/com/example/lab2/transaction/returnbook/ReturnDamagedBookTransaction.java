@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * 还书，还书时书本损坏的业务
@@ -52,16 +53,18 @@ public class ReturnDamagedBookTransaction extends ReturnBookTransaction {
         String reason = String.format("借阅%s%s损坏罚款",
                 bookTypeOptional.get().getName(), bookCopy.getUniqueBookMark());
 
+        String randomUUID = UUID.randomUUID().toString();
+
         //创建罚款对象
-        Fine fine = new Fine(fineAmount, userOptional.get().getUser_id(), reason, currentDate);
+        Fine fine = new Fine(fineAmount, userOptional.get().getUser_id(), reason, currentDate, randomUUID);
         fineRepository.save(fine);
 
         //创建罚款记录对象
-        FineRecord fineRecord = new FineRecord(userOptional.get().getUser_id(),currentDate,fineAmount,FineRecord.UNPAID,reason);
+        FineRecord fineRecord = new FineRecord(userOptional.get().getUser_id(), currentDate, fineAmount, FineRecord.UNPAID, reason, randomUUID);
         fineRecordRepository.save(fineRecord);
 
         //创建还书记录对象
-        ReturnRecord returnRecord = new ReturnRecord(userOptional.get().getUser_id(),currentDate,bookCopy.getUniqueBookMark(),adminID,adminLibraryID);
+        ReturnRecord returnRecord = new ReturnRecord(userOptional.get().getUser_id(), currentDate, bookCopy.getUniqueBookMark(), adminID, adminLibraryID);
         returnRecordRepository.save(returnRecord);
 
         return String.format("还书%s%s成功，由于书本损坏，%s被罚款%.2f元",

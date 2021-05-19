@@ -1,6 +1,8 @@
 package com.example.lab2.controller;
 
 import com.example.lab2.entity.Fine;
+import com.example.lab2.request.fine.PayFineRequest;
+import com.example.lab2.response.GeneralResponse;
 import com.example.lab2.service.FineService;
 import com.example.lab2.service.NormalUserService;
 import com.example.lab2.utils.JwtUtils;
@@ -48,6 +50,25 @@ public class NormalUserController {
         HashMap<String, List<Fine>> res = new HashMap<>();
         res.put("fineList", fineList);
         return ResponseEntity.ok(res);
+
+    }
+
+
+    /**
+     * 用户交罚款的接口
+     *
+     * @author zhj
+     */
+    @PostMapping("/payfine")
+    public ResponseEntity<GeneralResponse> payfine(
+            @RequestBody PayFineRequest payFineRequest,
+            HttpServletRequest httpServletRequest) {
+        String token = httpServletRequest.getHeader("token");
+        String username = JwtUtils.getUserName(token);
+
+        GeneralResponse generalResponse = fineService.payfine(username, payFineRequest.getFineID());
+
+        return ResponseEntity.ok(generalResponse);
 
     }
 

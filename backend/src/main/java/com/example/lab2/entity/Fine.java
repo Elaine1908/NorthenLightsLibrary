@@ -23,18 +23,15 @@ public class Fine {
     private String reason;
     private Date date;
 
-    public Fine(long fineID, long money, long userID, String reason, Date date) {
-        this.fineID = fineID;
-        this.money = money;
-        this.userID = userID;
-        this.reason = reason;
-        this.date = date;
-    }
+    @JsonIgnore
+    private String uuid;
 
-    public Fine(long money, long userID, String reason, Date date) {
+
+    public Fine(long money, long userID, String reason, Date date, String uuid) {
         this.money = money;
         this.userID = userID;
         this.reason = reason;
         this.date = date;
+        this.uuid = uuid;
     }
 }

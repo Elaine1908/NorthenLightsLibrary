@@ -264,6 +264,7 @@ type="returnRecord"
 
 ```
 userid
+fineid
 money
 time
 status:"未支付"或"已支付"

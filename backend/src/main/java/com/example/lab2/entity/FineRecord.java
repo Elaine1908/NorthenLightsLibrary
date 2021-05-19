@@ -30,11 +30,14 @@ public class FineRecord {
 
     private String reason;
 
-    public FineRecord(long userID,Date time,long money,String status,String reason){
-        this.status=status;
-        this.userID=userID;
-        this.time=time;
-        this.money=money;
-        this.reason=reason;
+    private String uuid;
+
+    public FineRecord(long userID, Date time, long money, String status, String reason, String uuid) {
+        this.status = status;
+        this.userID = userID;
+        this.time = time;
+        this.money = money;
+        this.reason = reason;
+        this.uuid = uuid;
     }
 }
