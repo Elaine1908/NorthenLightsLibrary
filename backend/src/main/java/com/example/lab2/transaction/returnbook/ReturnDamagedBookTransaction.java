@@ -56,6 +56,14 @@ public class ReturnDamagedBookTransaction extends ReturnBookTransaction {
         Fine fine = new Fine(fineAmount, userOptional.get().getUser_id(), reason, currentDate);
         fineRepository.save(fine);
 
+        //创建罚款记录对象
+        FineRecord fineRecord = new FineRecord(userOptional.get().getUser_id(),currentDate,fineAmount,FineRecord.UNPAID,reason);
+        fineRecordRepository.save(fineRecord);
+
+        //创建还书记录对象
+        ReturnRecord returnRecord = new ReturnRecord(userOptional.get().getUser_id(),currentDate,bookCopy.getUniqueBookMark(),adminID,adminLibraryID);
+        returnRecordRepository.save(returnRecord);
+
         return String.format("还书%s%s成功，由于书本损坏，%s被罚款%.2f元",
                 bookTypeOptional.get().getName(), bookCopy.getUniqueBookMark(), userOptional.get().getUsername(), fineAmount / 100.00);
     }
@@ -73,7 +81,7 @@ public class ReturnDamagedBookTransaction extends ReturnBookTransaction {
      */
     @Override
     public String overTime(BookCopy bookCopy, Borrow borrow, Long adminID, Long adminLibraryID, Date currentDate) {
-        return inTime(bookCopy, borrow, adminID, adminLibraryID, currentDate);
+        return this.inTime(bookCopy, borrow, adminID, adminLibraryID, currentDate);
     }
 
 }

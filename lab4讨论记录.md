@@ -101,7 +101,7 @@ number max_reserve_time(秒)
 
 
 
-/superadmin/setUserConfiguration post
+/superadmin/setUserConfiguration post (finished)
 
 #### 输入
 
@@ -266,7 +266,8 @@ type="returnRecord"
 userid
 money
 time
-status:"penging"或"finished"
+status:"未支付"或"已支付"
+reason
 ```
 
 ## 新增前端接口

@@ -1,10 +1,7 @@
 package com.example.lab2.transaction.returnbook;
 
 import com.example.lab2.dao.*;
-import com.example.lab2.entity.BookCopy;
-import com.example.lab2.entity.Borrow;
-import com.example.lab2.entity.Library;
-import com.example.lab2.entity.User;
+import com.example.lab2.entity.*;
 import com.example.lab2.exception.borrow.NotBorrowedException;
 import com.example.lab2.exception.notfound.BookCopyNotFoundException;
 import com.example.lab2.exception.notfound.LibraryNotFoundException;
@@ -38,6 +35,12 @@ public abstract class ReturnBookTransaction {
 
     @Autowired
     protected FineRepository fineRepository;
+
+    @Autowired
+    protected FineRecordRepository fineRecordRepository;
+
+    @Autowired
+    protected ReturnRecordRepository returnRecordRepository;
 
 
     public abstract String inTime(BookCopy bookCopy, Borrow borrow, Long adminID, Long adminLibraryID, Date currentDate);

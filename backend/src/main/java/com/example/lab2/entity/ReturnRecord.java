@@ -3,6 +3,7 @@ package com.example.lab2.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Data
 @Getter
@@ -16,20 +17,20 @@ public class ReturnRecord {
     private Long returnRecordID;
 
     @Column
-    private String username;
+    private long userID;
 
-    private String time;
+    private Date time;
 
     private String uniqueBookMark;
 
-    private String libraryName;
+    private long libraryID;
 
-    private String adminName;
+    private long adminID;
 
-    public ReturnRecord(String username,String time,String uniqueBookMark,String adminName,String libraryName){
-        this.adminName = adminName;
-        this.username=username;
-        this.libraryName=libraryName;
+    public ReturnRecord(long userID,Date time,String uniqueBookMark,long adminID,long libraryID){
+        this.adminID = adminID;
+        this.userID=userID;
+        this.libraryID=libraryID;
         this.time=time;
         this.uniqueBookMark=uniqueBookMark;
     }
