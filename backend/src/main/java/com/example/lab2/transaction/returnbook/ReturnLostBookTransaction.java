@@ -65,6 +65,10 @@ public class ReturnLostBookTransaction extends ReturnBookTransaction {
         FineRecord fineRecord = new FineRecord(userOptional.get().getUser_id(), currentDate, fineAmount, FineRecord.UNPAID, reason, randomUUID);
         fineRecordRepository.save(fineRecord);
 
+        //创建还书记录对象
+        ReturnRecord returnRecord = new ReturnRecord(userOptional.get().getUser_id(), currentDate, bookCopy.getUniqueBookMark(), adminID, adminLibraryID);
+        returnRecordRepository.save(returnRecord);
+
         return String.format("还书%s%s成功，由于书本丢失，%s被罚款%.2f元",
                 bookTypeOptional.get().getName(), bookCopy.getUniqueBookMark(), userOptional.get().getUsername(), fineAmount / 100.00);
     }
