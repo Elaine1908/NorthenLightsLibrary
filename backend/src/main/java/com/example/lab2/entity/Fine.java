@@ -1,5 +1,6 @@
 package com.example.lab2.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,6 +17,8 @@ public class Fine {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long fineID;
     private long money;
+
+    @JsonIgnore
     private long userID;
     private String reason;
     private Date date;
