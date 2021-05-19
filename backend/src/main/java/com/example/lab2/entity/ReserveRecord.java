@@ -23,14 +23,9 @@ public class ReserveRecord {
 
     private String uniqueBookMark;
 
-    private long libraryID;
 
-    private long adminID;
-
-    public ReserveRecord(long userID,Date time,String uniqueBookMark,long adminID,long libraryID){
-        this.adminID = adminID;
+    public ReserveRecord(long userID,Date time,String uniqueBookMark){
         this.userID=userID;
-        this.libraryID=libraryID;
         this.time=time;
         this.uniqueBookMark=uniqueBookMark;
     }

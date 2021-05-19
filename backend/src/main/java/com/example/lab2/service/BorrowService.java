@@ -47,6 +47,9 @@ public class BorrowService {
     @Autowired
     UserConfigurationRepository userConfigurationRepository;
 
+    @Autowired
+    BorrowRecordRepository borrowRecordRepository;
+
     /**
      * 管理员给用户借书的service层
      *
@@ -163,6 +166,10 @@ public class BorrowService {
             //更新数据库
             bookkCopyRepository.save(bookCopy);
             borrowRepository.save(newBorrow);
+
+            //新建借阅记录
+            BorrowRecord borrowRecord = new BorrowRecord(userOptional.get().getUser_id(),currentDate,uniqueBookMark,admin,adminLibraryID);
+            borrowRecordRepository.save(borrowRecord);
 
         }
 
@@ -303,6 +310,10 @@ public class BorrowService {
         bookkCopyRepository.save(bookCopy);
         //新建借阅条目
         borrowRepository.save(newBorrow);
+
+        //新建借阅记录
+        BorrowRecord borrowRecord = new BorrowRecord(user.getUser_id(),currentDate,uniqueBookMark,admin,adminLibraryID);
+        borrowRecordRepository.save(borrowRecord);
 
     }
 

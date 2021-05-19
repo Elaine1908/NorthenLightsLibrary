@@ -114,7 +114,13 @@ number max_reserve_time(秒)
 }
 ```
 
+#### 输出
 
+```
+{
+ "message":"string"
+}
+```
 
 # 需求3：预约、借阅超期提醒 
 
@@ -233,8 +239,6 @@ price:"string"(分)
 time
 userid
 uniquebookmark
-libraryid
-adminid
 type="reserveRecord"
 ```
 

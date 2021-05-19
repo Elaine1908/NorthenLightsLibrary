@@ -1,11 +1,7 @@
 package com.example.lab2.service;
 
-import com.example.lab2.dao.BookCopyRepository;
-import com.example.lab2.dao.BorrowRepository;
-import com.example.lab2.dao.LibraryRepository;
-import com.example.lab2.dao.UserRepository;
-import com.example.lab2.dto.BorrowedBookCopyDTO;
-import com.example.lab2.dto.ReservedBookCopyDTO;
+import com.example.lab2.dao.*;
+import com.example.lab2.dto.*;
 import com.example.lab2.entity.*;
 import com.example.lab2.exception.notfound.UserNotFoundException;
 import com.example.lab2.request.borrow.ReturnSingleBookRequest;
@@ -21,6 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 @Service("normalUserService")
 public class NormalUserService {
@@ -33,6 +30,12 @@ public class NormalUserService {
     LibraryRepository libraryRepository;
     @Autowired
     BorrowRepository borrowRepository;
+    @Autowired
+    ReserveRecordRepository reserveRecordRepository;
+    @Autowired
+    BorrowRecordRepository borrowRecordRepository;
+    @Autowired
+    ReturnRecordRepository returnRecordRepository;
 
     @Autowired
     private AutowireCapableBeanFactory autowireCapableBeanFactory;
@@ -134,6 +137,53 @@ public class NormalUserService {
         }
 
 
+    }
+
+
+    /**
+     * 获取所有的预约记录
+     * @param username
+     * @return
+     * @author zyw
+     */
+    public List<ReserveRecordDTO> getReserveRecord(String username){
+        //看看用户存不存在
+        Optional<User> userOptional = userRepository.findByName(username);
+        if (!userOptional.isPresent()) {
+            throw new UserNotFoundException("找不到这个用户！");
+        }
+
+        return reserveRecordRepository.getReserveRecordByUsername(username);
+    }
+
+    /**
+     * 获取所有的借阅记录
+     * @param username
+     * @return
+     * @author zyw
+     */
+    public List<BorrowRecordDTO> getBorrowRecord(String username){
+        //看看用户存不存在
+        Optional<User> userOptional = userRepository.findByName(username);
+        if (!userOptional.isPresent()) {
+            throw new UserNotFoundException("找不到这个用户！");
+        }
+        return borrowRecordRepository.getBorrowRecordByUsername(username);
+    }
+
+    /**
+     * 获取所有的还书记录
+     * @param username
+     * @return
+     * @author zyw
+     */
+    public List<ReturnRecordDTO> getReturnRecord(String username){
+        //看看用户存不存在
+        Optional<User> userOptional = userRepository.findByName(username);
+        if (!userOptional.isPresent()) {
+            throw new UserNotFoundException("找不到这个用户！");
+        }
+        return returnRecordRepository.getReturnRecordByUsername(username);
     }
 
 

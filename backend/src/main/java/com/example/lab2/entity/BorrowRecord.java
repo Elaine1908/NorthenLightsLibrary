@@ -25,10 +25,10 @@ public class BorrowRecord {
 
     private long libraryID;
 
-    private long adminID;
+    private String admin;
 
-    public BorrowRecord(long userID,Date time,String uniqueBookMark,long adminID,long libraryID){
-        this.adminID = adminID;
+    public BorrowRecord(long userID,Date time,String uniqueBookMark,String admin,long libraryID){
+        this.admin = admin;
         this.userID=userID;
         this.libraryID=libraryID;
         this.time=time;

@@ -2,11 +2,9 @@ package com.example.lab2.service;
 
 import com.example.lab2.dao.*;
 import com.example.lab2.dao.UserRepository;
+import com.example.lab2.dto.ReserveRecordDTO;
 import com.example.lab2.dto.ReservedBookCopyDTO;
-import com.example.lab2.entity.BookCopy;
-import com.example.lab2.entity.Reservation;
-import com.example.lab2.entity.User;
-import com.example.lab2.entity.UserConfiguration;
+import com.example.lab2.entity.*;
 import com.example.lab2.exception.auth.RoleNotAllowedException;
 import com.example.lab2.exception.bookcopy.BookCopyNotAvailableException;
 import com.example.lab2.exception.notfound.BookCopyNotFoundException;
@@ -38,6 +36,8 @@ public class ReserveService {
     @Autowired
     UserConfigurationRepository userConfigurationRepository;
 
+    @Autowired
+    ReserveRecordRepository reserveRecordRepository;
 
     @Transactional(rollbackFor = {Exception.class, RuntimeException.class})
     public GeneralResponse reserveBook(String uniqueBookMark, String username) {
@@ -103,6 +103,10 @@ public class ReserveService {
                     userReserving.get().getUser_id(), bc.getBookCopyID(), currentDate, deadLine
             );
             reservationRepository.save(newReservation);
+
+            //在预约记录表中插入新的预约记录
+            ReserveRecord reserveRecord = new ReserveRecord(userReserving.get().getUser_id(),currentDate,bc.getUniqueBookMark());
+            reserveRecordRepository.save(reserveRecord);
 
 
         }
