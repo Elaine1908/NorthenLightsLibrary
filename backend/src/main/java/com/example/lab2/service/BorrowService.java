@@ -168,7 +168,7 @@ public class BorrowService {
             borrowRepository.save(newBorrow);
 
             //新建借阅记录
-            BorrowRecord borrowRecord = new BorrowRecord(userOptional.get().getUser_id(),currentDate,uniqueBookMark,admin,adminLibraryID);
+            BorrowRecord borrowRecord = new BorrowRecord(userOptional.get().getUser_id(), currentDate, uniqueBookMark, admin, adminLibraryID);
             borrowRecordRepository.save(borrowRecord);
 
         }
@@ -246,8 +246,8 @@ public class BorrowService {
         }
 
         //获得这个用户的最大借阅时间和最多能借多少本书
-        Optional<UserConfiguration> userConfiguration = userConfigurationRepository.findUserConfigurationByRole(user.getRole());
-        if (userConfiguration.isEmpty()) {
+        Optional<UserConfiguration> userConfigurationOptional = userConfigurationRepository.findUserConfigurationByRole(user.getRole());
+        if (userConfigurationOptional.isEmpty()) {
             throw new RoleNotAllowedException("角色错误");
         }
 
@@ -278,10 +278,18 @@ public class BorrowService {
             }
         }
 
+        //看看用户是不是借阅了太多书
+        long currentBorrowCount = borrowRepository.getBorrowCountByUsername(user.getUsername());
+        if (currentBorrowCount >= userConfigurationOptional.get().getMaxBookBorrow()) {
+            throw new BorrowToManyException(
+                    String.format("您系统设置您最大可以借阅%d本书，你已经借阅了%d本书，不能再借阅了"
+                            , userConfigurationOptional.get().getMaxBookBorrow(), currentBorrowCount)
+            );
+        }
 
         //新建borrow对象
         Date currentDate = new Date();
-        Date deadline = new Date(currentDate.getTime() + userConfiguration.get().getMaxBorrowTime() * 1000);
+        Date deadline = new Date(currentDate.getTime() + userConfigurationOptional.get().getMaxBorrowTime() * 1000);
         Borrow newBorrow = new Borrow(
                 user.getUser_id(),
                 uniqueBookMark,
@@ -312,7 +320,7 @@ public class BorrowService {
         borrowRepository.save(newBorrow);
 
         //新建借阅记录
-        BorrowRecord borrowRecord = new BorrowRecord(user.getUser_id(),currentDate,uniqueBookMark,admin,adminLibraryID);
+        BorrowRecord borrowRecord = new BorrowRecord(user.getUser_id(), currentDate, uniqueBookMark, admin, adminLibraryID);
         borrowRecordRepository.save(borrowRecord);
 
     }

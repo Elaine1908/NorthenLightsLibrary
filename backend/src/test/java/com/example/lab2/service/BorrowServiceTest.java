@@ -181,7 +181,7 @@ public class BorrowServiceTest {
         bookkCopyRepository.save(bookCopy);
 
         Borrow borrow = new Borrow(
-                (long) 345, "1111111111-1", new Date()
+                (long) 345, "1111111111-1", new Date(),new Date()
         );
         borrowRepository.save(borrow);
 

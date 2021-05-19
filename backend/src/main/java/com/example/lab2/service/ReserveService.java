@@ -73,7 +73,7 @@ public class ReserveService {
         //看看用户已经预约了多少本图书
         long cnt = reservationRepository.getReservationCountByUserID(userReserving.get().getUser_id());
         if (cnt >= 10) {
-            throw new ReserveTooManyException("系统规定一个用户最多能借阅10本图书，你已经借阅了" + cnt + "本");
+            throw new ReserveTooManyException("系统规定一个用户最多能预约10本图书，你已经预约了" + cnt + "本");
         }
 
         //加锁，防止出现两个人抢着预约到了同一本书的情况

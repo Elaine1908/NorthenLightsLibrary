@@ -58,6 +58,15 @@ public class NormalUserServiceTest {
     @Autowired
     FineRepository fineRepository;
 
+    @Autowired
+    BorrowRecordRepository borrowRecordRepository;
+
+    @Autowired
+    ReserveRecordRepository reserveRecordRepository;
+
+    @Autowired
+    ReturnRecordRepository returnRecordRepository;
+
     @Test
     @Transactional
     public void testGetUserInfo() {
@@ -94,6 +103,7 @@ public class NormalUserServiceTest {
                     Borrow(
                     user.getUser_id(),
                     UUID.randomUUID().toString(),
+                    new Date(),
                     new Date()
             );
             borrowRepository.save(borrow);
@@ -173,7 +183,7 @@ public class NormalUserServiceTest {
 
         User userFromDB = userRepository.getUserByUsername("newUser");
 
-        Borrow borrow = new Borrow(userFromDB.getUser_id(), "uniqueBookMark", new Date());
+        Borrow borrow = new Borrow(userFromDB.getUser_id(), "uniqueBookMark", new Date(), new Date());
 
         borrowRepository.save(borrow);
 
@@ -213,7 +223,7 @@ public class NormalUserServiceTest {
 
         User userFromDB = userRepository.getUserByUsername("newUser");
 
-        Borrow borrow = new Borrow(userFromDB.getUser_id(), "uniqueBookMark", new Date());
+        Borrow borrow = new Borrow(userFromDB.getUser_id(), "uniqueBookMark", new Date(), new Date());
 
         borrowRepository.save(borrow);
 
@@ -327,7 +337,7 @@ public class NormalUserServiceTest {
 
         User userFromDB = userRepository.getUserByUsername("newUser");
 
-        Borrow borrow = new Borrow(userFromDB.getUser_id(), "uniqueBookMark", new Date(), new Date(System.currentTimeMillis()-100));
+        Borrow borrow = new Borrow(userFromDB.getUser_id(), "uniqueBookMark", new Date(), new Date(System.currentTimeMillis() - 100));
 
         borrowRepository.save(borrow);
 
@@ -483,14 +493,14 @@ public class NormalUserServiceTest {
         assertEquals(admin.getUser_id(), bookCopy.getAdminID().longValue());
 
         List<Fine> fineList = fineRepository.getFineByUserID(userFromDB.getUser_id());
-        assertEquals(fineList.get(0).getMoney(), 1000 );
+        assertEquals(fineList.get(0).getMoney(), 1000);
 
     }
 
     @Transactional
     @Test
     public void testReturnBooks_Success() {
-      /*  BookCopy bookCopy1 = new BookCopy(
+        BookCopy bookCopy1 = new BookCopy(
                 BookCopy.BORROWED,
                 "isbn",
                 "uniqueBookMark1",
@@ -539,36 +549,112 @@ public class NormalUserServiceTest {
         bookCopyRepository.save(bookCopy3);
         bookCopyRepository.save(bookCopy4);
 
-        Borrow borrow1 = new Borrow(user.getUser_id(), "uniqueBookMark1", new Date());
-        Borrow borrow2 = new Borrow(user.getUser_id(), "uniqueBookMark2", new Date());
-        Borrow borrow3 = new Borrow(user.getUser_id(), "uniqueBookMark3", new Date());
-        Borrow borrow4 = new Borrow(user.getUser_id(), "uniqueBookMark4", new Date());
+        Borrow borrow1 = new Borrow(user.getUser_id(), "uniqueBookMark1", new Date(), new Date());
+        Borrow borrow2 = new Borrow(user.getUser_id(), "uniqueBookMark2", new Date(), new Date());
+        Borrow borrow3 = new Borrow(user.getUser_id(), "uniqueBookMark3", new Date(), new Date());
+        Borrow borrow4 = new Borrow(user.getUser_id(), "uniqueBookMark4", new Date(), new Date());
 
         borrowRepository.save(borrow1);
         borrowRepository.save(borrow2);
         borrowRepository.save(borrow3);
         borrowRepository.save(borrow4);
 
-        List<String> uniqueBookMarkList = Stream.of(
-                "uniqueBookMark1",
-                "uniqueBookMark2",
-                "uniqueBookMark3",
-                "uniqueBookMark4",
-                "non_existent_mark"
+        List<ReturnSingleBookRequest> uniqueBookMarkList = Stream.of(
+                new ReturnSingleBookRequest("uniqueBookMark1", "ok"),
+                new ReturnSingleBookRequest("uniqueBookMark2", "ok"),
+                new ReturnSingleBookRequest("uniqueBookMark3", "damaged"),
+                new ReturnSingleBookRequest("uniqueBookMark4", "lost"),
+                new ReturnSingleBookRequest("non_existent", "ok")
         ).collect(Collectors.toList());
 
-        GeneralResponse response = normalUserService.returnBooks(uniqueBookMarkList, (long) 4, "admin");
+        List<String> response = normalUserService.returnBooks(uniqueBookMarkList, (long) 4, "admin");
 
-        System.out.println(response.getMessage());
+        BookCopy bc = bookCopyRepository.getBookCopyByUniqueBookMark("uniqueBookMark1").get();
 
         assertTrue(bookCopyRepository.getBookCopyByUniqueBookMark("uniqueBookMark1").isPresent());
+        assertEquals(bookCopyRepository.getBookCopyByUniqueBookMark("uniqueBookMark1").get().getStatus(),
+                BookCopy.AVAILABLE);
         assertTrue(bookCopyRepository.getBookCopyByUniqueBookMark("uniqueBookMark2").isPresent());
+        assertEquals(bookCopyRepository.getBookCopyByUniqueBookMark("uniqueBookMark2").get().getStatus(),
+                BookCopy.AVAILABLE);
         assertTrue(bookCopyRepository.getBookCopyByUniqueBookMark("uniqueBookMark3").isPresent());
+        assertEquals(bookCopyRepository.getBookCopyByUniqueBookMark("uniqueBookMark3").get().getStatus(),
+                BookCopy.DAMAGED);
         assertTrue(bookCopyRepository.getBookCopyByUniqueBookMark("uniqueBookMark4").isPresent());
+        assertEquals(bookCopyRepository.getBookCopyByUniqueBookMark("uniqueBookMark4").get().getStatus(),
+                BookCopy.LOST);
         assertFalse(borrowRepository.getBorrowByUniqueBookMark("uniqueBookMark1").isPresent());
         assertFalse(borrowRepository.getBorrowByUniqueBookMark("uniqueBookMark2").isPresent());
         assertFalse(borrowRepository.getBorrowByUniqueBookMark("uniqueBookMark3").isPresent());
-        assertFalse(borrowRepository.getBorrowByUniqueBookMark("uniqueBookMark4").isPresent());*/
+        assertFalse(borrowRepository.getBorrowByUniqueBookMark("uniqueBookMark4").isPresent());
+
+        response.forEach(System.out::println);
+
+    }
+
+    @Transactional
+    @Test
+    public void testGetReserveRecord() {
+
+        User user = new User(
+                "newUser",
+                "password",
+                "zhj@email.com",
+                User.STUDENT,
+                User.MAX_CREDIT
+        );
+        userRepository.save(user);
+
+        for (int i = 0; i < 40; ++i) {
+            ReserveRecord reserveRecord = new ReserveRecord(user.getUser_id(), new Date(), "u" + i);
+            reserveRecordRepository.save(reserveRecord);
+        }
+
+        assertEquals(reserveRecordRepository.getReserveRecordByUsername("newUser").size(), 40);
+
+    }
+
+    @Transactional
+    @Test
+    public void testGetBorrowRecord() {
+
+        User user = new User(
+                "newUser",
+                "password",
+                "zhj@email.com",
+                User.STUDENT,
+                User.MAX_CREDIT
+        );
+        userRepository.save(user);
+
+        for (int i = 0; i < 40; ++i) {
+            BorrowRecord borrowRecord = new BorrowRecord(user.getUser_id(), new Date(), "u" + i, "admin", 1);
+            borrowRecordRepository.save(borrowRecord);
+        }
+
+        assertEquals(borrowRecordRepository.getBorrowRecordByUsername("newUser").size(), 40);
+
+    }
+
+    @Transactional
+    @Test
+    public void testGetReturnRecord() {
+
+        User user = new User(
+                "newUser",
+                "password",
+                "zhj@email.com",
+                User.STUDENT,
+                User.MAX_CREDIT
+        );
+        userRepository.save(user);
+
+        for (int i = 0; i < 40; ++i) {
+            ReturnRecord returnRecord = new ReturnRecord(user.getUser_id(), new Date(), "u" + i, "admin", 1);
+            returnRecordRepository.save(returnRecord);
+        }
+
+        assertEquals(returnRecordRepository.getReturnRecordByUsername("newUser").size(), 40);
 
     }
 
