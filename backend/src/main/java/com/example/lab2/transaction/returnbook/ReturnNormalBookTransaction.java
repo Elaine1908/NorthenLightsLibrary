@@ -39,6 +39,10 @@ public class ReturnNormalBookTransaction extends ReturnBookTransaction {
         //更新副本状态
         bookCopyRepository.save(bookCopy);
 
+        //创建还书记录对象
+        ReturnRecord returnRecord = new ReturnRecord(borrow.getUserID(),currentDate,bookCopy.getUniqueBookMark(),adminID,adminLibraryID);
+        returnRecordRepository.save(returnRecord);
+
         return String.format("还书%s成功", bookCopy.getUniqueBookMark());
     }
 
@@ -84,6 +88,14 @@ public class ReturnNormalBookTransaction extends ReturnBookTransaction {
         //创建罚款对象
         Fine fine = new Fine(fineAmount, userOptional.get().getUser_id(), reason, currentDate);
         fineRepository.save(fine);
+
+        //创建罚款记录对象
+        FineRecord fineRecord = new FineRecord(userOptional.get().getUser_id(),currentDate,fineAmount,FineRecord.UNPAID,reason);
+        fineRecordRepository.save(fineRecord);
+
+        //创建还书记录对象
+        ReturnRecord returnRecord = new ReturnRecord(userOptional.get().getUser_id(),currentDate,bookCopy.getUniqueBookMark(),adminID,adminLibraryID);
+        returnRecordRepository.save(returnRecord);
 
         return String.format("还书%s%s成功，由于借阅超期，%s被罚款%.2f元",
                 bookTypeOptional.get().getName(), bookCopy.getUniqueBookMark(), userOptional.get().getUsername(), fineAmount / 100.00);
