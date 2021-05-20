@@ -105,7 +105,8 @@ public class ReserveService {
             reservationRepository.save(newReservation);
 
             //在预约记录表中插入新的预约记录
-            ReserveRecord reserveRecord = new ReserveRecord(userReserving.get().getUser_id(),currentDate,bc.getUniqueBookMark());
+            ReserveRecord reserveRecord = new ReserveRecord(userReserving.get().getUser_id(),currentDate,bc.getUniqueBookMark(),"admin",1);
+            //其实在预约记录中不需要记录admin和libraryID，但是这里为了后续数据库查找的方便默认将所有的admin和libraryID统一设置成了admin和0
             reserveRecordRepository.save(reserveRecord);
 
 

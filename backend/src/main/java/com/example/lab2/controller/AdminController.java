@@ -19,6 +19,7 @@ import com.example.lab2.service.SearchService;
 import com.example.lab2.service.UploadService;
 import com.example.lab2.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +29,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.PushBuilder;
 import javax.validation.Valid;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -220,5 +222,15 @@ public class AdminController {
         result.put("fineRecordList",fineRecordDTOS);
         return ResponseEntity.ok(result);
 
+    }
+
+    @GetMapping("/recordOfBook")
+    public ResponseEntity<HashMap<String,Object>> getRecordByUniqueBookMark(@Param("isbn") String isbn){
+
+        List<BookCopyRecordDTO> bookCopyRecordDTOS = normalUserService.getBookCopyRecord(isbn);
+        //加入result
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("recordList",bookCopyRecordDTOS);
+        return ResponseEntity.ok(result);
     }
 }

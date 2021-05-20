@@ -365,7 +365,7 @@ reason
 
 ### 显示副本的操作记录
 
-/admin/recordOfBook
+/admin/recordOfBook?isbn=xxx get
 
 ```
 {

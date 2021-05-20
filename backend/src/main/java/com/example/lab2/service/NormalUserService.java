@@ -3,6 +3,7 @@ package com.example.lab2.service;
 import com.example.lab2.dao.*;
 import com.example.lab2.dto.*;
 import com.example.lab2.entity.*;
+import com.example.lab2.exception.notfound.BookCopyNotFoundException;
 import com.example.lab2.exception.notfound.UserNotFoundException;
 import com.example.lab2.request.borrow.ReturnSingleBookRequest;
 import com.example.lab2.response.GeneralResponse;
@@ -14,10 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service("normalUserService")
 public class NormalUserService {
@@ -38,6 +36,8 @@ public class NormalUserService {
     ReturnRecordRepository returnRecordRepository;
     @Autowired
     FineRecordRepository fineRecordRepository;
+    @Autowired
+    BookCopyRecordRepository bookCopyRecordRepository;
 
     @Autowired
     private AutowireCapableBeanFactory autowireCapableBeanFactory;
@@ -204,4 +204,23 @@ public class NormalUserService {
     }
 
 
+    public List<BookCopyRecordDTO> getBookCopyRecord(String isbn){
+        Optional<BookCopy> bookCopyOptional = bookCopyRepository.getBookCopyByUniqueBookMark(isbn);
+        if(!bookCopyOptional.isPresent()){
+            throw new BookCopyNotFoundException("找不到这个副本！");
+        }
+
+        List<BookCopyRecordDTO> reserveRecord = bookCopyRecordRepository.getBookCopyReserveRecordByUniqueBookMark(isbn);
+        List<BookCopyRecordDTO> returnRecord = bookCopyRecordRepository.getBookCopyReturnRecordByUniqueBookMark(isbn);
+        List<BookCopyRecordDTO> borrowRecord = bookCopyRecordRepository.getBookCopyBorrowRecordByUniqueBookMark(isbn);
+
+        //将三个list拼接在一起
+        reserveRecord.addAll(returnRecord);
+        reserveRecord.addAll(borrowRecord);
+
+        //将三类不同的记录根据时间排序
+        Collections.sort(reserveRecord);
+
+        return reserveRecord;
+    }
 }
