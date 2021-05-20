@@ -42,7 +42,12 @@ const routes = [
       {
         path:'showCopy',
         name:'ShowCopy',
-        component: () => import('@/components/ShowCopy')
+        component: () => import('@/components/ShowCopy'),
+      },
+      {
+        path: 'copyRecord',
+        name: 'CopyRecord',
+        component: () => import('@/components/CopyRecord')
       },
       {
         path: 'user',
