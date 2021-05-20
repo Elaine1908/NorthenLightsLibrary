@@ -1,88 +1,153 @@
 <template>
-  <el-table
-          ref="filterTable"
-          :data="tableData"
-          style="width: 100%">
-    <el-table-column
-            prop="date"
-            label="日期"
-            sortable
-            width="180"
-            column-key="date"
-            :filters="[{text: '2016-05-01', value: '2016-05-01'}, {text: '2016-05-02', value: '2016-05-02'}, {text: '2016-05-03', value: '2016-05-03'}, {text: '2016-05-04', value: '2016-05-04'}]"
-            :filter-method="filterHandler"
-    >
-    </el-table-column>
-    <el-table-column
-            prop="name"
-            label="姓名"
-            width="180">
-    </el-table-column>
-    <el-table-column
-            prop="address"
-            label="地址"
-            :formatter="formatter">
-    </el-table-column>
-    <el-table-column
-            prop="tag"
-            label="标签"
-            width="100"
-            :filters="[{ text: '家', value: '家' }, { text: '公司', value: '公司' }]"
-            :filter-method="filterTag"
-            filter-placement="bottom-end">
-      <template slot-scope="scope">
-        <el-tag
-                :type="scope.row.tag === '家' ? 'primary' : 'success'"
-                disable-transitions>{{scope.row.tag}}</el-tag>
-      </template>
-    </el-table-column>
-  </el-table>
+  <div class="show">
+    <div style="margin-top: 30px">
+      <el-radio-group v-model="type" style="margin-bottom: 30px;">
+        <el-radio-button label="reserveRecordList">预约记录</el-radio-button>
+        <el-radio-button label="borrowRecordList">借阅记录</el-radio-button>
+        <el-radio-button label="returnRecordList">还书记录</el-radio-button>
+        <el-radio-button label="fineRecordList">罚款记录</el-radio-button>
+      </el-radio-group>
+    </div>
+    <template v-if="type=='reserveRecordList'">
+      <el-table
+              :data="reserveRecordList"
+              border
+              style="width: 100%">
+        <el-table-column
+                prop="time"
+                label="日期"
+                width="180">
+        </el-table-column>
+        <el-table-column
+                prop="username"
+                label="用户名"
+                width="180">
+        </el-table-column>
+        <el-table-column
+                prop="uniqueBookMark"
+                label="ISBN">
+        </el-table-column>
+      </el-table>
+    </template>
+    <template v-if="type=='borrowRecordList'">
+      <el-table
+              :data="borrowRecordList"
+              border
+              style="width: 100%">
+        <el-table-column
+                prop="time"
+                label="日期"
+                width="180">
+        </el-table-column>
+        <el-table-column
+                prop="username"
+                label="用户名"
+                width="180">
+        </el-table-column>
+        <el-table-column
+                prop="uniqueBookMark"
+                label="ISBN">
+        </el-table-column>
+        <el-table-column
+                prop="libraryName"
+                label="所在分馆">
+        </el-table-column>
+        <el-table-column
+                prop="adminName"
+                label="管理员">
+        </el-table-column>
+      </el-table>
+    </template>
+    <template v-if="type=='returnRecordList'">
+      <el-table
+              :data="returnRecordList"
+              border
+              style="width: 100%">
+        <el-table-column
+                prop="time"
+                label="日期"
+                width="180">
+        </el-table-column>
+        <el-table-column
+                prop="username"
+                label="用户名"
+                width="180">
+        </el-table-column>
+        <el-table-column
+                prop="uniqueBookMark"
+                label="ISBN">
+        </el-table-column>
+        <el-table-column
+                prop="libraryName"
+                label="所在分馆">
+        </el-table-column>
+        <el-table-column
+                prop="adminName"
+                label="管理员">
+        </el-table-column>
+      </el-table>
+    </template>
+    <template v-if="type=='fineRecordList'">
+      <el-table
+              :data="fineRecordList"
+              border
+              style="width: 100%">
+        <el-table-column
+                prop="time"
+                label="日期"
+                width="180">
+        </el-table-column>
+        <el-table-column
+                prop="username"
+                label="用户名"
+                width="180">
+        </el-table-column>
+        <el-table-column
+                prop="reason"
+                label="罚款原因">
+        </el-table-column>
+        <el-table-column
+                prop="money"
+                label="罚款金额">
+        </el-table-column>
+        <el-table-column
+                prop="status"
+                label="是否支付">
+        </el-table-column>
+      </el-table>
+    </template>
+  </div>
 </template>
 
 <script>
   export default {
+    name:"UserRecord",
     data() {
       return {
-        tableData: [{
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄',
-          tag: '家'
-        }, {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄',
-          tag: '公司'
-        }, {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄',
-          tag: '家'
-        }, {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄',
-          tag: '公司'
-        }]
+        type: 'reserveRecordList',
+        reserveRecordList:[],
+        borrowRecordList:[],
+        returnRecordList:[],
+        fineRecordList:[]
       }
     },
-    methods: {
-      resetDateFilter() {
-        this.$refs.filterTable.clearFilter('date');
-      },
-      clearFilter() {
-        this.$refs.filterTable.clearFilter();
-      },
-      formatter(row, column) {
-        return row.address;
-      },
-      filterTag(value, row) {
-        return row.tag === value;
-      },
-      filterHandler(value, row, column) {
-        const property = column['property'];
-        return row[property] === value;
-      }
+    created() {
+      this.axios.get('/user/myRecord').then(resp => {
+        if (resp.status === 200){
+          this.reserveRecordList=resp.data.reserveRecordList;
+          this.borrowRecordList=resp.data.borrowRecordList;
+          this.returnRecordList=resp.data.returnRecordList;
+          this.fineRecordList=resp.data.fineRecordList;
+        } else {
+          this.$message(resp.data.message);
+        }
+      }).catch(err => {
+        this.$message.error(err.response.data.message)
+      })
     }
   }
 </script>
+
+<style>
+
+</style>
