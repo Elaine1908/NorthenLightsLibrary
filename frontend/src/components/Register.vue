@@ -21,17 +21,6 @@
       ></el-input>
     </el-form-item>
     <el-form-item
-        label="邮箱"
-        prop="email">
-      <el-input
-          type="email"
-          v-model="ruleForm.email"
-          autocomplete="off"
-          placeholder="邮箱"
-          required
-      ></el-input>
-    </el-form-item>
-    <el-form-item
         label="密码"
         prop="passWord">
       <el-input
@@ -51,7 +40,29 @@
           required
       ></el-input>
     </el-form-item>
-      <el-button
+    <el-form-item
+        label="选择身份"
+        prop="identity">
+      <el-radio-group v-model="ruleForm.identity">
+        <el-radio label="teacher">教师</el-radio>
+        <el-radio label="undergraduate">本科生</el-radio>
+        <el-radio label="postgraduate">研究生</el-radio>
+      </el-radio-group>
+    </el-form-item>
+    <el-form-item
+        label="邮箱"
+        prop="email">
+      <span class="validate">
+        <span class="validate-input">{{this.fillEmail}}</span>
+        <el-button type="primary" plain @click="validateEmail" class="validate-button">验证邮箱</el-button>
+      </span>
+    </el-form-item>
+    <el-form-item
+        label="验证码"
+        prop="captcha">
+      <el-input v-model="ruleForm.captcha"></el-input>
+    </el-form-item>
+    <el-button
           type="primary"
           plain
           @click="submitForm('ruleForm')"
@@ -116,22 +127,13 @@ export default {
         callback();
       }
     }
-    var validEmail = (rule, value, callback) => {
-      let emailPat = /^\w+@[a-zA-Z0-9]{2,10}(?:\.[a-z]{2,4}){1,3}$/
-      if (value === '') {
-        callback(new Error('请输入邮箱'))
-      } else if (!emailPat.test(value)) {
-        callback(new Error('请输入使用雷·汤普森创立的标准E-mail格式的邮箱'))
-      } else {
-        callback();
-      }
-    }
     return {
       ruleForm: {
         passWord: '',
         checkPass: '',
         username: '',
-        email: ''
+        identity: '',
+        captcha: ''
       },
       rules: {
         passWord: [
@@ -143,11 +145,14 @@ export default {
         username: [
           {validator: validUsername, trigger: 'blur', required: true},
         ],
-        email: [
-          {validator: validEmail, trigger: 'blur', required: true},
+        identity: [
+          {required: true, message: '请选择身份', trigger: 'change'}
+        ],
+        captcha: [
+          {required: true, message: '请填写验证码', trigger: 'blur'}
         ]
       },
-      emailValue: '123'
+      fillEmail: ''
     };
   },
   methods: {
@@ -158,7 +163,8 @@ export default {
             username: this.ruleForm.username,
             passWord: this.ruleForm.passWord,
             passWordAgain: this.ruleForm.checkPass,
-            email: this.ruleForm.email
+            captcha: this.ruleForm.captcha,
+            role: this.ruleForm.identity
           }).then(data => {
             if (data.status === 200) {
               this.$router.push({
@@ -178,7 +184,20 @@ export default {
       this.$refs[formName].resetFields();
     },
     autoFill() {
-      this.ruleForm.email = this.ruleForm.username === '' ? '' : (this.ruleForm.username + '@fudan.edu.cn')
+      this.fillEmail = this.ruleForm.username === '' ? '' : (this.ruleForm.username + '@fudan.edu.cn')
+    },
+    validateEmail() {
+      if (this.fillEmail !== "") {
+        this.$axios.post('/auth/sendEmailCaptcha', {
+          email: this.fillEmail
+        }).then(resp => {
+          this.$message.success(resp.data.message)
+        }).catch(err => {
+          this.$message.error(err.response.data.message)
+        })
+      } else {
+        this.$message.error("请先填写用户名再验证学邮")
+      }
     }
   }
 }
@@ -195,5 +214,18 @@ a {
   margin-top: 10px;
   font-size: smaller;
   color: gray;
+}
+.validate {
+  display: flex;
+}
+.validate-input {
+  width: 80%;
+  border: solid 1px lightgray;
+  border-radius: 4px;
+  text-align: left;
+  padding-left: 15px;
+}
+.validate-button {
+  margin-left: 10px;
 }
 </style>
