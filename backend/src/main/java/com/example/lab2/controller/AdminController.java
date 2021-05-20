@@ -3,7 +3,7 @@ package com.example.lab2.controller;
 
 import com.example.lab2.dao.BookTypeRepository;
 import com.example.lab2.dao.LibraryRepository;
-import com.example.lab2.dto.ShowBookCopyDTO;
+import com.example.lab2.dto.*;
 import com.example.lab2.entity.BookCopy;
 import com.example.lab2.entity.Reservation;
 import com.example.lab2.exception.UploadException;
@@ -203,5 +203,22 @@ public class AdminController {
 
         //把结果返回给前端
         return ResponseEntity.ok(resList);
+    }
+
+    @GetMapping("/record")
+    public ResponseEntity<HashMap<String,Object>> searchRecordByUsername(@RequestParam("username") String username){
+        List<ReserveRecordDTO> reserveRecordDTOS = normalUserService.getReserveRecord(username);
+        List<BorrowRecordDTO> borrowRecordDTOS = normalUserService.getBorrowRecord(username);
+        List<ReturnRecordDTO> returnRecordDTOS = normalUserService.getReturnRecord(username);
+        List<FineRecordDTO> fineRecordDTOS = normalUserService.getFineRecord(username);
+
+        //加入result
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("reserveRecordList",reserveRecordDTOS);
+        result.put("borrowRecordList",borrowRecordDTOS);
+        result.put("returnRecordList",returnRecordDTOS);
+        result.put("fineRecordList",fineRecordDTOS);
+        return ResponseEntity.ok(result);
+
     }
 }

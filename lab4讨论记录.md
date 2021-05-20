@@ -279,7 +279,7 @@ reason
 
 ### 查询用户所有的记录
 
-/admin/record?username=xxx get
+/admin/record?username=xxx get (finished)
 
 ```
 {
@@ -288,8 +288,6 @@ reason
 			"time":"string",
 			"username":"string",
 			"uniqueBookMark":"string",
-			"libraryName":"string",
-			"adminName":"string"
 		}
 	],
 	borrowRecordList:[
@@ -314,6 +312,7 @@ reason
 		{
 			"username":"string",
 			"money":"string",
+            "reason":"string",
 			"time":"string",
 			"status":"string"
 		}
@@ -323,7 +322,7 @@ reason
 
 ### 读者查询自己的历史记录
 
-/user/myRecord get
+/user/myRecord get (finished)
 
 ```
 {
@@ -331,9 +330,7 @@ reason
 		{
 			"time":"string",
 			"username":"string",
-			"uniqueBookMark":"string",
-			"libraryName":"string",
-			"adminName":"string"
+			"uniqueBookMark":"string"
 		}
 	],
 	borrowRecordList:[
@@ -358,6 +355,7 @@ reason
 		{
 			"username":"string",
 			"money":"string",
+            "reason":"string",
 			"time":"string",
 			"status":"string"
 		}

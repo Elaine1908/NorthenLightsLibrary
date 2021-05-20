@@ -36,6 +36,8 @@ public class NormalUserService {
     BorrowRecordRepository borrowRecordRepository;
     @Autowired
     ReturnRecordRepository returnRecordRepository;
+    @Autowired
+    FineRecordRepository fineRecordRepository;
 
     @Autowired
     private AutowireCapableBeanFactory autowireCapableBeanFactory;
@@ -184,6 +186,21 @@ public class NormalUserService {
             throw new UserNotFoundException("找不到这个用户！");
         }
         return returnRecordRepository.getReturnRecordByUsername(username);
+    }
+
+    /**
+     * 获取所有的罚款记录
+     * @param username
+     * @return
+     * @author zyw
+     */
+    public List<FineRecordDTO> getFineRecord(String username){
+        //看看用户存不存在
+        Optional<User> userOptional = userRepository.findByName(username);
+        if (!userOptional.isPresent()) {
+            throw new UserNotFoundException("找不到这个用户！");
+        }
+        return fineRecordRepository.getFineRecordByUsername(username);
     }
 
 

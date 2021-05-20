@@ -1,6 +1,7 @@
 package com.example.lab2.controller;
 
 import com.example.lab2.dto.BorrowRecordDTO;
+import com.example.lab2.dto.FineRecordDTO;
 import com.example.lab2.dto.ReserveRecordDTO;
 import com.example.lab2.dto.ReturnRecordDTO;
 import com.example.lab2.entity.Borrow;
@@ -72,14 +73,14 @@ public class NormalUserController {
         List<ReserveRecordDTO> reserveRecordDTOS = normalUserService.getReserveRecord(username);
         List<BorrowRecordDTO> borrowRecordDTOS = normalUserService.getBorrowRecord(username);
         List<ReturnRecordDTO> returnRecordDTOS = normalUserService.getReturnRecord(username);
-
-
+        List<FineRecordDTO> fineRecordDTOS = normalUserService.getFineRecord(username);
 
         //加入result
         HashMap<String, Object> result = new HashMap<>();
         result.put("reserveRecordList",reserveRecordDTOS);
         result.put("borrowRecordList",borrowRecordDTOS);
         result.put("returnRecordList",returnRecordDTOS);
+        result.put("fineRecordList",fineRecordDTOS);
 
 
         return ResponseEntity.ok(result);
