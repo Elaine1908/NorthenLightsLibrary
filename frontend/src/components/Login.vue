@@ -112,11 +112,7 @@
                     else {
                       this.$store.commit({
                         type: 'doLogin',
-                        token: resp.headers.token,
-                        username: this.ruleForm.username,
-                        identity: resp.data.message,
-                        campusID: libraryID,
-                        loginIdentity: this.ruleForm.identity
+                        token: resp.headers.token
                       });
                       this.$router.push({path: '/home'});
                     }
