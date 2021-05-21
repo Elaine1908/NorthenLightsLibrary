@@ -7,14 +7,18 @@ import com.example.lab2.exception.auth.SetConfigurationException;
 import com.example.lab2.request.auth.AddAdminRequest;
 import com.example.lab2.request.auth.DeleteAdminRequest;
 import com.example.lab2.request.auth.SetUserConfigurationRequest;
+import com.example.lab2.service.EmailService;
 import com.example.lab2.service.UserConfigurationService;
 import com.example.lab2.service.UserDetailsServiceImpl;
+import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -28,6 +32,9 @@ public class SuperAdminController {
 
     @Resource(name = "userConfigurationService")
     UserConfigurationService userConfigurationService;
+
+    @Resource(name = "emailService")
+    EmailService emailService;
 
     /**
      * 添加管理员的接口
@@ -108,6 +115,18 @@ public class SuperAdminController {
 
         HashMap<String, String> map = userConfigurationService.setUserConfiguration(setUserConfigurationRequest);
 
+        return ResponseEntity.ok(map);
+    }
+
+    /**
+     * 用户预约超期，借阅超期，罚款未缴纳邮件提醒
+     * @return
+     * @author yiwen
+     */
+    @PostMapping("/notify")
+    public ResponseEntity<?> notify(@RequestBody JSONObject jsonObject) throws JSONException {
+        String type = jsonObject.get("messages").toString();
+        HashMap<String,String> map  = emailService.sendNotify(type);
         return ResponseEntity.ok(map);
     }
 }
