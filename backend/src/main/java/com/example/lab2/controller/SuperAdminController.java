@@ -114,6 +114,23 @@ public class SuperAdminController {
             );
         }
 
+        if (setUserConfigurationRequest.getMaxBorrowTime().getTotalSecs() <= 0) {
+            throw new IllegalArgumentException("请检查最大借阅时间是否输入正确");
+        }
+
+        if (setUserConfigurationRequest.getMaxReserveTime().getTotalSecs() <= 0) {
+            throw new IllegalArgumentException("请检查最大借阅时间是否输入正确");
+        }
+
+        //将前端传来的天，小时，分，秒统统转换为秒
+        setUserConfigurationRequest.setMax_borrow_time(
+                setUserConfigurationRequest.getMaxBorrowTime().getTotalSecs() + ""
+        );
+
+        setUserConfigurationRequest.setMax_reserve_time(
+                setUserConfigurationRequest.getMaxReserveTime().getTotalSecs() + ""
+        );
+
 
         HashMap<String, String> map = userConfigurationService.setUserConfiguration(setUserConfigurationRequest);
 
@@ -122,13 +139,14 @@ public class SuperAdminController {
 
     /**
      * 用户预约超期，借阅超期，罚款未缴纳邮件提醒
+     *
      * @return
      * @author yiwen
      */
     @PostMapping("/notify")
-    public ResponseEntity<?> notify(@RequestBody JSONObject jsonObject) throws JSONException {
+    public ResponseEntity<?> notify(@RequestBody JSONObject jsonObject) throws Exception {
         String type = jsonObject.get("messages").toString();
-        HashMap<String,String> map  = emailService.sendNotify(type);
+        HashMap<String, String> map = emailService.sendNotify(type);
         return ResponseEntity.ok(map);
     }
 }

@@ -21,6 +21,7 @@ public class BorrowRecordDTO extends RecordAboutBookCopyDTO {
     }
 
     public BorrowRecordDTO(Date time, String uniqueBookMark, String username, String admin, String library) {
+        this();
         this.admin = admin;
         this.library = library;
         this.time = time;

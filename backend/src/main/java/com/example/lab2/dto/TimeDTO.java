@@ -15,25 +15,31 @@ public class TimeDTO {
     private long min;
     private long sec;
 
+    public final static long DAY_SECS = 24 * 60 * 60;
+    public final static long HOUR_SECS = 60 * 60;
+    public final static long MIN_SECS = 60;
+
     public TimeDTO(long secs) {
-        final long daySecs = 24 * 60 * 60;
-        final long hourSecs = 60 * 60;
-        final long minSecs = 60;
+
 
         long secsLeft = secs;
 
-        this.day = secsLeft / daySecs;
-        secsLeft -= daySecs * this.day;
+        this.day = secsLeft / DAY_SECS;
+        secsLeft -= DAY_SECS * this.day;
 
-        this.hour = secsLeft / hourSecs;
-        secsLeft -= hourSecs * this.hour;
+        this.hour = secsLeft / HOUR_SECS;
+        secsLeft -= HOUR_SECS * this.hour;
 
-        this.min = secsLeft / minSecs;
-        secsLeft -= this.min * minSecs;
+        this.min = secsLeft / MIN_SECS;
+        secsLeft -= this.min * MIN_SECS;
 
         this.sec = secsLeft;
 
 
+    }
+
+    public long getTotalSecs() {
+        return DAY_SECS * day + HOUR_SECS * hour + MIN_SECS * min + sec;
     }
 
 }

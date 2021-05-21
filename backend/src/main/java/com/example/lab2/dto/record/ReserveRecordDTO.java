@@ -26,6 +26,7 @@ public class ReserveRecordDTO extends RecordAboutBookCopyDTO {
 
 
     public ReserveRecordDTO(Date reservationDate, String uniqueBookMark, String username) {
+        this();
         this.username = username;
         this.time = reservationDate;
         this.uniqueBookMark = uniqueBookMark;
