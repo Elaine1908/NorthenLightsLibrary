@@ -2,9 +2,9 @@
   <el-row>
     <el-col class="menu">
       <el-menu
-          :default-active="$route.path"
-          :router="true"
-          class="el-menu-vertical-demo">
+              :default-active="$route.path"
+              :router="true"
+              class="el-menu-vertical-demo">
         <el-menu-item index="/home/admin/returnBooks">
           <i class="el-icon-s-promotion"></i>
           <span slot="title">现场还书</span>
@@ -46,30 +46,30 @@
 </template>
 
 <script>
-export default {
-  name: "Admin",
-  data() {
-    return {
-      isSuperAdmin: localStorage.getItem('role') === 'superadmin'
+  export default {
+    name: "Admin",
+    data() {
+      return {
+        isSuperAdmin: localStorage.getItem('role') === 'superadmin'
+      }
     }
   }
-}
 </script>
 
 <style>
-.menu {
-  width: 12%;
-  float: left;
-}
-.content {
-  float: right;
-  width: 85%;
-}
-.router-link-active {
-  color: deepskyblue;
-}
-.admin-link {
-  text-decoration: none;
-  color: inherit;
-}
+  .menu {
+    width: 12%;
+    float: left;
+  }
+  .content {
+    float: right;
+    width: 85%;
+  }
+  .router-link-active {
+    color: deepskyblue;
+  }
+  .admin-link {
+    text-decoration: none;
+    color: inherit;
+  }
 </style>
