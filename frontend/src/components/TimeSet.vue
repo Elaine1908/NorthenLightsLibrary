@@ -17,16 +17,29 @@
           </template>
         </el-table-column>
 
+<!--        <el-table-column prop="max_borrow_time" label="借阅时长">-->
+<!--          <template slot-scope="scope">-->
+<!--            <template v-if="scope.row.action == 'view'">-->
+<!--              <vue-timepicker manual-input hide-dropdown @focus="focusState = 'focused'" @blur="focusState = 'blurred'" @open="dropdownState = 'opened'" @close="dropdownState = 'closed'" format="HH时mm分ss秒"></vue-timepicker>-->
+<!--            </template>-->
+<!--            <template v-else>-->
+<!--              <vue-timepicker manual-input hide-dropdown @focus="focusState = 'focused'" @blur="focusState = 'blurred'" @open="dropdownState = 'opened'" @close="dropdownState = 'closed'"></vue-timepicker>-->
+<!--              &lt;!&ndash;              <el-form-item :prop="'datas.'+scope.$index + '.max_borrow_time'" :rules='rules.max_borrow_time'>&ndash;&gt;-->
+<!--&lt;!&ndash;                <el-input size="mini" v-model.trim="scope.row.max_borrow_time" style="width: 80px;margin-left: 30px"></el-input>&ndash;&gt;-->
+<!--&lt;!&ndash;              </el-form-item>&ndash;&gt;-->
+<!--            </template>-->
+<!--          </template>-->
+<!--        </el-table-column>-->
+
         <el-table-column prop="max_borrow_time" label="借阅时长">
           <template slot-scope="scope">
             <template v-if="scope.row.action == 'view'">
-              <vue-timepicker manual-input hide-dropdown @focus="focusState = 'focused'" @blur="focusState = 'blurred'" @open="dropdownState = 'opened'" @close="dropdownState = 'closed'" format="HH时mm分ss秒"></vue-timepicker>
+              {{scope.row.max_borrow_time}}
             </template>
             <template v-else>
-              <vue-timepicker manual-input hide-dropdown @focus="focusState = 'focused'" @blur="focusState = 'blurred'" @open="dropdownState = 'opened'" @close="dropdownState = 'closed'"></vue-timepicker>
-              <!--              <el-form-item :prop="'datas.'+scope.$index + '.max_borrow_time'" :rules='rules.max_borrow_time'>-->
-<!--                <el-input size="mini" v-model.trim="scope.row.max_borrow_time" style="width: 80px;margin-left: 30px"></el-input>-->
-<!--              </el-form-item>-->
+              <el-form-item :prop="'datas.'+scope.$index + '.max_borrow_time'" :rules='rules.max_borrow_time'>
+                <el-input size="mini" v-model.trim="scope.row.max_borrow_time" style="width: 80px;margin-left: 30px"></el-input>
+              </el-form-item>
             </template>
           </template>
         </el-table-column>
@@ -111,11 +124,19 @@
     },
 
     created() {
-      //处理数据，为已有数据添加action:'view'
-      this.form.datas.map(item => {
-        this.$set(item,"action","view")
-        return item;
-      });
+      //显示已有管理员列表
+      this.axios.get('/superadmin/userConfiguration').then(resp => {
+        if (resp.status === 200) {
+          this.form.datas = resp.data.userConfigurationList;
+          //处理数据，为已有数据添加action:'view'
+          this.form.datas.map(item => {
+            this.$set(item,"action","view")
+            return item;
+          });
+        } else {
+          this.$message(resp.data.message);
+        }
+      })
     },
 
     methods: {

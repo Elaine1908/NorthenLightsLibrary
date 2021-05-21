@@ -1,17 +1,32 @@
 <template>
   <div>
-  <div class="search_bar" style="margin-bottom: 60px">
-    <el-form :inline="true" :model="formInline" class="demo-form-inline">
-      <el-form-item>
-        <el-input v-model="formInline.username" placeholder="用户名"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="toRes">查询</el-button>
-      </el-form-item>
-    </el-form>
-  </div>
-    <div class="show">
-      <div style="margin-top: 30px">
+    <div>
+      <div style="position: absolute;right: 20px;top:22px" v-if="isSuperAdmin">
+        <el-dropdown>
+          <el-button type="primary" icon="el-icon-message" circle></el-button>
+          <el-dropdown-menu>
+            <el-dropdown-item @click.native="reminds('reserve')">预约提醒</el-dropdown-item>
+            <el-dropdown-item @click.native="reminds('borrow')">借阅提醒</el-dropdown-item>
+            <el-dropdown-item @click.native="reminds('fine')">罚款提醒</el-dropdown-item>
+          </el-dropdown-menu>
+        </el-dropdown>
+      </div>
+      <div class="search_bar" style="margin-top: 80px" v-if="showBack">
+        <el-form :inline="true" :model="formInline" class="demo-form-inline">
+          <el-form-item>
+            <el-input style="width: 300px" v-model="formInline.username" placeholder="用户名"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="search">查询</el-button>
+          </el-form-item>
+        </el-form>
+      </div>
+    </div>
+    <div class="show" v-if="!showBack">
+      <div style="margin-top: 30px;margin-bottom: 30px">
+        <div style="position: absolute">
+          <el-page-header @back="backToSearch"></el-page-header>
+        </div>
         <el-radio-group v-model="type" style="margin-bottom: 30px;">
           <el-radio-button label="reserveRecordList">预约记录</el-radio-button>
           <el-radio-button label="borrowRecordList">借阅记录</el-radio-button>
@@ -137,15 +152,48 @@
     data(){
       return{
         type: 'reserveRecordList',
+        isSuperAdmin: localStorage.getItem('role') === 'superadmin',
         formInline: {
-          usernaem:''
-        }
+          username:''
+        },
+        showBack:true,
+        reserveRecordList:[],
+        borrowRecordList:[],
+        returnRecordList:[],
+        fineRecordList:[]
       }
     },
     methods:{
-      toRes(){
-        this.$message('hhhhh');
-        this.$router.push({name: 'ShowReservation'});
+      search() {
+        this.axios.get('/admin/record',
+            {
+              params:{
+                username:this.formInline.username,
+              }
+            }).then(resp => {
+          if (resp.status === 200) {
+            this.reserveRecordList = resp.data.reserveRecordList;
+            this.borrowRecordList=resp.data.borrowRecordList;
+            this.returnRecordList=resp.data.returnRecordList;
+            this.fineRecordList=resp.data.fineRecordList;
+            this.showBack=true;
+            this.$message.success(resp.data.message)
+          }
+        }).then(err => {
+          this.$message.error(err.response.data.message)
+        })
+      },
+      backToSearch(){
+        this.showBack=false;
+      },
+      reminds(messages){
+        this.$axios.post('/superadmin/notifiy',{
+          messages:messages
+        }).then(data => {
+          this.$message.success(data.data.message)
+        }).catch(err => {
+          this.$message.error(err.response.data.message)
+        })
       }
     }
   }
