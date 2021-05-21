@@ -1,4 +1,4 @@
-package com.example.lab2.dto;
+package com.example.lab2.dto.record;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,6 +1,6 @@
 package com.example.lab2.service;
 
-import com.example.lab2.dao.FineRecordRepository;
+import com.example.lab2.dao.record.FineRecordRepository;
 import com.example.lab2.dao.FineRepository;
 import com.example.lab2.dao.UserRepository;
 import com.example.lab2.entity.Fine;
@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 

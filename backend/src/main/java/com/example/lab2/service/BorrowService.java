@@ -1,6 +1,7 @@
 package com.example.lab2.service;
 
 import com.example.lab2.dao.*;
+import com.example.lab2.dao.record.BorrowRecordRepository;
 import com.example.lab2.entity.*;
 import com.example.lab2.exception.auth.RoleNotAllowedException;
 import com.example.lab2.exception.bookcopy.BookCopyIsBorrowedException;
@@ -17,10 +18,8 @@ import com.example.lab2.exception.reserve.ReservedByOtherException;
 import com.example.lab2.response.GeneralResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.html.Option;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;

@@ -1,18 +1,15 @@
 package com.example.lab2.controller;
 
-import com.example.lab2.dto.BorrowRecordDTO;
-import com.example.lab2.dto.FineRecordDTO;
-import com.example.lab2.dto.ReserveRecordDTO;
-import com.example.lab2.dto.ReturnRecordDTO;
-import com.example.lab2.entity.Borrow;
+import com.example.lab2.dto.record.BorrowRecordDTO;
+import com.example.lab2.dto.record.FineRecordDTO;
+import com.example.lab2.dto.record.ReserveRecordDTO;
+import com.example.lab2.dto.record.ReturnRecordDTO;
 import com.example.lab2.entity.Fine;
 import com.example.lab2.request.fine.PayFineRequest;
 import com.example.lab2.response.GeneralResponse;
-import com.example.lab2.service.BorrowService;
 
 import com.example.lab2.service.FineService;
 import com.example.lab2.service.NormalUserService;
-import com.example.lab2.service.ReserveService;
 import com.example.lab2.utils.JwtUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

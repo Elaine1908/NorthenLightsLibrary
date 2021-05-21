@@ -1,6 +1,8 @@
 package com.example.lab2.transaction.returnbook;
 
 import com.example.lab2.dao.*;
+import com.example.lab2.dao.record.FineRecordRepository;
+import com.example.lab2.dao.record.ReturnRecordRepository;
 import com.example.lab2.entity.*;
 import com.example.lab2.exception.borrow.NotBorrowedException;
 import com.example.lab2.exception.notfound.BookCopyNotFoundException;
@@ -8,8 +10,6 @@ import com.example.lab2.exception.notfound.LibraryNotFoundException;
 import com.example.lab2.exception.notfound.UserNotFoundException;
 import com.example.lab2.request.borrow.ReturnSingleBookRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.jca.context.SpringContextResourceAdapter;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;

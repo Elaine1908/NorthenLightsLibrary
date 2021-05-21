@@ -1,12 +1,19 @@
 package com.example.lab2.service;
 
 import com.example.lab2.dao.*;
+import com.example.lab2.dao.record.BorrowRecordRepository;
+import com.example.lab2.dao.record.FineRecordRepository;
+import com.example.lab2.dao.record.ReserveRecordRepository;
+import com.example.lab2.dao.record.ReturnRecordRepository;
 import com.example.lab2.dto.*;
+import com.example.lab2.dto.record.BorrowRecordDTO;
+import com.example.lab2.dto.record.FineRecordDTO;
+import com.example.lab2.dto.record.ReserveRecordDTO;
+import com.example.lab2.dto.record.ReturnRecordDTO;
 import com.example.lab2.entity.*;
 import com.example.lab2.exception.notfound.BookCopyNotFoundException;
 import com.example.lab2.exception.notfound.UserNotFoundException;
 import com.example.lab2.request.borrow.ReturnSingleBookRequest;
-import com.example.lab2.response.GeneralResponse;
 import com.example.lab2.response.UserInfoResponse;
 import com.example.lab2.transaction.returnbook.ReturnBookTransaction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +41,9 @@ public class NormalUserService {
     BorrowRecordRepository borrowRecordRepository;
     @Autowired
     ReturnRecordRepository returnRecordRepository;
+
     @Autowired
     FineRecordRepository fineRecordRepository;
-    @Autowired
-    BookCopyRecordRepository bookCopyRecordRepository;
 
     @Autowired
     private AutowireCapableBeanFactory autowireCapableBeanFactory;
@@ -144,11 +150,12 @@ public class NormalUserService {
 
     /**
      * 获取所有的预约记录
+     *
      * @param username
      * @return
      * @author zyw
      */
-    public List<ReserveRecordDTO> getReserveRecord(String username){
+    public List<ReserveRecordDTO> getReserveRecord(String username) {
         //看看用户存不存在
         Optional<User> userOptional = userRepository.findByName(username);
         if (!userOptional.isPresent()) {
@@ -160,11 +167,12 @@ public class NormalUserService {
 
     /**
      * 获取所有的借阅记录
+     *
      * @param username
      * @return
      * @author zyw
      */
-    public List<BorrowRecordDTO> getBorrowRecord(String username){
+    public List<BorrowRecordDTO> getBorrowRecord(String username) {
         //看看用户存不存在
         Optional<User> userOptional = userRepository.findByName(username);
         if (!userOptional.isPresent()) {
@@ -175,11 +183,12 @@ public class NormalUserService {
 
     /**
      * 获取所有的还书记录
+     *
      * @param username
      * @return
      * @author zyw
      */
-    public List<ReturnRecordDTO> getReturnRecord(String username){
+    public List<ReturnRecordDTO> getReturnRecord(String username) {
         //看看用户存不存在
         Optional<User> userOptional = userRepository.findByName(username);
         if (!userOptional.isPresent()) {
@@ -190,11 +199,12 @@ public class NormalUserService {
 
     /**
      * 获取所有的罚款记录
+     *
      * @param username
      * @return
      * @author zyw
      */
-    public List<FineRecordDTO> getFineRecord(String username){
+    public List<FineRecordDTO> getFineRecord(String username) {
         //看看用户存不存在
         Optional<User> userOptional = userRepository.findByName(username);
         if (!userOptional.isPresent()) {
@@ -204,23 +214,29 @@ public class NormalUserService {
     }
 
 
-    public List<BookCopyRecordDTO> getBookCopyRecord(String isbn){
+    public List<RecordAboutBookCopyDTO> getBookCopyRecord(String isbn) {
         Optional<BookCopy> bookCopyOptional = bookCopyRepository.getBookCopyByUniqueBookMark(isbn);
-        if(!bookCopyOptional.isPresent()){
+        if (bookCopyOptional.isEmpty()) {
             throw new BookCopyNotFoundException("找不到这个副本！");
         }
 
-        List<BookCopyRecordDTO> reserveRecord = bookCopyRecordRepository.getBookCopyReserveRecordByUniqueBookMark(isbn);
-        List<BookCopyRecordDTO> returnRecord = bookCopyRecordRepository.getBookCopyReturnRecordByUniqueBookMark(isbn);
-        List<BookCopyRecordDTO> borrowRecord = bookCopyRecordRepository.getBookCopyBorrowRecordByUniqueBookMark(isbn);
+        //分别根据uniqueBookMark得到借阅记录，归还记录和预约记录
+        List<ReserveRecordDTO> reserveRecordDTOList = reserveRecordRepository.getBookCopyReserveRecordByUniqueBookMark(isbn);
+        List<ReturnRecordDTO> returnRecordDTOList = returnRecordRepository.getBookCopyReturnRecordByUniqueBookMark(isbn);
+        List<BorrowRecordDTO> borrowRecordDTOList = borrowRecordRepository.getBookCopyBorrowRecordByUniqueBookMark(isbn);
 
-        //将三个list拼接在一起
-        reserveRecord.addAll(returnRecord);
-        reserveRecord.addAll(borrowRecord);
+        //最终的结果list
+        List<RecordAboutBookCopyDTO> resList = new ArrayList<>();
 
-        //将三类不同的记录根据时间排序
-        Collections.sort(reserveRecord);
+        //将三个list中的内容加入到结果list中去
+        resList.addAll(reserveRecordDTOList);
+        resList.addAll(returnRecordDTOList);
+        resList.addAll(borrowRecordDTOList);
 
-        return reserveRecord;
+        //按时间排序
+        resList.sort(Comparator.comparing(RecordAboutBookCopyDTO::getTime));
+
+        //返回结果
+        return resList;
     }
 }

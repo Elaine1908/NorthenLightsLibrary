@@ -1,15 +1,22 @@
 package com.example.lab2.service;
 
 import com.example.lab2.dao.*;
+import com.example.lab2.dao.record.BorrowRecordRepository;
+import com.example.lab2.dao.record.ReserveRecordRepository;
+import com.example.lab2.dao.record.ReturnRecordRepository;
+import com.example.lab2.dto.RecordAboutBookCopyDTO;
+import com.example.lab2.dto.record.BorrowRecordDTO;
+import com.example.lab2.dto.record.ReserveRecordDTO;
+import com.example.lab2.dto.record.ReturnRecordDTO;
 import com.example.lab2.entity.*;
 import com.example.lab2.exception.borrow.NotBorrowedException;
 import com.example.lab2.exception.notfound.BookCopyNotFoundException;
 import com.example.lab2.exception.notfound.LibraryNotFoundException;
 import com.example.lab2.request.borrow.ReturnSingleBookRequest;
 import com.example.lab2.request.upload.UploadNewBookRequest;
-import com.example.lab2.response.GeneralResponse;
 import com.example.lab2.response.UserInfoResponse;
 import org.junit.Test;
+import org.junit.jupiter.params.shadow.com.univocity.parsers.common.record.Record;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,13 +28,9 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.SecureRandom;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -606,11 +609,11 @@ public class NormalUserServiceTest {
         userRepository.save(user);
 
         for (int i = 0; i < 40; ++i) {
-            ReserveRecord reserveRecord = new ReserveRecord(user.getUser_id(), new Date(), "u" + i);
+            ReserveRecord reserveRecord = new ReserveRecord(user.getUser_id(), new Date(), "u" + i, "admin", 1);
             reserveRecordRepository.save(reserveRecord);
         }
 
-        assertEquals(reserveRecordRepository.getReserveRecordByUsername("newUser").size(), 40);
+        assertEquals(normalUserService.getReserveRecord("newUser").size(), 40);
 
     }
 
@@ -632,7 +635,7 @@ public class NormalUserServiceTest {
             borrowRecordRepository.save(borrowRecord);
         }
 
-        assertEquals(borrowRecordRepository.getBorrowRecordByUsername("newUser").size(), 40);
+        assertEquals(normalUserService.getBorrowRecord("newUser").size(), 40);
 
     }
 
@@ -654,7 +657,74 @@ public class NormalUserServiceTest {
             returnRecordRepository.save(returnRecord);
         }
 
-        assertEquals(returnRecordRepository.getReturnRecordByUsername("newUser").size(), 40);
+        assertEquals(normalUserService.getReturnRecord("newUser").size(), 40);
+
+    }
+
+    @Transactional
+    @Test
+    public void testGetBookCopyRecord() {
+        BookCopy bookCopy = new BookCopy(
+                BookCopy.AVAILABLE,
+                "isbn",
+                "uniqueBookMark",
+                (long) 1,
+                new Date(),
+                new Date(),
+                (long) 2
+        );
+
+        bookCopyRepository.save(bookCopy);
+
+        SecureRandom secureRandom = new SecureRandom();
+
+        int reserveRecordAmount = secureRandom.nextInt(10);
+        int borrowRecordAmount = secureRandom.nextInt(10);
+        int returnRecordAmount = secureRandom.nextInt(10);
+
+        for (int i = 0; i < reserveRecordAmount; i++) {
+            ReserveRecord reserveRecord = new ReserveRecord(
+                    secureRandom.nextLong(),
+                    new Date(),
+                    "uniqueBookMark",
+                    "admin",
+                    1
+            );
+            reserveRecordRepository.save(reserveRecord);
+        }
+
+        for (int i = 0; i < borrowRecordAmount; i++) {
+            BorrowRecord borrowRecord = new BorrowRecord(
+                    secureRandom.nextLong(),
+                    new Date(),
+                    "uniqueBookMark",
+                    "admin",
+                    1
+            );
+            borrowRecordRepository.save(borrowRecord);
+        }
+
+        for (int i = 0; i < returnRecordAmount; i++) {
+            ReturnRecord returnRecord = new ReturnRecord(secureRandom.nextLong(),
+                    new Date(),
+                    "uniqueBookMark",
+                    "admin",
+                    1);
+            returnRecordRepository.save(returnRecord);
+        }
+
+        List<RecordAboutBookCopyDTO> lis = normalUserService.getBookCopyRecord("uniqueBookMark");
+        HashMap<Class<?>, Integer> hashMap = new HashMap<>();
+        lis.forEach((RecordAboutBookCopyDTO r) -> {
+            if (!hashMap.containsKey(r.getClass())) {
+                hashMap.put(r.getClass(), 0);
+            }
+            hashMap.put(r.getClass(), hashMap.get(r.getClass()) + 1);
+        });
+        assertEquals(hashMap.get(BorrowRecordDTO.class).intValue(), borrowRecordAmount);
+        assertEquals(hashMap.get(ReserveRecordDTO.class).intValue(), reserveRecordAmount);
+        assertEquals(hashMap.get(ReturnRecordDTO.class).intValue(), returnRecordAmount);
+
 
     }
 

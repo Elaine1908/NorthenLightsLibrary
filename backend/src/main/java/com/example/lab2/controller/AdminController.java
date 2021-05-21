@@ -4,8 +4,10 @@ package com.example.lab2.controller;
 import com.example.lab2.dao.BookTypeRepository;
 import com.example.lab2.dao.LibraryRepository;
 import com.example.lab2.dto.*;
-import com.example.lab2.entity.BookCopy;
-import com.example.lab2.entity.Reservation;
+import com.example.lab2.dto.record.BorrowRecordDTO;
+import com.example.lab2.dto.record.FineRecordDTO;
+import com.example.lab2.dto.record.ReserveRecordDTO;
+import com.example.lab2.dto.record.ReturnRecordDTO;
 import com.example.lab2.exception.UploadException;
 import com.example.lab2.request.borrow.BorrowBookRequest;
 import com.example.lab2.request.borrow.BorrowReservedBookRequest;
@@ -24,12 +26,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.PushBuilder;
 import javax.validation.Valid;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -227,10 +226,10 @@ public class AdminController {
     @GetMapping("/recordOfBook")
     public ResponseEntity<HashMap<String,Object>> getRecordByUniqueBookMark(@Param("isbn") String isbn){
 
-        List<BookCopyRecordDTO> bookCopyRecordDTOS = normalUserService.getBookCopyRecord(isbn);
+        List<RecordAboutBookCopyDTO> recordAboutBookCopyDTOS = normalUserService.getBookCopyRecord(isbn);
         //加入result
         HashMap<String, Object> result = new HashMap<>();
-        result.put("recordList",bookCopyRecordDTOS);
+        result.put("recordList", recordAboutBookCopyDTOS);
         return ResponseEntity.ok(result);
     }
 }

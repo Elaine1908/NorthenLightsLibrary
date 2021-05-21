@@ -2,7 +2,7 @@ package com.example.lab2.service;
 
 import com.example.lab2.dao.*;
 import com.example.lab2.dao.UserRepository;
-import com.example.lab2.dto.ReserveRecordDTO;
+import com.example.lab2.dao.record.ReserveRecordRepository;
 import com.example.lab2.dto.ReservedBookCopyDTO;
 import com.example.lab2.entity.*;
 import com.example.lab2.exception.auth.RoleNotAllowedException;

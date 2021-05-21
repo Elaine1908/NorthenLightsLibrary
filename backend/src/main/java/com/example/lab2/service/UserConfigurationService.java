@@ -1,6 +1,7 @@
 package com.example.lab2.service;
 
 import com.example.lab2.dao.UserConfigurationRepository;
+import com.example.lab2.dto.UserConfigurationDTO;
 import com.example.lab2.entity.UserConfiguration;
 import com.example.lab2.exception.auth.SetConfigurationException;
 import com.example.lab2.exception.notfound.UserNotFoundException;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service("userConfigurationService")
 public class UserConfigurationService {
@@ -22,6 +24,13 @@ public class UserConfigurationService {
 
     public List<UserConfiguration> getAllUserConfiguration() {
         return userConfigurationRepository.findAll();
+    }
+
+    public List<UserConfigurationDTO> getAllUserConfigurationDTO() {
+        List<UserConfiguration> userConfigurationList = userConfigurationRepository.findAll();
+        return userConfigurationList.stream().map(
+                UserConfigurationDTO::new
+        ).collect(Collectors.toList());
     }
 
     //用于测试

@@ -1,5 +1,6 @@
 package com.example.lab2.controller;
 
+import com.example.lab2.dto.UserConfigurationDTO;
 import com.example.lab2.dto.UserDTO;
 import com.example.lab2.entity.UserConfiguration;
 import com.example.lab2.exception.auth.RegisterException;
@@ -81,22 +82,23 @@ public class SuperAdminController {
      * @author haojie
      */
     @GetMapping("/userConfiguration")
-    public ResponseEntity<HashMap<String, List<UserConfiguration>>> getAllUserConfiguration() {
-        HashMap<String, List<UserConfiguration>> res = new HashMap<>();
+    public ResponseEntity<HashMap<String, List<UserConfigurationDTO>>> getAllUserConfiguration() {
+        HashMap<String, List<UserConfigurationDTO>> res = new HashMap<>();
         res.put("userConfigurationList",
-                userConfigurationService.getAllUserConfiguration());
+                userConfigurationService.getAllUserConfigurationDTO());
         return ResponseEntity.ok(res);
 
     }
 
     /**
      * 设置所有种类用户的最长借书时间，最长预约时间和最大借书数量
-     *  @return
-     *  @author yiwen
+     *
+     * @return
+     * @author yiwen
      */
     @PostMapping("/setUserConfiguration")
     public ResponseEntity<HashMap<String, String>> setUserConfiguration(@RequestBody @Valid SetUserConfigurationRequest setUserConfigurationRequest
-            , BindingResult bindingResult){
+            , BindingResult bindingResult) {
 
         //如果从前端接口传来的信息存在不合法参数
         if (bindingResult.hasFieldErrors()) {
