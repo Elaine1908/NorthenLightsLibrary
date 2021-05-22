@@ -64,9 +64,12 @@
             this.$axios.post('/admin/receiveBookFromUser', {
               uniqueBookMarkList: this.returnForm.domains
             }).then(resp => {
-              this.$message.success(resp.data.message)
               this.$refs.returnForm.resetFields()
-              this.$message.success(resp.data.message)
+              for (let i = 0; i < resp.data.length; i++) {
+                setTimeout(() => {
+                  this.$message(resp.data[i])
+                }, 100)
+              }
             }).catch(err => {
               this.$message.error(err.response.data.message)
             })
