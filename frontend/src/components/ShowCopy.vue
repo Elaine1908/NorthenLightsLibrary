@@ -42,8 +42,8 @@
       </el-table-column>
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button class="button" @click="reserve(scope.row.uniqueBookMark)" v-if="roleShow=='student'">预约</el-button>
-          <el-button class="button" @click="read(scope.row.uniqueBookMark)" v-if="roleShow=='admin'||roleShow=='superadmin'">查看记录</el-button>
+          <el-button class="button" @click="reserve(scope.row.uniqueBookMark)" v-if="roleShow ==='undergraduate' || roleShow === 'postgraduate' || roleShow === 'teacher'">预约</el-button>
+          <el-button class="button" @click="read(scope.row.uniqueBookMark)" v-if="roleShow ==='admin' || roleShow ==='superadmin'">查看记录</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -56,7 +56,7 @@
     data() {
       return {
         tableData: [],
-        roleShow:localStorage.getItem('role')
+        roleShow: localStorage.getItem('role')
       }
     },
     created() {
