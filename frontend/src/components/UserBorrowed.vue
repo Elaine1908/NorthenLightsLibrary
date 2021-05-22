@@ -67,9 +67,9 @@
       this.axios.get('/user/userinfo').then(resp => {
         if (resp.status === 200){
           this.tableData=resp.data.borrowedBooks;
-        } else {
-          this.$message.error(resp.data.message);
         }
+      }).catch(err => {
+        this.$message.error(err.response.data.message);
       })
     }
   }

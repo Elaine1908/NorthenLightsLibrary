@@ -100,8 +100,6 @@
           if (resp.status === 200){
             this.bookList=resp.data.bookTypeList;
             this.showBack=false;
-          } else {
-            this.$message(resp.data.message);
           }
         }).catch(err => {
           this.$message.error(err.response.data.message)
