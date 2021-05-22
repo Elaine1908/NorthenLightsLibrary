@@ -1,23 +1,32 @@
 <template>
   <el-form
-          class="return-form"
-          id="form"
-          ref="form"
-          :model="form"
-          status-icon
-          label-position="left"
-          label-width="100px">
-    <el-form-item
-            v-for="(domain, index) in form.domains"
-            :label="'ISBN ' + (index + 1)"
-            :prop="'domains.' + index + '.value'"
-            :rules="{required: true, message: 'ISBN不能为空', trigger: 'blur'}">
-      <el-input v-model="domain.value" class="return-input"></el-input>
+      class="return-form"
+      ref="returnForm"
+      :model="returnForm"
+      status-icon
+      label-width="70px">
+    <div v-for="(domain, index) in this.returnForm.domains" class="form-region">
+      <el-form-item
+          :label="'ISBN ' + (index + 1)"
+          :prop="'domains.' + index + '.uniqueBookMark'"
+          :rules="{required: true, message: 'ISBN不能为空', trigger: 'blur'}">
+        <el-input v-model="domain.uniqueBookMark"></el-input>
+      </el-form-item>
+      <el-form-item
+          :label="'状态 ' + (index + 1)"
+          :prop="'domains.' + index + '.status'"
+          :rules="{required: true, message: '状态不能为空', trigger: 'blur'}">
+        <el-select v-model="domain.status" class="return-status">
+          <el-option label="完好" value="ok"></el-option>
+          <el-option label="损坏" value="damaged"></el-option>
+          <el-option label="丢失" value="lost"></el-option>
+        </el-select>
+      </el-form-item>
       <span @click.prevent="removeDomain(domain)" class="icon"><i class="el-icon-delete"></i></span>
-    </el-form-item>
+    </div>
     <el-form-item>
       <el-button @click="addDomain">新增书本</el-button>
-      <el-button @click="submitForm" type="primary">立即还书</el-button>
+      <el-button @click="submitForm" type="primary">现场还书</el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -27,43 +36,41 @@
     name: "ReturnBooks",
     data() {
       return {
-        form: {
+        returnForm: {
           domains: [{
-            value: ''
+            uniqueBookMark: '',
+            status: ''
           }]
         }
       }
+
     },
     methods: {
       removeDomain(item) {
-        let index = this.form.domains.indexOf(item)
+        let index = this.returnForm.domains.indexOf(item)
         if (index !== -1) {
-          this.form.domains.splice(index, 1)
+          this.returnForm.domains.splice(index, 1)
         }
       },
       addDomain() {
-        this.form.domains.push({
-          value: ''
+        this.returnForm.domains.push({
+          uniqueBookMark: '',
+          status: ''
         });
       },
       submitForm() {
-        this.$refs.form.validate(valid => {
+        this.$refs.returnForm.validate(valid => {
           if (valid) {
-            let isbnList = new Array(this.form.domains.length)
-            for (let i = 0; i < isbnList.length; i++) {
-              isbnList[i] = this.form.domains[i].value
-            }
             this.$axios.post('/admin/receiveBookFromUser', {
-              uniqueBookMarkList: isbnList
-            }).then(data => {
-              this.$message.info(data.data.message)
-              this.$refs.form.resetFields()
+              uniqueBookMarkList: this.returnForm.domains
+            }).then(resp => {
+              this.$message.success(resp.data.message)
+              this.$refs.returnForm.resetFields()
             }).catch(err => {
               this.$message.error(err.response.data.message)
             })
-          }
-          else {
-            this.$message.error('请填写完整所有内容')
+          } else {
+            this.$message.error("请正确填写表单")
           }
         })
       }
@@ -88,15 +95,22 @@
     text-align: left;
     width: 90%;
   }
-  .return-input {
-    width: 300px;
-  }
   .icon {
+    padding-top: 8px;
     margin-left: 20px;
     font-size: larger;
   }
   .icon:hover {
     color: #409EFF;
     cursor: pointer;
+  }
+  .return-status {
+    width: 120px;
+  }
+  .form-region {
+    display: flex;
+  }
+  .return-form {
+    text-align: left;
   }
 </style>
