@@ -1,13 +1,12 @@
 <template>
   <div>
     <div>
-      <div style="position: absolute;right: 20px;top:22px" v-if="isSuperAdmin">
+<!--      <div style="position: absolute;right: 20px;top:22px" v-if="isSuperAdmin">-->
+      <div style="position: absolute;right: 20px;top:22px">
         <el-dropdown>
           <el-button type="primary" icon="el-icon-message" circle></el-button>
           <el-dropdown-menu>
-            <el-dropdown-item @click.native="reminds('reserve')">预约提醒</el-dropdown-item>
-            <el-dropdown-item @click.native="reminds('borrow')">借阅提醒</el-dropdown-item>
-            <el-dropdown-item @click.native="reminds('fine')">罚款提醒</el-dropdown-item>
+            <el-dropdown-item @click.native="reminds()">一键提醒</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </div>
@@ -186,13 +185,15 @@
       backToSearch(){
         this.showBack=false;
       },
-      reminds(messages){
-        this.$axios.post('/superadmin/notifiy',{
-          messages:messages
-        }).then(data => {
-          this.$message.success(data.data.message)
+      reminds(){
+        this.$axios.post('/superadmin/notify').then(data => {
+          for(var i = 0;i<data.data.message.length;i++){
+            this.$message.success(data.data.message[i]);
+          }
         }).catch(err => {
-          this.$message.error(err.response.data.message)
+          for(var i = 0;i<err.response.data.message.length;i++){
+            this.$message.error(err.response.data.message[i])
+          }
         })
       }
     }
