@@ -1,7 +1,6 @@
 package com.example.lab2.response.search;
 
-import com.example.lab2.dto.BookCopyDTO;
-import com.example.lab2.entity.BookCopy;
+import com.example.lab2.dto.bookcopy.BookCopyDTO;
 import com.example.lab2.entity.BookType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

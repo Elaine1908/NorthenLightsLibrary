@@ -144,10 +144,9 @@ public class SuperAdminController {
      * @author yiwen
      */
     @PostMapping("/notify")
-    public ResponseEntity<?> notify(@RequestBody JSONObject jsonObject) throws Exception {
-        String type = jsonObject.get("messages").toString();
-        HashMap<String, String> map = emailService.sendNotify(type);
-        return ResponseEntity.ok(map);
+    public ResponseEntity<?> notifyReserveFineBorrow() throws Exception {
+        List<String> messages = emailService.sendNotify();
+        return ResponseEntity.ok(messages);
     }
 }
 

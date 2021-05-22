@@ -3,11 +3,8 @@ package com.example.lab2.controller;
 
 import com.example.lab2.dao.BookTypeRepository;
 import com.example.lab2.dao.LibraryRepository;
-import com.example.lab2.dto.*;
-import com.example.lab2.dto.record.BorrowRecordDTO;
-import com.example.lab2.dto.record.FineRecordDTO;
-import com.example.lab2.dto.record.ReserveRecordDTO;
-import com.example.lab2.dto.record.ReturnRecordDTO;
+import com.example.lab2.dto.bookcopy.ShowBookCopyDTO;
+import com.example.lab2.dto.record.*;
 import com.example.lab2.exception.UploadException;
 import com.example.lab2.request.borrow.BorrowBookRequest;
 import com.example.lab2.request.borrow.BorrowReservedBookRequest;

@@ -1,4 +1,4 @@
-package com.example.lab2.dto;
+package com.example.lab2.dto.bookcopy;
 
 
 import lombok.AllArgsConstructor;

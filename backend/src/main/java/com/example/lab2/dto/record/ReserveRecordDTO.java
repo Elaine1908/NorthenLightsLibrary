@@ -1,9 +1,6 @@
 package com.example.lab2.dto.record;
 
-import com.example.lab2.dto.RecordAboutBookCopyDTO;
-import com.example.lab2.entity.ReserveRecord;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;

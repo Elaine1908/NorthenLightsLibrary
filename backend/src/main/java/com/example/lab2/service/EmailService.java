@@ -1,6 +1,10 @@
 package com.example.lab2.service;
 
 import com.example.lab2.dao.*;
+import com.example.lab2.dto.due.DueBorrowedBookCopyDTO;
+import com.example.lab2.dto.due.DueDTO;
+import com.example.lab2.dto.due.DueFineDTO;
+import com.example.lab2.dto.due.DueReservedBookCopyDTO;
 import com.example.lab2.entity.Borrow;
 import com.example.lab2.entity.Fine;
 import com.example.lab2.entity.Reservation;
@@ -8,11 +12,14 @@ import com.example.lab2.entity.User;
 import com.example.lab2.exception.auth.NotifyException;
 import com.example.lab2.exception.notfound.UserNotFoundException;
 import com.example.lab2.utils.EmailUtils;
+import com.example.lab2.utils.UserNameAndEmail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.mail.MessagingException;
+import javax.swing.*;
 import java.util.*;
 
 /**
@@ -58,119 +65,140 @@ public class EmailService {
     }
 
     /**
-     * @author yiwen
-     * @param type 发送邮件的种类
-     * @return 成功返回msg，失败抛出异常
+     * @return 成功返回，失败抛出异常
      * @throws MessagingException
+     * @author yiwen
      */
-    public HashMap<String,String> sendNotify(String type) throws MessagingException {
-        HashMap<String, String> map = new HashMap<>();
-        switch (type){
-            case "reserve":
-                Date currentDate = new Date();
-                List<Reservation> allReservation = reservationRepository.findAll();
-                //没有超期则剔除
-                allReservation.removeIf(r -> currentDate.getTime() <= r.getDeadline().getTime());
-                List<String> emailList1 = new ArrayList<>();
-                List<String> reserveList = new ArrayList<>();
-                //循环加入每个用户对应的预约超期的书
-                for(Reservation r:allReservation){
-                    String isbn = bookCopyRepository.findById(r.getBookCopyID()).get().getIsbn();
-                    String bookName = bookTypeRepository.getBookTypeByISBN(isbn).get().getName();
+    public List<String> sendNotify() throws MessagingException {
+        TreeMap<UserNameAndEmail, StringBuilder> usernameEmailToMessage = new TreeMap<>();
 
-                    Optional<User> user = userRepository.findById(r.getUserID());
-                    String email = user.get().getEmail();
+        //获得每一个用户所有的预约超期，罚款，及借阅超期
+        TreeMap<UserNameAndEmail, List<DueDTO>> userToDueDTO = new TreeMap<>();
+        addAllDueReservedBook(userToDueDTO);
+        addAllDueBorrowedBook(userToDueDTO);
+        addAllDueFineDTO(userToDueDTO);
 
-                    if(!emailList1.contains(email)){
-                        emailList1.add(email);
-                        reserveList.add(bookName);
-                    }else {
-                        int index = emailList1.indexOf(email);
-                        String oldText = reserveList.get(index);
-                        String newText = oldText+", "+bookName;
-                        reserveList.set(index,newText);
-                    }
+        //遍历这个map，生成每个用户对应的信息
+        for (Map.Entry<UserNameAndEmail, List<DueDTO>> entry : userToDueDTO.entrySet()) {
 
-                    reservationRepository.deleteReservationByBookCopyID(r.getBookCopyID());
-                    //将预约超期记录删除
-                }
+            UserNameAndEmail userNameAndEmail = entry.getKey();
+            List<DueDTO> dueDTOS = entry.getValue();
 
-                for(int i = 0; i < emailList1.size(); i ++){
-                    String finalText = "同学你好，你预约的书本" + reserveList.get(i) + "已超期，系统已自动删除预约记录。";
-                    emailUtils.sendEmail(emailList1.get(i),"图书馆预约超期提醒",finalText);
-                }
-                map.put("message", "提醒成功！");
-                break;
-            case "borrow":
-                Date currentDate2 = new Date();
-                List<Borrow> allBorrow = borrowRepository.findAll();
-                //没有超期则剔除
-                allBorrow.removeIf(r -> currentDate2.getTime() <= r.getDeadline().getTime());
-                List<String> emailList2 = new ArrayList<>();
-                List<String> borrowList = new ArrayList<>();
-                //循环加入每个用户对应的借阅超期的书
-                for(Borrow b:allBorrow){
-                    String isbn = bookCopyRepository.getBookCopyByUniqueBookMark(b.getUniqueBookMark()).get().getIsbn();
-                    String bookName = bookTypeRepository.getBookTypeByISBN(isbn).get().getName();
+            //为每个用户生成邮件的头信息
+            if (!usernameEmailToMessage.containsKey(userNameAndEmail)) {
+                usernameEmailToMessage.put(userNameAndEmail, new StringBuilder(
+                        dueDTOS.get(0).getHeadMessage()
+                ));
+            }
 
-                    Optional<User> user = userRepository.findById(b.getUserID());
-                    String email = user.get().getEmail();
+            //对每个用户的过期对象进行遍历，添加这个对象的过期信息
+            dueDTOS.forEach((DueDTO dueDTO) -> {
+                usernameEmailToMessage.get(userNameAndEmail).append(dueDTO.getDueMessage());
+            });
 
-                    if(!emailList2.contains(email)){
-                        emailList2.add(email);
-                        borrowList.add(bookName);
-                    }else {
-                        int index = emailList2.indexOf(email);
-                        String oldText = borrowList.get(index);
-                        String newText = oldText+", "+bookName;
-                        borrowList.set(index,newText);
-                    }
-                }
-                for(int i = 0; i < emailList2.size(); i ++){
-                    String finalText = "同学你好，你借阅的书本" + borrowList.get(i) + "已超期，请尽快归还。";
-                    emailUtils.sendEmail(emailList2.get(i),"图书馆借阅超期提醒",finalText);
-                }
-                map.put("message", "提醒成功！");
-                break;
-            case "fine":
-                List<Fine> allFines = fineRepository.findAll();
-                List<String> emailList = new ArrayList<>();
-                List<String> reasonList = new ArrayList<>();
-                //foreach 循环将所有罚款记录取出并且按照每个 email对应的reason添加进list
-                for(Fine f:allFines){
-                    String reason = f.getReason();
-                    long money = f.getMoney();
-                    long yuan = money / 100;
-                    long jiao = (money % 100) / 10;
-                    long fen = (money % 100) % 10;
-                    String text = String.format("因%s的%d.%d%d元",reason,yuan,jiao,fen);
-                    Optional<User> user = userRepository.findById(f.getUserID());
-                    String email = user.get().getEmail();
-                    if(!emailList.contains(email)){
-                        emailList.add(email);
-                        reasonList.add(text);
-                    }else {
-                        int index = emailList.indexOf(email);
-                        String oldReason = reasonList.get(index);
-                        String newReason = oldReason+", "+text;
-                        reasonList.set(index,newReason);
-                    }
-//                    if(user.isEmpty()){
-//                        throw new UserNotFoundException("用户不存在!");
-//                    }
-                }
-
-                for(int i = 0;i < emailList.size();i ++){
-                    String finalText = "同学你好，你" + reasonList.get(i) + "尚未支付，请尽快缴纳。";
-                    emailUtils.sendEmail(emailList.get(i),"图书馆罚款未缴纳提醒",finalText);
-                }
-                map.put("message", "提醒成功！");
-                break;
-            default:
-                throw new NotifyException("提醒类别错误");
         }
-        return map;
+
+        //显示给前端的信息
+        List<String> messageList = new ArrayList<>();
+
+        //为每个用户发邮件
+        for (Map.Entry<UserNameAndEmail, StringBuilder> entry : usernameEmailToMessage.entrySet()) {
+            UserNameAndEmail userNameAndEmail = entry.getKey();
+            String to = userNameAndEmail.email;
+            String title = "图书馆的提醒";
+            emailUtils.sendEmail(to, title, entry.getValue().toString());
+            messageList.add(String.format("向用户%s发邮件成功", userNameAndEmail.username));
+        }
+
+        return messageList;
+
+    }
+
+
+    /**
+     * 把所有的预约超期图书加入到userToDueDTO里面去
+     **/
+    @Transactional(rollbackFor = {RuntimeException.class, Exception.class})
+    public void addAllDueReservedBook(TreeMap<UserNameAndEmail, List<DueDTO>> userToDueDTO) {
+
+        //得到所有过期的预约图书
+        List<DueReservedBookCopyDTO> dueReservedBookCopyDTOList = bookCopyRepository.getAllDueReservedBookCopyDTO();
+
+        //遍历上面的列表，把对应的过期预约书本记录加入到userToDueDTO里
+        dueReservedBookCopyDTOList.forEach((DueReservedBookCopyDTO dueReservedBookCopyDTO) -> {
+
+            //创建用户名和email的对象
+            UserNameAndEmail userNameAndEmail = new UserNameAndEmail(
+                    dueReservedBookCopyDTO.getUsername(), dueReservedBookCopyDTO.getEmail());
+
+            //把这本预约过期的图书加入到map中
+            if (!userToDueDTO.containsKey(userNameAndEmail)) {
+                userToDueDTO.put(userNameAndEmail, new ArrayList<>());
+            }
+            userToDueDTO.get(userNameAndEmail).add(dueReservedBookCopyDTO);
+
+            //取消预约
+            reservationRepository.deleteById(dueReservedBookCopyDTO.getReservationID());
+
+        });
+
+    }
+
+    /**
+     * 把所有的借阅超期图书加入到userToDueDTO里面去
+     *
+     * @param userToDueDTO
+     */
+    public void addAllDueBorrowedBook(TreeMap<UserNameAndEmail, List<DueDTO>> userToDueDTO) {
+
+        //从数据库中获得所有的借阅超期的图书的DTO
+        List<DueBorrowedBookCopyDTO> dueBorrowedBookCopyDTOList = bookCopyRepository.getAllDueBorrowedBookCopyDTO();
+
+        //遍历上面的列表，获得map
+        dueBorrowedBookCopyDTOList.forEach((DueBorrowedBookCopyDTO dueBorrowedBookCopyDTO) -> {
+
+            //获得username和email的对象
+            UserNameAndEmail userNameAndEmail = new UserNameAndEmail(
+                    dueBorrowedBookCopyDTO.getUsername(), dueBorrowedBookCopyDTO.getEmail()
+            );
+
+            //把这个借阅超期的图书加入到对应的list中去
+            if (!userToDueDTO.containsKey(userNameAndEmail)) {
+                userToDueDTO.put(userNameAndEmail, new ArrayList<>());
+            }
+            userToDueDTO.get(userNameAndEmail).add(dueBorrowedBookCopyDTO);
+
+        });
+
+    }
+
+    /**
+     * 把所有的没交的罚款加入到userToDueDTO里去
+     *
+     * @param userToDueDTO
+     */
+    public void addAllDueFineDTO(TreeMap<UserNameAndEmail, List<DueDTO>> userToDueDTO) {
+
+        //获得所有未支付的fine
+        List<DueFineDTO> dueFineDTOList = fineRepository.getAllDueFineDTO();
+
+        //遍历list，获得map
+        dueFineDTOList.forEach((DueFineDTO dueFineDTO) -> {
+            UserNameAndEmail userNameAndEmail = new UserNameAndEmail(
+                    dueFineDTO.getUsername(), dueFineDTO.getEmail()
+            );
+
+            if (!userToDueDTO.containsKey(userNameAndEmail)) {
+                userToDueDTO.put(userNameAndEmail, new ArrayList<>());
+            }
+            userToDueDTO.get(userNameAndEmail).add(dueFineDTO);
+
+        });
+
+
     }
 
 
 }
+
+
