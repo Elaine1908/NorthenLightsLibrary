@@ -67,6 +67,9 @@
           placeholder="选择日期">
       </el-date-picker>
     </el-form-item>
+    <el-form-item label="金额" prop="price">
+      <el-input-number v-model="form.price" :precision="2" :step="0.01"></el-input-number>
+    </el-form-item>
     <el-form-item label="作者" prop="author">
       <el-input v-model="form.author"></el-input>
     </el-form-item>
@@ -138,6 +141,7 @@ export default {
         isbn: '',
         publishDate: '',
         author: '',
+        price: '',
         description: ''
       },
       rules: {
@@ -158,7 +162,8 @@ export default {
         ],
         description: [
           {required: true, message: '请填写简介', trigger: 'blur'}
-        ]
+        ],
+
       }
     };
   },
