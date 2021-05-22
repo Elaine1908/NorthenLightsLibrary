@@ -14,6 +14,7 @@ import com.example.lab2.exception.notfound.BookCopyNotFoundException;
 import com.example.lab2.exception.notfound.LibraryNotFoundException;
 import com.example.lab2.exception.notfound.UserNotFoundException;
 import com.example.lab2.exception.reserve.NotReservedException;
+import com.example.lab2.exception.reserve.ReservationDueException;
 import com.example.lab2.exception.reserve.ReservedByOtherException;
 import com.example.lab2.response.GeneralResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -244,6 +245,13 @@ public class BorrowService {
             throw new NotReservedException(uniqueBookMark + "还没有被预约");
         }
 
+        //看看预约是否超期
+        Date currentDate = new Date();
+        Date reservationDeadline = reservationOptional.get().getDeadline();
+        if (reservationDeadline.getTime() < currentDate.getTime()) {
+            throw new ReservationDueException(String.format("此预约已与%s到期，不能取书", reservationDeadline.toString()));
+        }
+
         //获得这个用户的最大借阅时间和最多能借多少本书
         Optional<UserConfiguration> userConfigurationOptional = userConfigurationRepository.findUserConfigurationByRole(user.getRole());
         if (userConfigurationOptional.isEmpty()) {
@@ -287,7 +295,6 @@ public class BorrowService {
         }
 
         //新建borrow对象
-        Date currentDate = new Date();
         Date deadline = new Date(currentDate.getTime() + userConfigurationOptional.get().getMaxBorrowTime() * 1000);
         Borrow newBorrow = new Borrow(
                 user.getUser_id(),
