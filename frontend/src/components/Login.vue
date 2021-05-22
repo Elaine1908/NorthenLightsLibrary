@@ -94,10 +94,10 @@
     },
     methods: {
       submitForm(formName) {
-        localStorage.setItem('username', 'admin')
+        /*localStorage.setItem('username', 'admin')
         localStorage.setItem('role', 'superadmin')
         localStorage.setItem('libraryID', '1')
-        localStorage.setItem('login', 'true')
+        localStorage.setItem('login', 'true')*/
         let a = new Date().getTime() + 100000000;
         localStorage.setItem('exp', a.toString())
         this.$refs[formName].validate((valid) => {
