@@ -1,8 +1,7 @@
 <template>
   <div>
     <div>
-<!--      <div style="position: absolute;right: 20px;top:22px" v-if="isSuperAdmin">-->
-      <div style="position: absolute;right: 20px;top:22px">
+      <div style="position: absolute;right: 20px;top:22px" v-if="isSuperAdmin">
         <el-dropdown>
           <el-button type="primary" icon="el-icon-message" circle></el-button>
           <el-dropdown-menu>
