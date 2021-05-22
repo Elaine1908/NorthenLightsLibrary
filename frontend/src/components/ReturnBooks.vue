@@ -66,6 +66,7 @@
             }).then(resp => {
               this.$message.success(resp.data.message)
               this.$refs.returnForm.resetFields()
+              this.$message.success(resp.data.message)
             }).catch(err => {
               this.$message.error(err.response.data.message)
             })
