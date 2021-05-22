@@ -100,11 +100,12 @@
         <el-table-column
                 prop="username"
                 label="用户名"
-                width="180">
+                width="160">
         </el-table-column>
         <el-table-column
                 prop="reason"
-                label="罚款原因">
+                label="罚款原因"
+                width="220">
         </el-table-column>
         <el-table-column
                 prop="money"
@@ -113,6 +114,10 @@
         <el-table-column
                 prop="status"
                 label="是否支付">
+        </el-table-column>
+        <el-table-column
+                label="操作">
+          <el-button>缴纳</el-button>
         </el-table-column>
       </el-table>
     </template>
@@ -128,16 +133,25 @@
         reserveRecordList:[],
         borrowRecordList:[],
         returnRecordList:[],
-        fineRecordList:[]
+        fineRecordList:[{
+          money:5000
+        },{
+          money:9099
+        }]
       }
     },
     created() {
+      for(let i=0;i<this.fineRecordList.length;i++) {
+        this.fineRecordList[i].money = ''+(this.fineRecordList[i].money/100.0).toFixed(2)+'元';
+        this.$message(this.fineRecordList[i].money);
+      }
       this.axios.get('/user/myRecord').then(resp => {
         if (resp.status === 200){
           this.reserveRecordList=resp.data.reserveRecordList;
           this.borrowRecordList=resp.data.borrowRecordList;
           this.returnRecordList=resp.data.returnRecordList;
           this.fineRecordList=resp.data.fineRecordList;
+
         } else {
           this.$message(resp.data.message);
         }
