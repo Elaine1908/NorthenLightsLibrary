@@ -68,7 +68,7 @@
       </el-date-picker>
     </el-form-item>
     <el-form-item label="金额" prop="price">
-      <el-input-number v-model.number="form.price" :precision="2" :step="0.01"></el-input-number>
+      <el-input-number v-model.number="form.price" :precision="2" :step="0.5"></el-input-number>
     </el-form-item>
     <el-form-item label="作者" prop="author">
       <el-input v-model="form.author"></el-input>

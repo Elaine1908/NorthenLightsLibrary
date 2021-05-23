@@ -177,7 +177,6 @@
               this.fineRecordList[i].money = ''+(this.fineRecordList[i].money/100.0).toFixed(2)+'元';
             }
             this.showBack=true;
-            this.$message.success(resp.data.message)
           }
         }).then(err => {
           this.$message.error(err.response.data.message)
@@ -189,11 +188,16 @@
       reminds(){
         this.$axios.post('/superadmin/notify').then(data => {
           for(var i = 0;i<data.data.length;i++) {
-            this.$message.success(data.data[i]);
+            setTimeout(() => {
+              this.$message.success(data.data[i]);
+            }, 100)
+
           }
         }).catch(err => {
           for(var i = 0;i<err.response.data.length;i++){
-            this.$message.error(err.response.data[i])
+            setTimeout(() => {
+              this.$message.error(err.response.data[i])
+            }, 100)
           }
         })
       }

@@ -79,8 +79,8 @@ export default {
             uniqueBookMarkList: isbnList,
             username: this.form.username
           }).then(data => {
-            this.$router.go(0)
-            this.$message.success(data.data.message)
+            this.$message.info(data.data.message)
+            this.$ref.form.resetFields()
           }).catch(err => {
             this.$message.error(err.response.data.message)
           })

@@ -80,7 +80,7 @@
       }
       if (parseInt(localStorage.getItem('exp')) < ((new Date().getTime())/1000)) {
         this.$store.commit('doLogout')
-        this.$router.push('/home/show')
+        this.$router.go(0)
       }
     }
   }

@@ -170,8 +170,8 @@ export default {
               this.$router.push({
                 path: '/login'
               });
+              this.$message.success(data.data.message)
             }
-            console.log(data.data.message)
           }).catch(err => {
             this.$message.error(err.response.data.message)
           })

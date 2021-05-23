@@ -68,7 +68,7 @@
     },
     data() {
       let validateAmount = (rule, value, callback) => {
-        if (value < 1 && value < 10) {
+        if (value < 1 && value > 10) {
           callback(new Error('请输入1-10的数字'))
         } else {
           callback()
@@ -90,7 +90,7 @@
             {
               type: 'number',
               trigger: 'blur',
-              validator:validateAmount
+              validator: validateAmount
               // min: 1,
               // max: 10,
               // message: '最小1，最大10',

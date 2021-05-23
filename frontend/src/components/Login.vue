@@ -121,6 +121,7 @@
                         token: resp.headers.token
                       });
                       this.$router.push({path: '/home'});
+                      this.$message.success('登陆成功')
                     } else {
                       this.$message.error('与所选身份不一致，请重新登陆')
                     }

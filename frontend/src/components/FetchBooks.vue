@@ -134,6 +134,8 @@ export default {
           this.$message.info(data.data.message)
           this.$refs.form.resetFields()
           this.showTable = false
+          this.tableData = []
+          this.multipleSelection = []
         }).catch(err => {
           this.$message.error(err.response.data.message)
         })
