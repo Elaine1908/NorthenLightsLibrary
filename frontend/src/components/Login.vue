@@ -102,7 +102,7 @@
         localStorage.setItem('exp', a.toString())
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            let libraryID = (this.ruleForm.identity === 'student') ? 0 : this.ruleForm.libraryID;
+            let libraryID = (this.ruleForm.identity === 'reader') ? 0 : this.ruleForm.libraryID;
             this.$axios.post('/auth/login', {
               username: this.ruleForm.username,
               password: this.ruleForm.password,
@@ -113,7 +113,7 @@
                     //更新 vuex 的 state的值, 必须通过 mutations 提供的方法才可以
                     // 通过 commit('方法名') 就可以出发 mutations 中的指定方法
                     if ((this.ruleForm.identity === 'reader' &&
-                        (resp.data.message === 'graduate' || resp.data.message === 'postgraduate' ||
+                        (resp.data.message === 'undergraduate' || resp.data.message === 'postgraduate' ||
                             resp.data.message === 'teacher')) ||
                         this.ruleForm.identity === resp.data.message) {
                       this.$store.commit({

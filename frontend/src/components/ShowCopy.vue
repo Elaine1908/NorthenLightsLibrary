@@ -71,9 +71,9 @@
             this.tableData[i].name = resp.data.name
             this.tableData[i].author = resp.data.author
           }
-        } else {
-          this.$message(resp.data.message);
         }
+      }).catch(err => {
+        this.$message.error(err.response.data.message)
       })
     },
     methods: {
