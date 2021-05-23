@@ -123,7 +123,8 @@
         <el-table-column
                 label="操作">
           <template slot-scope="scope">
-            <el-button @click="payFine(scope.row.fineID)">缴纳</el-button>
+            <el-button @click="payFine(scope.row.fineID)" v-if="scope.row.status=='未支付'">缴纳</el-button>
+            <el-button v-if="scope.row.status=='已支付'" disabled>缴纳</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -140,7 +141,11 @@
         reserveRecordList:[],
         borrowRecordList:[],
         returnRecordList:[],
-        fineRecordList:[]
+        fineRecordList:[{
+          status:'已支付'
+        },{
+          status: '未支付'
+        }]
       }
     },
     created() {
