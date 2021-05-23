@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Service("borrowService")
@@ -53,13 +54,13 @@ public class BorrowService {
     /**
      * 管理员给用户借书的service层
      *
-     * @param uniqueBookMark 唯一的图书标识
-     * @param username       用户名
-     * @param adminLibraryID 管理员在哪个图书馆？？
+     * @param uniqueBookMarkList 唯一的图书标识
+     * @param username           用户名
+     * @param adminLibraryID     管理员在哪个图书馆？？
      * @return
      */
     @Transactional(rollbackFor = {Exception.class, RuntimeException.class})
-    public GeneralResponse lendBookToUser(String uniqueBookMark,
+    public GeneralResponse lendBookToUser(List<String> uniqueBookMarkList,
                                           String username,
                                           Long adminLibraryID,
                                           String admin) {
@@ -86,9 +87,54 @@ public class BorrowService {
             throw new RoleNotAllowedException("用户角色错误");
         }
 
+        int successfulCnt = 0;
+        StringBuilder messageBuilder = new StringBuilder();
+
+        //尝试把书一本本借阅给用户
+        for (String uniqueBookMark : uniqueBookMarkList
+        ) {
+            try {
+                //尝试把这本书借给用户
+                this.lendOnlyOneBookToUser(
+                        uniqueBookMark,
+                        adminLibraryID,
+                        libraries,
+                        userOptional.get(),
+                        admin,
+                        userConfigurationOptional
+                );
+
+                //如果能运行到这里，说明借阅成功
+                successfulCnt += 1;
+
+                //添加借阅成功的信息
+                messageBuilder.append(String.format("借阅%s成功;", uniqueBookMark));
+
+            } catch (RuntimeException e) {
+                messageBuilder.append(e.getMessage()).append(";");
+            }
+        }
+
+        //添加最后借阅成功了多少图书
+        messageBuilder.append(String.format("共成功借阅了%d本图书。", successfulCnt));
+
+        //返回结果
+        return new GeneralResponse(messageBuilder.toString());
+
+
+    }
+
+
+    @Transactional(rollbackFor = {Exception.class, RuntimeException.class})
+    public void lendOnlyOneBookToUser(String uniqueBookMark,
+                                      Long adminLibraryID,
+                                      List<Library> libraries,
+                                      User user, String admin,
+                                      Optional<UserConfiguration> userConfigurationOptional) {
+
         //检验书的副本存不存在
         Optional<BookCopy> bookCopyOptional = bookkCopyRepository.getBookCopyByUniqueBookMark(uniqueBookMark);
-        if (!bookCopyOptional.isPresent()) {
+        if (bookCopyOptional.isEmpty()) {
             throw new BookCopyNotFoundException("该图书的副本没有找到！");
         }
 
@@ -97,7 +143,7 @@ public class BorrowService {
             //如果不是，提醒用户去对应的分管借书
             libraries.forEach(library -> {
                 if (library.getLibraryID() == bookCopyOptional.get().getLibraryID()) {
-                    throw new BookCopyNotHereException("这本书不在该管。请去" + library.getLibraryName() + "借书");
+                    throw new BookCopyNotHereException(uniqueBookMark + "不在该馆。请去" + library.getLibraryName() + "借书");
 
                 }
             });
@@ -108,13 +154,14 @@ public class BorrowService {
         }
 
         //检查用户是否借阅了太多书,如果是的话给出提示
-        long currentBorrowCount = borrowRepository.getBorrowCountByUsername(userOptional.get().getUsername());
+        long currentBorrowCount = borrowRepository.getBorrowCountByUsername(user.getUsername());
         if (currentBorrowCount >= userConfigurationOptional.get().getMaxBookBorrow()) {
             throw new BorrowToManyException(
                     String.format("您系统设置您最大可以借阅%d本书，你已经借阅了%d本书，不能再借阅了"
                             , userConfigurationOptional.get().getMaxBookBorrow(), currentBorrowCount)
             );
         }
+
 
         synchronized (BorrowService.class) {
 
@@ -140,7 +187,7 @@ public class BorrowService {
             Date currentDate = new Date();
             Date deadline = new Date(currentDate.getTime() + 1000 * userConfigurationOptional.get().getMaxBorrowTime());
             Borrow newBorrow = new Borrow(
-                    userOptional.get().getUser_id(),
+                    user.getUser_id(),
                     uniqueBookMark,
                     currentDate,
                     deadline
@@ -148,7 +195,7 @@ public class BorrowService {
 
             //得到管理员的ID
             Optional<User> adminOptional = userRepository.findByName(admin);
-            if (!adminOptional.isPresent()) {
+            if (adminOptional.isEmpty()) {
                 throw new UserNotFoundException("找不到管理员" + admin);
             }
             Long adminID = adminOptional.get().getUser_id();
@@ -159,7 +206,7 @@ public class BorrowService {
             bookCopy.setStatus(BookCopy.BORROWED);
             bookCopy.setLastRentDate(currentDate);
             bookCopy.setAdminID(adminID);
-            bookCopy.setBorrower(username);
+            bookCopy.setBorrower(user.getUsername());
             bookCopy.setLibraryID(adminLibraryID);
             //借出的分馆？？
 
@@ -168,16 +215,14 @@ public class BorrowService {
             borrowRepository.save(newBorrow);
 
             //新建借阅记录
-            BorrowRecord borrowRecord = new BorrowRecord(userOptional.get().getUser_id(), currentDate, uniqueBookMark, admin, adminLibraryID);
+            BorrowRecord borrowRecord = new BorrowRecord(user.getUser_id(), currentDate, uniqueBookMark, admin, adminLibraryID);
             borrowRecordRepository.save(borrowRecord);
 
         }
 
-        //返回结果
-        return new GeneralResponse("借阅" + uniqueBookMark + "成功！");
-
 
     }
+
 
     @Transactional(rollbackFor = {Exception.class, RuntimeException.class})
     public GeneralResponse lendReservedBookToUser(String username,
@@ -248,7 +293,7 @@ public class BorrowService {
         //看看预约是否超期
         Date currentDate = new Date();
         Date reservationDeadline = reservationOptional.get().getDeadline();
-        if (reservationDeadline.getTime() < currentDate.getTime()) {
+        if (reservationDeadline != null && reservationDeadline.getTime() < currentDate.getTime()) {
             throw new ReservationDueException(String.format("此预约已与%s到期，不能取书", reservationDeadline.toString()));
         }
 

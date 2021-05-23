@@ -138,7 +138,7 @@ public class AdminController {
 
         //进入业务层
         GeneralResponse generalResponse = borrowService.lendBookToUser(
-                borrowBookRequest.getUniqueBookMark(),
+                borrowBookRequest.getUniqueBookMarkList(),
                 borrowBookRequest.getUsername(),
                 adminLibraryID,
                 admin
