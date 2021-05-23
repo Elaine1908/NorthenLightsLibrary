@@ -42,9 +42,12 @@ public class ReturnNormalBookTransaction extends ReturnBookTransaction {
 
         //得到管理员
         Optional<User> adminOptional = userRepository.findById(adminID);
+        if (adminOptional.isEmpty()) {
+            throw new UserNotFoundException("找不到管理员");
+        }
 
         //创建还书记录对象
-        ReturnRecord returnRecord = new ReturnRecord(borrow.getUserID(),currentDate,bookCopy.getUniqueBookMark(),adminOptional.get().getUsername(),adminLibraryID);
+        ReturnRecord returnRecord = new ReturnRecord(borrow.getUserID(), currentDate, bookCopy.getUniqueBookMark(), adminOptional.get().getUsername(), adminLibraryID);
 
         returnRecordRepository.save(returnRecord);
 
@@ -102,9 +105,11 @@ public class ReturnNormalBookTransaction extends ReturnBookTransaction {
 
         //得到管理员
         Optional<User> adminOptional = userRepository.findById(adminID);
-
+        if (adminOptional.isEmpty()) {
+            throw new UserNotFoundException("找不到管理员");
+        }
         //创建还书记录对象
-        ReturnRecord returnRecord = new ReturnRecord(userOptional.get().getUser_id(),currentDate,bookCopy.getUniqueBookMark(),adminOptional.get().getUsername(),adminLibraryID);
+        ReturnRecord returnRecord = new ReturnRecord(userOptional.get().getUser_id(), currentDate, bookCopy.getUniqueBookMark(), adminOptional.get().getUsername(), adminLibraryID);
 
         returnRecordRepository.save(returnRecord);
 

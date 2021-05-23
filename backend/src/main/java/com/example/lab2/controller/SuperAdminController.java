@@ -18,6 +18,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import java.util.HashMap;

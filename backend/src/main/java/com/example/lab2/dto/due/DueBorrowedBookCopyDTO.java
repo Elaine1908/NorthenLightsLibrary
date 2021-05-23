@@ -48,11 +48,11 @@ public class DueBorrowedBookCopyDTO implements DueDTO {
 
     @Override
     public String getDueMessage() {
-        return String.format("你借阅的图书%s%s已于%s到期，请尽快归还\n", name, uniqueBookMark, deadline.toString());
+        return String.format("你借阅的图书%s%s已于%s到期，请尽快归还%n", name, uniqueBookMark, deadline.toString());
     }
 
     @Override
     public String getHeadMessage() {
-        return String.format("用户%s，你好\n", username);
+        return String.format("用户%s，你好%n", username);
     }
 }

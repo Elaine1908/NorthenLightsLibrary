@@ -608,7 +608,9 @@ public class NormalUserServiceTest {
         userRepository.save(user);
 
         for (int i = 0; i < 40; ++i) {
-            ReserveRecord reserveRecord = new ReserveRecord(user.getUser_id(), new Date(), "u" + i, "admin", 1);
+
+            ReserveRecord reserveRecord = new ReserveRecord(user.getUser_id(), new Date(), "u" + i,"admin",1);
+
             reserveRecordRepository.save(reserveRecord);
         }
 

@@ -2,8 +2,8 @@ package com.example.lab2.utils;
 
 
 public class UserNameAndEmail implements Comparable<UserNameAndEmail> {
-    public String username;
-    public String email;
+    public final String username;
+    public final String email;
 
     public UserNameAndEmail(String username, String email) {
         this.username = username;
