@@ -1,0 +1,27 @@
+{
+  "groups": [
+    {
+      "name": "email",
+      "type": "com.example.lab2.config.EmailConfig",
+      "sourceType": "com.example.lab2.config.EmailConfig"
+    }
+  ],
+  "properties": [
+    {
+      "name": "email.password",
+      "type": "java.lang.String",
+      "sourceType": "com.example.lab2.config.EmailConfig"
+    },
+    {
+      "name": "email.smtp-server",
+      "type": "java.lang.String",
+      "sourceType": "com.example.lab2.config.EmailConfig"
+    },
+    {
+      "name": "email.username",
+      "type": "java.lang.String",
+      "sourceType": "com.example.lab2.config.EmailConfig"
+    }
+  ],
+  "hints": []
+}

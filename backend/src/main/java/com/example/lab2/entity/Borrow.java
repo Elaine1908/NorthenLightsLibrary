@@ -22,10 +22,14 @@ public class Borrow {
     private Long userID;
     private String uniqueBookMark;
     private Date borrowDate;
+    private Date deadline;
 
-    public Borrow(Long userID, String uniqueBookMark, Date borrowDate) {
+
+
+    public Borrow(Long userID, String uniqueBookMark, Date borrowDate, Date deadline) {
         this.userID = userID;
         this.uniqueBookMark = uniqueBookMark;
         this.borrowDate = borrowDate;
+        this.deadline = deadline;
     }
 }

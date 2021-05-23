@@ -3,9 +3,8 @@ package com.example.lab2.controller;
 
 import com.example.lab2.dao.BookTypeRepository;
 import com.example.lab2.dao.LibraryRepository;
-import com.example.lab2.dto.ShowBookCopyDTO;
-import com.example.lab2.entity.BookCopy;
-import com.example.lab2.entity.Reservation;
+import com.example.lab2.dto.bookcopy.ShowBookCopyDTO;
+import com.example.lab2.dto.record.*;
 import com.example.lab2.exception.UploadException;
 import com.example.lab2.request.borrow.BorrowBookRequest;
 import com.example.lab2.request.borrow.BorrowReservedBookRequest;
@@ -19,16 +18,16 @@ import com.example.lab2.service.SearchService;
 import com.example.lab2.service.UploadService;
 import com.example.lab2.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.PushBuilder;
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 
 @RestController
@@ -139,7 +138,7 @@ public class AdminController {
 
         //进入业务层
         GeneralResponse generalResponse = borrowService.lendBookToUser(
-                borrowBookRequest.getUniqueBookMark(),
+                borrowBookRequest.getUniqueBookMarkList(),
                 borrowBookRequest.getUsername(),
                 adminLibraryID,
                 admin
@@ -185,7 +184,7 @@ public class AdminController {
     }
 
     @PostMapping("/receiveBookFromUser")
-    public ResponseEntity<GeneralResponse> receiveBookFromUser(@Valid @RequestBody ReturnBookRequest returnBookRequest, BindingResult bindingResult,
+    public ResponseEntity<List<String>> receiveBookFromUser(@Valid @RequestBody ReturnBookRequest returnBookRequest, BindingResult bindingResult,
                                                                HttpServletRequest httpServletRequest) {
 
         if (bindingResult.hasFieldErrors()) {
@@ -198,9 +197,36 @@ public class AdminController {
         //得到admin的账号
         String admin = JwtUtils.getUserName(token);
 
-        GeneralResponse generalResponse = normalUserService.returnBooks(returnBookRequest.getUniqueBookMarkList(), adminLibraryID, admin);
+        List<String> resList = normalUserService.returnBooks(returnBookRequest.getUniqueBookMarkList(), adminLibraryID, admin);
 
         //把结果返回给前端
-        return ResponseEntity.ok(generalResponse);
+        return ResponseEntity.ok(resList);
+    }
+
+    @GetMapping("/record")
+    public ResponseEntity<HashMap<String,Object>> searchRecordByUsername(@RequestParam("username") String username){
+        List<ReserveRecordDTO> reserveRecordDTOS = normalUserService.getReserveRecord(username);
+        List<BorrowRecordDTO> borrowRecordDTOS = normalUserService.getBorrowRecord(username);
+        List<ReturnRecordDTO> returnRecordDTOS = normalUserService.getReturnRecord(username);
+        List<FineRecordDTO> fineRecordDTOS = normalUserService.getFineRecord(username);
+
+        //加入result
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("reserveRecordList",reserveRecordDTOS);
+        result.put("borrowRecordList",borrowRecordDTOS);
+        result.put("returnRecordList",returnRecordDTOS);
+        result.put("fineRecordList",fineRecordDTOS);
+        return ResponseEntity.ok(result);
+
+    }
+
+    @GetMapping("/recordOfBook")
+    public ResponseEntity<HashMap<String,Object>> getRecordByUniqueBookMark(@Param("isbn") String isbn){
+
+        List<RecordAboutBookCopyDTO> recordAboutBookCopyDTOS = normalUserService.getBookCopyRecord(isbn);
+        //加入result
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("recordList", recordAboutBookCopyDTOS);
+        return ResponseEntity.ok(result);
     }
 }

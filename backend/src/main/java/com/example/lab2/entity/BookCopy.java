@@ -20,6 +20,7 @@ public class BookCopy {
     public static final String BORROWED = "已被借走";
     public static final String RESERVED = "已被预定";
     public static final String DAMAGED = "已损坏";
+    public static final String LOST = "已丢失";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

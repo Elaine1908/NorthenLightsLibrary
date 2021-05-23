@@ -101,7 +101,11 @@ number max_reserve_time(秒)
 
 
 
+<<<<<<< HEAD
 /superadmin/setUserConfiguration post
+=======
+/superadmin/setUserConfiguration post (finished)
+>>>>>>> backend
 
 #### 输入
 
@@ -114,7 +118,17 @@ number max_reserve_time(秒)
 }
 ```
 
+<<<<<<< HEAD
 
+=======
+#### 输出
+
+```
+{
+ "message":"string"
+}
+```
+>>>>>>> backend
 
 # 需求3：预约、借阅超期提醒 
 
@@ -233,8 +247,11 @@ price:"string"(分)
 time
 userid
 uniquebookmark
+<<<<<<< HEAD
 libraryid
 adminid
+=======
+>>>>>>> backend
 type="reserveRecord"
 ```
 
@@ -264,16 +281,28 @@ type="returnRecord"
 
 ```
 userid
+<<<<<<< HEAD
 money
 time
 status:"penging"或"finished"
+=======
+fineid
+money
+time
+status:"未支付"或"已支付"
+reason
+>>>>>>> backend
 ```
 
 ## 新增前端接口
 
 ### 查询用户所有的记录
 
+<<<<<<< HEAD
 /admin/record?username=xxx get
+=======
+/admin/record?username=xxx get (finished)
+>>>>>>> backend
 
 ```
 {
@@ -282,8 +311,11 @@ status:"penging"或"finished"
 			"time":"string",
 			"username":"string",
 			"uniqueBookMark":"string",
+<<<<<<< HEAD
 			"libraryName":"string",
 			"adminName":"string"
+=======
+>>>>>>> backend
 		}
 	],
 	borrowRecordList:[
@@ -308,6 +340,10 @@ status:"penging"或"finished"
 		{
 			"username":"string",
 			"money":"string",
+<<<<<<< HEAD
+=======
+            "reason":"string",
+>>>>>>> backend
 			"time":"string",
 			"status":"string"
 		}
@@ -317,7 +353,11 @@ status:"penging"或"finished"
 
 ### 读者查询自己的历史记录
 
+<<<<<<< HEAD
 /user/myRecord get
+=======
+/user/myRecord get (finished)
+>>>>>>> backend
 
 ```
 {
@@ -325,9 +365,13 @@ status:"penging"或"finished"
 		{
 			"time":"string",
 			"username":"string",
+<<<<<<< HEAD
 			"uniqueBookMark":"string",
 			"libraryName":"string",
 			"adminName":"string"
+=======
+			"uniqueBookMark":"string"
+>>>>>>> backend
 		}
 	],
 	borrowRecordList:[
@@ -352,6 +396,10 @@ status:"penging"或"finished"
 		{
 			"username":"string",
 			"money":"string",
+<<<<<<< HEAD
+=======
+            "reason":"string",
+>>>>>>> backend
 			"time":"string",
 			"status":"string"
 		}
@@ -361,7 +409,11 @@ status:"penging"或"finished"
 
 ### 显示副本的操作记录
 
+<<<<<<< HEAD
 /admin/recordOfBook
+=======
+/admin/recordOfBook?isbn=xxx get
+>>>>>>> backend
 
 ```
 {

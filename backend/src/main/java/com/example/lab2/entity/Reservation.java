@@ -25,9 +25,19 @@ public class Reservation {
 
     private Date reservationDate;
 
+    private Date deadline;
+
+
     public Reservation(Long userID, Long bookCopyID, Date reservationDate) {
         this.userID = userID;
         this.bookCopyID = bookCopyID;
         this.reservationDate = reservationDate;
+    }
+
+    public Reservation(Long userID, Long bookCopyID, Date reservationDate, Date deadline) {
+        this.userID = userID;
+        this.bookCopyID = bookCopyID;
+        this.reservationDate = reservationDate;
+        this.deadline = deadline;
     }
 }

@@ -1,6 +1,6 @@
 package com.example.lab2.service;
 
-import com.example.lab2.dto.BookCopyDTO;
+import com.example.lab2.dto.bookcopy.BookCopyDTO;
 import com.example.lab2.entity.BookCopy;
 import com.example.lab2.entity.BookType;
 import com.example.lab2.entity.Library;
@@ -90,7 +90,8 @@ public class SearchServiceTest {
                 "nametest",
                 "authortest",
                 "descriptiontest",
-                "2000-10-06"
+                "2000-10-06",
+                1000
 
         );
 
@@ -165,7 +166,8 @@ public class SearchServiceTest {
                 "nametest",
                 "authortest",
                 "descriptiontest",
-                "2000-10-06"
+                "2000-10-06",
+                1000
 
         );
 
@@ -175,7 +177,8 @@ public class SearchServiceTest {
                 "nametest",
                 "authortest",
                 "descriptiontest",
-                "2000-10-06"
+                "2000-10-06",
+                1000
 
         );
 
@@ -203,7 +206,8 @@ public class SearchServiceTest {
                 "nametest",
                 "author1",
                 "descriptiontest",
-                "2000-10-06"
+                "2000-10-06",
+                1000
 
         );
 
@@ -213,7 +217,8 @@ public class SearchServiceTest {
                 "nametest2",
                 "author2",
                 "descriptiontest",
-                "2000-10-06"
+                "2000-10-06",
+                1000
 
         );
 
@@ -223,7 +228,8 @@ public class SearchServiceTest {
                 "nametest2",
                 "author1",
                 "descriptiontest",
-                "2000-10-06"
+                "2000-10-06",
+                1000
 
         );
 
@@ -233,7 +239,8 @@ public class SearchServiceTest {
                 "nametest2",
                 "nfvonfv",
                 "descriptiontest",
-                "2000-10-06"
+                "2000-10-06",
+                1000
 
         );
 
@@ -262,7 +269,8 @@ public class SearchServiceTest {
                         i + String.valueOf(j),
                         "authortest",
                         "descriptiontest",
-                        "2000-10-06"
+                        "2000-10-06",
+                        1000
 
                 );
                 uploadService.handleUpload(uploadNewBookRequest);
@@ -290,7 +298,8 @@ public class SearchServiceTest {
                         i + String.valueOf(j),
                         String.valueOf(i),
                         "descriptiontest",
-                        "2000-10-06"
+                        "2000-10-06",
+                        1000
 
                 );
                 uploadService.handleUpload(uploadNewBookRequest);

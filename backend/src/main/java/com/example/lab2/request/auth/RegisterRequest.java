@@ -3,6 +3,7 @@ package com.example.lab2.request.auth;
 
 import com.example.lab2.entity.User;
 import com.example.lab2.exception.auth.RegisterException;
+import com.example.lab2.exception.auth.RoleNotAllowedException;
 import lombok.*;
 
 import javax.validation.Valid;
@@ -30,7 +31,18 @@ public class RegisterRequest {
     @NotNull(message = "确认密码不能为空")
     private String passWordAgain;
 
+    @NotNull(message = "验证码不能为空")
+    private String captcha;
+
+    @NotNull(message = "角色不能为空")
+    private String role;
+
     private static String emailSuffix = "@fudan.edu.cn";
+
+
+    public String getEmail() {
+        return this.username + emailSuffix;
+    }
 
     /**
      * 检查两次密码是否输入一致，密码是否包含了字母，数字，特殊字符的至少两种
@@ -82,8 +94,12 @@ public class RegisterRequest {
      */
     public User createUserObject() {
 
-        //先默认创建为学生，权限的事情以后再说。
-        return new User(username, passWord, username + emailSuffix, "student", 100);
+        if (!User.POSTGRADUATE.equals(role) &&
+                !User.UNDERGRADUATE.equals(role) &&
+                !User.TEACHER.equals(role)) {
+            throw new RoleNotAllowedException("用户的角色不正确，请重试");
+        }
+        return new User(username, passWord, username + emailSuffix, role, 100);
     }
 
 

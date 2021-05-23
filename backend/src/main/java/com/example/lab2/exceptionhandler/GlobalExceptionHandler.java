@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice(assignableTypes = {AdminController.class, InitializeController.class,
-        ReserveController.class, SearchController.class, SuperAdminController.class, UserController.class,NormalUserController.class})
+        ReserveController.class, SearchController.class, SuperAdminController.class, AuthController.class,NormalUserController.class})
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = Exception.class)

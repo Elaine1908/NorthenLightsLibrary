@@ -2,10 +2,10 @@ package com.example.lab2.service;
 
 import com.example.lab2.dao.*;
 import com.example.lab2.dao.UserRepository;
-import com.example.lab2.dto.ReservedBookCopyDTO;
-import com.example.lab2.entity.BookCopy;
-import com.example.lab2.entity.Reservation;
-import com.example.lab2.entity.User;
+import com.example.lab2.dao.record.ReserveRecordRepository;
+import com.example.lab2.dto.bookcopy.ReservedBookCopyDTO;
+import com.example.lab2.entity.*;
+import com.example.lab2.exception.auth.RoleNotAllowedException;
 import com.example.lab2.exception.bookcopy.BookCopyNotAvailableException;
 import com.example.lab2.exception.notfound.BookCopyNotFoundException;
 import com.example.lab2.exception.notfound.UserNotFoundException;
@@ -33,6 +33,11 @@ public class ReserveService {
     @Autowired
     BookCopyRepository bookkCopyRepository;
 
+    @Autowired
+    UserConfigurationRepository userConfigurationRepository;
+
+    @Autowired
+    ReserveRecordRepository reserveRecordRepository;
 
     @Transactional(rollbackFor = {Exception.class, RuntimeException.class})
     public GeneralResponse reserveBook(String uniqueBookMark, String username) {
@@ -50,6 +55,13 @@ public class ReserveService {
             throw new AdminReserveBookException("管理员不能借阅图书");
         }
 
+        //得到当前用户的UserConfiguration,里面包含了最长预约时间
+        Optional<UserConfiguration> userConfiguration = userConfigurationRepository.findUserConfigurationByRole(
+                userReserving.get().getRole());
+        if (userConfiguration.isEmpty()) {
+            throw new RoleNotAllowedException("用户角色错误");
+        }
+
         //在数据库中找找看这个副本
         Optional<BookCopy> desiredBookCopy = bookkCopyRepository.getBookCopyByUniqueBookMark(uniqueBookMark);
 
@@ -61,7 +73,7 @@ public class ReserveService {
         //看看用户已经预约了多少本图书
         long cnt = reservationRepository.getReservationCountByUserID(userReserving.get().getUser_id());
         if (cnt >= 10) {
-            throw new ReserveTooManyException("系统规定一个用户最多能借阅10本图书，你已经借阅了" + cnt + "本");
+            throw new ReserveTooManyException("系统规定一个用户最多能预约10本图书，你已经预约了" + cnt + "本");
         }
 
         //加锁，防止出现两个人抢着预约到了同一本书的情况
@@ -84,11 +96,18 @@ public class ReserveService {
             bc.setLastReservationDate(currentDate);
             bookkCopyRepository.save(bc);
 
+            Date deadLine = new Date(currentDate.getTime() + 1000 * userConfiguration.get().getMaxReserveTime());
+
             //在预约表里插入一个新的预约
             Reservation newReservation = new Reservation(
-                    userReserving.get().getUser_id(), bc.getBookCopyID(), currentDate
+                    userReserving.get().getUser_id(), bc.getBookCopyID(), currentDate, deadLine
             );
             reservationRepository.save(newReservation);
+
+            //在预约记录表中插入新的预约记录
+            ReserveRecord reserveRecord = new ReserveRecord(userReserving.get().getUser_id(),currentDate,bc.getUniqueBookMark(),"admin",1);
+            //其实在预约记录中不需要记录admin和libraryID，但是这里为了后续数据库查找的方便默认将所有的admin和libraryID统一设置成了admin和0
+            reserveRecordRepository.save(reserveRecord);
 
 
         }

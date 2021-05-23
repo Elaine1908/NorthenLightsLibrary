@@ -1,31 +1,26 @@
 package com.example.lab2.service;
 
-import com.example.lab2.dao.BookCopyRepository;
-import com.example.lab2.dao.BorrowRepository;
-import com.example.lab2.dao.LibraryRepository;
-import com.example.lab2.dao.UserRepository;
-import com.example.lab2.dto.BorrowedBookCopyDTO;
-import com.example.lab2.dto.ReservedBookCopyDTO;
+import com.example.lab2.dao.*;
+import com.example.lab2.dao.record.BorrowRecordRepository;
+import com.example.lab2.dao.record.FineRecordRepository;
+import com.example.lab2.dao.record.ReserveRecordRepository;
+import com.example.lab2.dao.record.ReturnRecordRepository;
+import com.example.lab2.dto.bookcopy.BorrowedBookCopyDTO;
+import com.example.lab2.dto.bookcopy.ReservedBookCopyDTO;
+import com.example.lab2.dto.record.*;
 import com.example.lab2.entity.*;
-import com.example.lab2.exception.bookcopy.BookCopyNotAvailableException;
-import com.example.lab2.exception.bookcopy.BookCopyNotHereException;
-import com.example.lab2.exception.borrow.NotBorrowedException;
 import com.example.lab2.exception.notfound.BookCopyNotFoundException;
-import com.example.lab2.exception.notfound.LibraryNotFoundException;
 import com.example.lab2.exception.notfound.UserNotFoundException;
-import com.example.lab2.exception.reserve.NotReservedException;
-import com.example.lab2.exception.reserve.ReservedByOtherException;
-import com.example.lab2.response.GeneralResponse;
+import com.example.lab2.request.borrow.ReturnSingleBookRequest;
 import com.example.lab2.response.UserInfoResponse;
+import com.example.lab2.transaction.returnbook.ReturnBookTransaction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.html.Option;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 @Service("normalUserService")
 public class NormalUserService {
@@ -38,6 +33,18 @@ public class NormalUserService {
     LibraryRepository libraryRepository;
     @Autowired
     BorrowRepository borrowRepository;
+    @Autowired
+    ReserveRecordRepository reserveRecordRepository;
+    @Autowired
+    BorrowRecordRepository borrowRecordRepository;
+    @Autowired
+    ReturnRecordRepository returnRecordRepository;
+
+    @Autowired
+    FineRecordRepository fineRecordRepository;
+
+    @Autowired
+    private AutowireCapableBeanFactory autowireCapableBeanFactory;
 
     public UserInfoResponse userInfo(String username) {
         User user = userRepository.getUserByUsername(username);
@@ -65,84 +72,169 @@ public class NormalUserService {
 
     }
 
-    public GeneralResponse returnBooks(List<String> books, Long adminLibraryID, String admin) {
+    public List<String> returnBooks(List<ReturnSingleBookRequest> books, Long adminLibraryID, String admin) {
 
-        StringBuilder messageBuilder = new StringBuilder();
+        List<String> stringList = new ArrayList<>();
 
         //还书成功的数目
         int successfulCount = 0;
 
-        for (String uniqueBookMark : books) {
+        for (ReturnSingleBookRequest returnSingleBookRequest : books) {
 
             try {
                 //尝试还书
-                this.returnOnlyOneBook(uniqueBookMark, adminLibraryID, admin);
+                String res = this.returnOnlyOneBook(returnSingleBookRequest, adminLibraryID, admin);
 
                 //如果没有抛出异常，说明成功
-                messageBuilder.append(String.format("还书%s成功;", uniqueBookMark));
+                stringList.add(res);
 
                 successfulCount += 1;
 
             } catch (RuntimeException e) {
 
                 //还书失败，提示用户
-                messageBuilder.append(e.getMessage()).append(";");
+                stringList.add(e.getMessage());
 
             }
 
         }
 
-        messageBuilder.append("共成功还掉了").append(successfulCount).append("本图书;");
+        stringList.add(String.format(
+                "共成功还掉了%d本图书", successfulCount
+        ));
 
         //返回结果
-        return new GeneralResponse(messageBuilder.toString());
+        return stringList;
     }
 
+    /**
+     * 只还一本书的接口。
+     *
+     * @param returnSingleBookRequest
+     * @param adminLibraryID
+     * @param admin
+     * @return
+     * @author zhj
+     */
     @Transactional(rollbackFor = {Exception.class, RuntimeException.class})
-    public void returnOnlyOneBook(
-            String uniqueBookMark,
+    public String returnOnlyOneBook(
+            ReturnSingleBookRequest returnSingleBookRequest,
             Long adminLibraryID, String admin) {
 
-        //看看副本存不存在
-        Optional<BookCopy> bookCopyOptional = bookCopyRepository.getBookCopyByUniqueBookMark(uniqueBookMark);
-        if (!bookCopyOptional.isPresent()) {
-            throw new BookCopyNotFoundException(uniqueBookMark + " 的副本没有找到！");
+        //初始化状态到类名的哈希表
+        HashMap<String, String> statusToClassName = new HashMap<>();
+        statusToClassName.put("ok", "com.example.lab2.transaction.returnbook.ReturnNormalBookTransaction");
+        statusToClassName.put("damaged", "com.example.lab2.transaction.returnbook.ReturnDamagedBookTransaction");
+        statusToClassName.put("lost", "com.example.lab2.transaction.returnbook.ReturnLostBookTransaction");
+
+        try {
+            //反射创建对应的transaction
+            Class<?> clz = Class.forName(statusToClassName.get(returnSingleBookRequest.getStatus()));
+            ReturnBookTransaction returnBookTransaction = (ReturnBookTransaction) clz.getConstructor().newInstance();
+
+            //给反射创建的transaction注入bean
+            autowireCapableBeanFactory.autowireBean(returnBookTransaction);
+
+            //尝试还书
+            String res = returnBookTransaction.doReturn(returnSingleBookRequest, admin, adminLibraryID);
+            return res;
+        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e.getMessage());
         }
 
-        //看看这本书是否是借出状态
-        Optional<Borrow> borrowOptional = borrowRepository.getBorrowByUniqueBookMark(uniqueBookMark);
-        if (!bookCopyOptional.get().getStatus().equals(BookCopy.BORROWED) || !borrowOptional.isPresent()) {
-            throw new NotBorrowedException("书本 " + uniqueBookMark + " 当前未被借阅");
-        }
-
-        //看看图书馆存不存在
-        Optional<Library> libraryOptional = libraryRepository.findById(adminLibraryID);
-        if (!libraryOptional.isPresent()) {
-            throw new LibraryNotFoundException("图书馆未找到，请检查参数是否正确");
-        }
-
-        //得到管理员的ID
-        Optional<User> adminOptional = userRepository.findByName(admin);
-        if (!adminOptional.isPresent()) {
-            throw new UserNotFoundException("找不到管理员" + admin);
-        }
-        Long adminID = adminOptional.get().getUser_id();
-
-
-        Date currentDate = new Date();
-        //更改原本bookcopy的status属性
-        BookCopy bookCopy = bookCopyOptional.get();
-        bookCopy.setStatus(BookCopy.AVAILABLE);
-        bookCopy.setLastReturnDate(currentDate);
-        bookCopy.setAdminID(adminID);
-        bookCopy.setLibraryID(adminLibraryID);
-
-        //删除借阅条目
-        borrowRepository.delete(borrowOptional.get());
-        //更新副本状态
-        bookCopyRepository.save(bookCopy);
 
     }
 
 
+    /**
+     * 获取所有的预约记录
+     *
+     * @param username
+     * @return
+     * @author zyw
+     */
+    public List<ReserveRecordDTO> getReserveRecord(String username) {
+        //看看用户存不存在
+        Optional<User> userOptional = userRepository.findByName(username);
+        if (!userOptional.isPresent()) {
+            throw new UserNotFoundException("找不到这个用户！");
+        }
+
+        return reserveRecordRepository.getReserveRecordByUsername(username);
+    }
+
+    /**
+     * 获取所有的借阅记录
+     *
+     * @param username
+     * @return
+     * @author zyw
+     */
+    public List<BorrowRecordDTO> getBorrowRecord(String username) {
+        //看看用户存不存在
+        Optional<User> userOptional = userRepository.findByName(username);
+        if (!userOptional.isPresent()) {
+            throw new UserNotFoundException("找不到这个用户！");
+        }
+        return borrowRecordRepository.getBorrowRecordByUsername(username);
+    }
+
+    /**
+     * 获取所有的还书记录
+     *
+     * @param username
+     * @return
+     * @author zyw
+     */
+    public List<ReturnRecordDTO> getReturnRecord(String username) {
+        //看看用户存不存在
+        Optional<User> userOptional = userRepository.findByName(username);
+        if (!userOptional.isPresent()) {
+            throw new UserNotFoundException("找不到这个用户！");
+        }
+        return returnRecordRepository.getReturnRecordByUsername(username);
+    }
+
+    /**
+     * 获取所有的罚款记录
+     *
+     * @param username
+     * @return
+     * @author zyw
+     */
+    public List<FineRecordDTO> getFineRecord(String username) {
+        //看看用户存不存在
+        Optional<User> userOptional = userRepository.findByName(username);
+        if (!userOptional.isPresent()) {
+            throw new UserNotFoundException("找不到这个用户！");
+        }
+        return fineRecordRepository.getFineRecordByUsername(username);
+    }
+
+
+    public List<RecordAboutBookCopyDTO> getBookCopyRecord(String isbn) {
+        Optional<BookCopy> bookCopyOptional = bookCopyRepository.getBookCopyByUniqueBookMark(isbn);
+        if (bookCopyOptional.isEmpty()) {
+            throw new BookCopyNotFoundException("找不到这个副本！");
+        }
+
+        //分别根据uniqueBookMark得到借阅记录，归还记录和预约记录
+        List<ReserveRecordDTO> reserveRecordDTOList = reserveRecordRepository.getBookCopyReserveRecordByUniqueBookMark(isbn);
+        List<ReturnRecordDTO> returnRecordDTOList = returnRecordRepository.getBookCopyReturnRecordByUniqueBookMark(isbn);
+        List<BorrowRecordDTO> borrowRecordDTOList = borrowRecordRepository.getBookCopyBorrowRecordByUniqueBookMark(isbn);
+
+        //最终的结果list
+        List<RecordAboutBookCopyDTO> resList = new ArrayList<>();
+
+        //将三个list中的内容加入到结果list中去
+        resList.addAll(reserveRecordDTOList);
+        resList.addAll(returnRecordDTOList);
+        resList.addAll(borrowRecordDTOList);
+
+        //按时间排序
+        resList.sort(Comparator.comparing(RecordAboutBookCopyDTO::getTime));
+
+        //返回结果
+        return resList;
+    }
 }

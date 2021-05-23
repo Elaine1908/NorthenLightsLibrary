@@ -1,7 +1,7 @@
 package com.example.lab2.response;
 
-import com.example.lab2.dto.BorrowedBookCopyDTO;
-import com.example.lab2.dto.ReservedBookCopyDTO;
+import com.example.lab2.dto.bookcopy.BorrowedBookCopyDTO;
+import com.example.lab2.dto.bookcopy.ReservedBookCopyDTO;
 import lombok.Getter;
 import lombok.Setter;
 

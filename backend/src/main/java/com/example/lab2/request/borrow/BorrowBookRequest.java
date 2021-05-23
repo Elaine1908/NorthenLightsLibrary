@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * 用户借书的请求
@@ -21,8 +22,7 @@ public class BorrowBookRequest {
     @NotNull(message = "用户名不能为空")
     private String username;
 
-    @NotNull(message = "借书的标识不能为空")
-    private String uniqueBookMark;
+    private List<String> uniqueBookMarkList;
 
 
 }

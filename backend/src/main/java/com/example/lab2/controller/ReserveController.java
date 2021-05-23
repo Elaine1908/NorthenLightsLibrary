@@ -1,7 +1,7 @@
 package com.example.lab2.controller;
 
 
-import com.example.lab2.dto.ReservedBookCopyDTO;
+import com.example.lab2.dto.bookcopy.ReservedBookCopyDTO;
 import com.example.lab2.request.reserve.ReserveRequest;
 import com.example.lab2.response.GeneralResponse;
 import com.example.lab2.service.ReserveService;
