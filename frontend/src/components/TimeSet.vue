@@ -11,7 +11,7 @@
             </template>
             <template v-else>
               <el-form-item :prop="'datas.'+scope.$index + '.max_book_borrow'" :rules='rules.max_book_borrow'>
-                <el-input size="mini" v-model.number="scope.row.max_book_borrow" style="width: 80px;" ></el-input>
+                <input class="timeInput" style="width:60px" size="mini" v-model.number="scope.row.max_book_borrow"></input>
               </el-form-item>
             </template>
           </template>
@@ -89,35 +89,11 @@
           },
             {
               type: 'number',
-              validator: validateAmount,
               trigger: 'blur',
-              //message: '最小1，最大10',
-            }],
-          day: [{
-            type: 'number',
-            required: true,
-            trigger: 'blur',
-            message: '请输入天数',
-          },
-            {
-              type: 'number',
+              min: 1,
+              max: 10,
               trigger: 'blur',
-              min: 0,
-              max: 60,
-              message: '最小0，最大60',
-            }],
-          hour: [{
-            type: 'number',
-            required: true,
-            trigger: 'blur',
-            message: '请输入小时数',
-          },
-            {
-              type: 'number',
-              trigger: 'blur',
-              min: 0,
-              max: 23,
-              message: '最小0，最大23',
+              message: '最小1，最大10',
             }]
         }
       }
@@ -176,14 +152,14 @@
         item.action = "view";
         this.$axios.post('/superadmin/setUserConfiguration', {
           role: item.role,
-          max_book_borrow:item.max_book_borrow,
-          max_borrow_time: {
+          maxBookBorrow:item.max_book_borrow,
+          maxBorrowTime: {
             day:item.max_borrow_time.day,
             hour:item.max_borrow_time.hour,
             min:item.max_borrow_time.min,
             sec:item.max_borrow_time.sec,
           },
-          max_reserve_time:{
+          maxReserveTime:{
             day:item.max_reserve_time.day,
             hour:item.max_reserve_time.hour,
             min:item.max_reserve_time.min,
@@ -207,10 +183,6 @@
       //编辑操作
       click_edit(item,index) {
         item.action = "edit";
-      },
-
-      changx(){
-        this.$forceUpdate();
       }
     }
   }

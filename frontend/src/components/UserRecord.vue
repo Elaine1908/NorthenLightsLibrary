@@ -117,7 +117,7 @@
         </el-table-column>
         <el-table-column
                 label="操作">
-          <el-button>缴纳</el-button>
+          <el-button @click="payFine">缴纳</el-button>
         </el-table-column>
       </el-table>
     </template>
@@ -143,7 +143,6 @@
     created() {
       for(let i=0;i<this.fineRecordList.length;i++) {
         this.fineRecordList[i].money = ''+(this.fineRecordList[i].money/100.0).toFixed(2)+'元';
-        this.$message(this.fineRecordList[i].money);
       }
       this.axios.get('/user/myRecord').then(resp => {
         if (resp.status === 200){
@@ -158,6 +157,20 @@
       }).catch(err => {
         this.$message.error(err.response.data.message)
       })
+    },
+    methods:{
+      payFine(item){
+        this.$axios.post('/user/payfine', {
+          fineID: item.username
+        }).then(data => {
+          if(data.status==200) {
+            //模拟删除一条数据
+            this.$message.success('支付成功');
+          }
+        }).catch(err => {
+          this.$message.error(err.response.data.message)
+        })
+      }
     }
   }
 </script>

@@ -8,7 +8,7 @@
         <el-menu-item index="/login" v-else>登录</el-menu-item>
         <el-menu-item index="/register" v-if="!isLogin">注册</el-menu-item>
         <el-menu-item index="/modifyPassword" v-if="isLogin">修改密码</el-menu-item>
-        <el-menu-item index="/home/user" v-if="isStudent">个人信息</el-menu-item>
+        <el-menu-item index="/home/user">个人信息</el-menu-item>
       </el-submenu>
       <el-menu-item index="/home/admin" v-if="isAdmin">
         管理员
