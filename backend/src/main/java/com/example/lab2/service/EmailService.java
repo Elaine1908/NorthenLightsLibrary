@@ -100,7 +100,6 @@ public class EmailService {
 
         //显示给前端的信息
         List<String> messageList = new ArrayList<>();
-
         //为每个用户发邮件
         for (Map.Entry<UserNameAndEmail, StringBuilder> entry : usernameEmailToMessage.entrySet()) {
             UserNameAndEmail userNameAndEmail = entry.getKey();
@@ -108,6 +107,9 @@ public class EmailService {
             String title = "图书馆的提醒";
             emailUtils.sendEmail(to, title, entry.getValue().toString());
             messageList.add(String.format("向用户%s发邮件成功", userNameAndEmail.username));
+        }
+        if (messageList.size() == 0) {
+            messageList.add("没有可以提醒的用户");
         }
 
         return messageList;

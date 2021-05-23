@@ -135,7 +135,7 @@ public class BorrowService {
         //检验书的副本存不存在
         Optional<BookCopy> bookCopyOptional = bookkCopyRepository.getBookCopyByUniqueBookMark(uniqueBookMark);
         if (bookCopyOptional.isEmpty()) {
-            throw new BookCopyNotFoundException("该图书的副本没有找到！");
+            throw new BookCopyNotFoundException(uniqueBookMark+"的副本没有找到！");
         }
 
         //看看这本书是不是在当前管理员所在的分管？
@@ -168,18 +168,18 @@ public class BorrowService {
             //看看这本书有没有被预约？
             Optional<Reservation> reservationOptional = reservationRepository.getReservationByBookCopyID(bookCopyOptional.get().getBookCopyID());
             if (reservationOptional.isPresent()) {
-                throw new BookCopyReservedException("这本书已经被别人预约了");
+                throw new BookCopyReservedException(uniqueBookMark + "已经被别人预约了");
             }
 
             //看看这本书有没有被借走
             Optional<Borrow> borrowOptional = borrowRepository.getBorrowByUniqueBookMark(uniqueBookMark);
             if (borrowOptional.isPresent()) {
-                throw new BookCopyIsBorrowedException("这本书已经被别人借走了");
+                throw new BookCopyIsBorrowedException(uniqueBookMark + "已经被别人借走了");
             }
 
             //看看这本书是否在架上
             if (!bookCopyOptional.get().getStatus().equals(BookCopy.AVAILABLE)) {
-                throw new BookCopyNotAvailableException("这本书的状态是" + bookCopyOptional.get().getStatus());
+                throw new BookCopyNotAvailableException(uniqueBookMark + "的状态是" + bookCopyOptional.get().getStatus());
             }
 
             //如果能运行到这里，说明一切条件都满足了！

@@ -14,7 +14,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class FineRecordDTO {
 
-    private long fineID;
+    private Long fineID;
 
     private Date time;
 
@@ -24,7 +24,7 @@ public class FineRecordDTO {
 
     private String status;
 
-    private long money;
+    private Long money;
 
     public FineRecordDTO(Date time, String reason, String username, String status, long money) {
         this.money = money;
@@ -34,7 +34,7 @@ public class FineRecordDTO {
         this.username = username;
     }
 
-    public FineRecordDTO(long fineID, Date time, String reason, String username, String status, long money) {
+    public FineRecordDTO(Long fineID, Date time, String reason, String username, String status, Long money) {
         this.fineID = fineID;
         this.time = time;
         this.reason = reason;
