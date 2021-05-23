@@ -5,11 +5,11 @@
         <el-dropdown>
           <el-button type="primary" icon="el-icon-message" circle></el-button>
           <el-dropdown-menu>
-            <el-dropdown-item @click.native="reminds()">一键提醒</el-dropdown-item>
+            <el-dropdown-item @click.native="reminds">一键提醒</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </div>
-      <div class="search_bar" style="margin-top: 80px" v-if="showBack">
+      <div class="search_bar" style="margin-top: 80px" v-if="!showBack">
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
           <el-form-item>
             <el-input style="width: 300px" v-model="formInline.username" placeholder="用户名"></el-input>
@@ -20,7 +20,7 @@
         </el-form>
       </div>
     </div>
-    <div class="show" v-if="!showBack">
+    <div class="show" v-if="showBack">
       <div style="margin-top: 30px;margin-bottom: 30px">
         <div style="position: absolute">
           <el-page-header @back="backToSearch"></el-page-header>
@@ -154,7 +154,7 @@
         formInline: {
           username:''
         },
-        showBack:true,
+        showBack:false,
         reserveRecordList:[],
         borrowRecordList:[],
         returnRecordList:[],
@@ -163,11 +163,8 @@
     },
     methods:{
       search() {
-        this.axios.get('/admin/record',
-            {
-              params:{
+        this.axios.get('/admin/record', {
                 username:this.formInline.username,
-              }
             }).then(resp => {
           if (resp.status === 200) {
             this.reserveRecordList = resp.data.reserveRecordList;
@@ -186,8 +183,8 @@
       },
       reminds(){
         this.$axios.post('/superadmin/notify').then(data => {
-          for(var i = 0;i<data.data.message.length;i++){
-            this.$message.success(data.data.message[i]);
+          for(var i = 0;i<data.data.length;i++) {
+            this.$message(data.data[i]);
           }
         }).catch(err => {
           for(var i = 0;i<err.response.data.message.length;i++){
