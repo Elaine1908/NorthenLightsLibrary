@@ -1,18 +1,19 @@
 <template>
   <div>
     <el-form
-            :model="form"
-            :rules="rules"
-            ref="form">
+            :model="adminForm"
+            :rules="adminForm"
+            ref="adminForm"
+            class="adminForm">
       <el-table
-              :data="form.datas"
+              :data="adminForm.datas"
               highlight-current-row
               style="width: 100%">
         <el-table-column
                 prop="username"
                 label="用户名">
           <template slot-scope="scope">
-            <template v-if="scope.row.action == 'view'">
+            <template v-if="scope.row.action === 'view'">
               {{scope.row.username}}
             </template>
             <template v-else>
@@ -32,7 +33,7 @@
                 prop="email"
                 label="Email">
           <template slot-scope="scope">
-            <template v-if="scope.row.action == 'view'">
+            <template v-if="scope.row.action === 'view'">
               {{scope.row.email}}
             </template>
             <template v-else>
@@ -50,10 +51,10 @@
 
         <el-table-column prop="operation" label="操作">
           <template slot-scope="scope">
-            <template v-if="scope.row.action == 'view'">
-              <el-button size="mini" @click="click_delete(scope.row, scope.$index)" v-if="scope.row.role!='superadmin'">删除</el-button>
+            <template v-if="scope.row.action === 'view'">
+              <el-button size="mini" @click="click_delete(scope.row, scope.$index)" v-if="scope.row.role!=='superadmin'">删除</el-button>
             </template>
-            <template v-else-if="scope.row.action == 'add'">
+            <template v-else-if="scope.row.action === 'add'">
               <el-button size="mini" @click="click_add( scope.row, scope.$index)">新增</el-button>
               <el-button size="mini" @click="click_reset(scope.row, scope.$index)">重置</el-button>
             </template>
@@ -79,7 +80,7 @@
         }
       }
       return {
-        form: {
+        adminForm: {
           datas: []
         },
 
@@ -104,14 +105,14 @@
       //显示已有管理员列表
       this.axios.get('/superadmin/showAdmin').then(resp => {
         if (resp.status === 200) {
-          this.form.datas = resp.data.admin;
+          this.adminForm.datas = resp.data.admin;
           //处理数据，为已有数据添加action:'view'
-          this.form.datas.map(item => {
+          this.adminForm.datas.map(item => {
             this.$set(item,"action","view")
             return item;
           });
           //在开头增加一条添加数据的行
-          this.form.datas.unshift({
+          this.adminForm.datas.unshift({
             username:undefined,
             email:undefined,
             action: "add"
@@ -171,7 +172,7 @@
 
       //新增-重置操作
       click_reset(item,index) {
-        this.resetField('form',index);
+        this.resetField('adminForm',index);
       },
 
       //删除操作
@@ -186,7 +187,7 @@
               }).then(data => {
                 if(data.status==200) {
                   //模拟删除一条数据
-                  this.form.datas.splice(index,1);
+                  this.adminForm.datas.splice(index,1);
                   this.$message.success('删除成功');
                 }
               }).catch(err => {

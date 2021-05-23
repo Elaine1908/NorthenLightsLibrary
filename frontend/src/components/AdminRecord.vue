@@ -177,9 +177,10 @@
               this.fineRecordList[i].money = ''+(this.fineRecordList[i].money/100.0).toFixed(2)+'元';
             }
             this.showBack=true;
+            this.$message.success("查询成功");
           }
-        }).then(err => {
-          this.$message.error(err.response.data.message)
+        }).catch(err => {
+          this.$message.error("该用户不存在")
         })
       },
       backToSearch(){
@@ -192,7 +193,6 @@
             setTimeout(() => {
               this.$message.success(a);
             }, 100)
-
           }
         }).catch(err => {
           for(var i = 0;i<err.response.data.length;i++){
