@@ -177,6 +177,7 @@
               this.fineRecordList[i].money = ''+(this.fineRecordList[i].money/100.0).toFixed(2)+'元';
             }
             this.showBack=true;
+            this.$message.success(resp.data.message);
           }
         }).then(err => {
           this.$message.error(err.response.data.message)
