@@ -188,15 +188,17 @@
       reminds(){
         this.$axios.post('/superadmin/notify').then(data => {
           for(var i = 0;i<data.data.length;i++) {
+            let a = data.data[i]
             setTimeout(() => {
-              this.$message.success(data.data[i]);
+              this.$message.success(a);
             }, 100)
 
           }
         }).catch(err => {
           for(var i = 0;i<err.response.data.length;i++){
+            let a = err.response.data[i]
             setTimeout(() => {
-              this.$message.error(err.response.data[i])
+              this.$message.error(a)
             }, 100)
           }
         })
