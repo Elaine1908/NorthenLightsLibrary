@@ -164,7 +164,9 @@
     methods:{
       search() {
         this.axios.get('/admin/record', {
-                username:this.formInline.username,
+          params: {
+            username: this.formInline.username
+          }
             }).then(resp => {
           if (resp.status === 200) {
             this.reserveRecordList = resp.data.reserveRecordList;
