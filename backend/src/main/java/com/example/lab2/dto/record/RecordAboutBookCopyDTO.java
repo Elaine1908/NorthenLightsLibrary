@@ -18,17 +18,17 @@ public abstract class RecordAboutBookCopyDTO implements Comparable<RecordAboutBo
     protected Date time;
     protected String uniqueBookMark;
     protected String username;
-    protected String admin;
-    protected String library;
+    protected String adminName;
+    protected String libraryName;
     protected String type;
 
     public RecordAboutBookCopyDTO() {
     }
 
-    public RecordAboutBookCopyDTO(Date time, String uniqueBookMark, String username, String admin, String library, String type) {
+    public RecordAboutBookCopyDTO(Date time, String uniqueBookMark, String username, String admin, String libraryName, String type) {
         this.time = time;
-        this.admin = admin;
-        this.library = library;
+        this.adminName = admin;
+        this.libraryName = libraryName;
         this.uniqueBookMark = uniqueBookMark;
         this.type = type;
         this.username = username;
