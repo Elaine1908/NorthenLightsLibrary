@@ -90,10 +90,10 @@
             {
               type: 'number',
               trigger: 'blur',
-              min: 1,
-              max: 10,
-              trigger: 'blur',
-              message: '最小1，最大10',
+              validator:validateAmount
+              // min: 1,
+              // max: 10,
+              // message: '最小1，最大10',
             }]
         }
       }

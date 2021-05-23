@@ -93,6 +93,11 @@
               border
               style="width: 100%">
         <el-table-column
+                prop="fineID"
+                label="罚款ID"
+                width="80">
+        </el-table-column>
+        <el-table-column
                 prop="time"
                 label="日期"
                 width="180">
@@ -117,7 +122,9 @@
         </el-table-column>
         <el-table-column
                 label="操作">
-          <el-button @click="payFine">缴纳</el-button>
+          <template slot-scope="scope">
+            <el-button @click="payFine(scope.row.fineID)">缴纳</el-button>
+          </template>
         </el-table-column>
       </el-table>
     </template>
@@ -134,9 +141,11 @@
         borrowRecordList:[],
         returnRecordList:[],
         fineRecordList:[{
-          money:5000
+          money:5000,
+          fineID:7
         },{
-          money:9099
+          money:9099,
+          fineID: 3
         }]
       }
     },
@@ -160,11 +169,11 @@
     },
     methods:{
       payFine(item){
+        console.log(item);
         this.$axios.post('/user/payfine', {
-          fineID: item.username
+          fineID: item
         }).then(data => {
           if(data.status==200) {
-            //模拟删除一条数据
             this.$message.success('支付成功');
           }
         }).catch(err => {
