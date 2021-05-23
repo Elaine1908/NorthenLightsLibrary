@@ -13,6 +13,7 @@ import com.example.lab2.exception.borrow.BorrowToManyException;
 import com.example.lab2.exception.notfound.BookCopyNotFoundException;
 import com.example.lab2.exception.notfound.LibraryNotFoundException;
 import com.example.lab2.exception.notfound.UserNotFoundException;
+import com.example.lab2.exception.notfound.UserTypeNotFoundException;
 import com.example.lab2.exception.reserve.NotReservedException;
 import com.example.lab2.exception.reserve.ReservationDueException;
 import com.example.lab2.exception.reserve.ReservedByOtherException;
@@ -135,7 +136,7 @@ public class BorrowService {
         //检验书的副本存不存在
         Optional<BookCopy> bookCopyOptional = bookkCopyRepository.getBookCopyByUniqueBookMark(uniqueBookMark);
         if (bookCopyOptional.isEmpty()) {
-            throw new BookCopyNotFoundException(uniqueBookMark+"的副本没有找到！");
+            throw new BookCopyNotFoundException(uniqueBookMark + "的副本没有找到！");
         }
 
         //看看这本书是不是在当前管理员所在的分管？
@@ -151,6 +152,10 @@ public class BorrowService {
             //这本书的libraryid在图书馆列表里找不到？
             throw new LibraryNotFoundException("系统错误，找不到这个图书馆");
 
+        }
+
+        if (userConfigurationOptional.isEmpty()) {
+            throw new UserTypeNotFoundException("用户角色错误");
         }
 
         //检查用户是否借阅了太多书,如果是的话给出提示

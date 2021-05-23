@@ -30,11 +30,11 @@ public class DueFineDTO implements DueDTO {
 
     @Override
     public String getDueMessage() {
-        return String.format("你由于%s遭受的罚款%.2f元还未支付，请尽快支付\n", reason, money / 100.0);
+        return String.format("你由于%s遭受的罚款%.2f元还未支付，请尽快支付%n", reason, money / 100.0);
     }
 
     @Override
     public String getHeadMessage() {
-        return String.format("用户%s，你好\n", username);
+        return String.format("用户%s，你好%n", username);
     }
 }

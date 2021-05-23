@@ -66,8 +66,12 @@ public class ReturnDamagedBookTransaction extends ReturnBookTransaction {
         //得到管理员
         Optional<User> adminOptional = userRepository.findById(adminID);
 
+        if (adminOptional.isEmpty()) {
+            throw new UserNotFoundException("找不到管理员");
+        }
+
         //创建还书记录对象
-        ReturnRecord returnRecord = new ReturnRecord(userOptional.get().getUser_id(),currentDate,bookCopy.getUniqueBookMark(),adminOptional.get().getUsername(),adminLibraryID);
+        ReturnRecord returnRecord = new ReturnRecord(userOptional.get().getUser_id(), currentDate, bookCopy.getUniqueBookMark(), adminOptional.get().getUsername(), adminLibraryID);
         returnRecordRepository.save(returnRecord);
 
         return String.format("还书%s%s成功，由于书本损坏，%s被罚款%.2f元",
