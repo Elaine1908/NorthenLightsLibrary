@@ -67,6 +67,9 @@
           placeholder="选择日期">
       </el-date-picker>
     </el-form-item>
+    <el-form-item label="金额" prop="price">
+      <el-input-number v-model.number="form.price" :precision="2" :step="0.5"></el-input-number>
+    </el-form-item>
     <el-form-item label="作者" prop="author">
       <el-input v-model="form.author"></el-input>
     </el-form-item>
@@ -123,6 +126,13 @@ export default {
         callback()
       }
     }
+    let validatePrice = (rule, value, callback) => {
+      if (value <= 0) {
+        callback(new Error('价格必须大于0'))
+      } else {
+        callback()
+      }
+    }
     return {
       dialogImageUrl: '',
       dialogVisible: false,
@@ -138,6 +148,7 @@ export default {
         isbn: '',
         publishDate: '',
         author: '',
+        price: '',
         description: ''
       },
       rules: {
@@ -158,6 +169,9 @@ export default {
         ],
         description: [
           {required: true, message: '请填写简介', trigger: 'blur'}
+        ],
+        price: [
+          {validator: validatePrice, required: true, trigger: 'change', type: 'number'}
         ]
       }
     };
@@ -197,12 +211,15 @@ export default {
       this.$refs.form.validate(valid => {
         if (valid) {
           let fd = new FormData();
+          let prc = this.form.price
+          prc *= 100
           fd.append('bookcoverimage', this.fileList[0].raw);
           fd.append('name', this.form.name);
           fd.append('author', this.form.author);
           fd.append('description', this.form.description);
           fd.append('isbn', this.form.isbn);
           fd.append('publicationDate', this.form.publishDate);
+          fd.append('price', prc)
           request({
             url: '/admin/uploadNewBook',
             method: 'post',

@@ -1,5 +1,10 @@
 module.exports = {
-  devServer: {
-    port: 8080,   // 端口号
+  chainWebpack: config => {
+    config
+        .plugin('html')
+        .tap(args => {
+          args[0].title = "Northern Lights Library";
+          return args;
+        })
   }
-};
+}

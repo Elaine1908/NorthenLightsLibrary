@@ -51,9 +51,12 @@
         activeIndex: '',
         isLogin: localStorage.getItem('login'),
         username: localStorage.getItem('login') ? localStorage.getItem('username') : '未登录',
-        isAdmin: localStorage.getItem('login')
-            && (localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'superadmin'),
-        isStudent:localStorage.getItem('login') && (localStorage.getItem('role') === 'student'),
+        isAdmin: localStorage.getItem('login') &&
+            (localStorage.getItem('role') === 'admin' || localStorage.getItem('role') === 'superadmin'),
+        isStudent:localStorage.getItem('login') &&
+            (localStorage.getItem('role') === 'undergraduate' ||
+                localStorage.getItem('role') === 'teacher' ||
+                localStorage.getItem('role') === 'postgraduate'),
         identity: localStorage.getItem('login') ? (localStorage.getItem('role') + ': ') : '',
         library: lib
       };
@@ -77,7 +80,7 @@
       }
       if (parseInt(localStorage.getItem('exp')) < ((new Date().getTime())/1000)) {
         this.$store.commit('doLogout')
-        this.$router.push('/home/show')
+        this.$router.go(0)
       }
     }
   }

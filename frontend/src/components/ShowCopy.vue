@@ -40,8 +40,11 @@
               width="120">
         <template slot-scope="scope">{{ scope.row.borrower }}</template>
       </el-table-column>
-      <el-table-column>
-        <el-button slot-scope="scope" class="button" @click="reserve(scope.row.uniqueBookMark)" v-if="roleShow=='student'">预约</el-button>
+      <el-table-column label="操作">
+        <template slot-scope="scope">
+          <el-button class="button" @click="reserve(scope.row.uniqueBookMark)" v-if="roleShow ==='undergraduate' || roleShow === 'postgraduate' || roleShow === 'teacher'">预约</el-button>
+          <el-button class="button" @click="read(scope.row.uniqueBookMark)" v-if="roleShow ==='admin' || roleShow ==='superadmin'">查看记录</el-button>
+        </template>
       </el-table-column>
     </el-table>
   </div>
@@ -53,7 +56,7 @@
     data() {
       return {
         tableData: [],
-        roleShow:localStorage.getItem('role')
+        roleShow: localStorage.getItem('role')
       }
     },
     created() {
@@ -68,9 +71,9 @@
             this.tableData[i].name = resp.data.name
             this.tableData[i].author = resp.data.author
           }
-        } else {
-          this.$message(resp.data.message);
         }
+      }).catch(err => {
+        this.$message.error(err.response.data.message)
       })
     },
     methods: {
@@ -82,6 +85,9 @@
         }).catch(err => {
           this.$message.error(err.response.data.message)
         })
+      },
+      read(uniqueBookMark){
+        this.$router.push({path: '/home/copyRecord', query: {isbn: uniqueBookMark}});
       }
     },
     mounted() {

@@ -7,12 +7,16 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "chokidar": "^3.5.1",
     "core-js": "^3.6.5",
     "element-ui": "^2.4.5",
     "jsonwebtoken": "^8.5.1",
     "mockjs": "^1.1.0",
+    "moment": "^2.29.1",
     "vue": "^2.6.11",
+    "vue-datepicker": "^1.3.0",
     "vue-router": "^3.2.0",
+    "vue2-timepicker": "^1.1.6",
     "vuex": "^3.4.0"
   },
   "devDependencies": {

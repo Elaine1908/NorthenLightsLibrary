@@ -2,9 +2,9 @@
   <el-row>
     <el-col class="menu">
       <el-menu
-          :default-active="$route.path"
-          :router="true"
-          class="el-menu-vertical-demo">
+              :default-active="$route.path"
+              :router="true"
+              class="el-menu-vertical-demo">
         <el-menu-item index="/home/admin/returnBooks">
           <i class="el-icon-s-promotion"></i>
           <span slot="title">现场还书</span>
@@ -25,6 +25,14 @@
           <i class="el-icon-notebook-1"></i>
           <span slot="title">添加副本</span>
         </el-menu-item>
+        <el-menu-item index="/home/admin/adminRecord">
+          <i class="el-icon-search"></i>
+          <span slot="title">操作查询</span>
+        </el-menu-item>
+        <el-menu-item index="/home/admin/timeSet" v-if="isSuperAdmin">
+          <i class="el-icon-time"></i>
+          <span slot="title">设置时长</span>
+        </el-menu-item>
         <el-menu-item index="/home/admin/addAdmin" v-if="isSuperAdmin">
           <i class="el-icon-s-custom"></i>
           <span slot="title">新管理员</span>
@@ -38,30 +46,30 @@
 </template>
 
 <script>
-export default {
-  name: "Admin",
-  data() {
-    return {
-      isSuperAdmin: localStorage.getItem('role') === 'superadmin'
+  export default {
+    name: "Admin",
+    data() {
+      return {
+        isSuperAdmin: localStorage.getItem('role') === 'superadmin'
+      }
     }
   }
-}
 </script>
 
 <style>
-.menu {
-  width: 12%;
-  float: left;
-}
-.content {
-  float: right;
-  width: 85%;
-}
-.router-link-active {
-  color: deepskyblue;
-}
-.admin-link {
-  text-decoration: none;
-  color: inherit;
-}
+  .menu {
+    width: 12%;
+    float: left;
+  }
+  .content {
+    float: right;
+    width: 85%;
+  }
+  .router-link-active {
+    color: deepskyblue;
+  }
+  .admin-link {
+    text-decoration: none;
+    color: inherit;
+  }
 </style>

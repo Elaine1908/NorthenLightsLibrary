@@ -52,6 +52,10 @@
             label="借书时间"
             prop="borrowDate">
     </el-table-column>
+    <el-table-column
+            label="到期时间"
+            prop="deadline">
+    </el-table-column>
   </el-table>
 </template>
 
@@ -67,9 +71,9 @@
       this.axios.get('/user/userinfo').then(resp => {
         if (resp.status === 200){
           this.tableData=resp.data.borrowedBooks;
-        } else {
-          this.$message.error(resp.data.message);
         }
+      }).catch(err => {
+        this.$message.error(err.response.data.message);
       })
     }
   }

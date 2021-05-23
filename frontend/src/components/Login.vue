@@ -32,7 +32,7 @@
           <el-radio-group v-model="ruleForm.identity">
             <el-radio label="admin">普通管理员</el-radio>
             <el-radio label="superadmin">超级管理员</el-radio>
-            <el-radio label="student">普通读者</el-radio>
+            <el-radio label="reader">普通读者</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item v-if="this.ruleForm.identity === 'admin' || this.ruleForm.identity === 'superadmin'" label="所在分馆" prop="libraryID">
@@ -94,9 +94,15 @@
     },
     methods: {
       submitForm(formName) {
+        /*localStorage.setItem('username', 'admin')
+        localStorage.setItem('role', 'superadmin')
+        localStorage.setItem('libraryID', '1')
+        localStorage.setItem('login', 'true')*/
+        let a = new Date().getTime() + 100000000;
+        localStorage.setItem('exp', a.toString())
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            let libraryID = (this.ruleForm.identity === 'student') ? 0 : this.ruleForm.libraryID;
+            let libraryID = (this.ruleForm.identity === 'reader') ? 0 : this.ruleForm.libraryID;
             this.$axios.post('/auth/login', {
               username: this.ruleForm.username,
               password: this.ruleForm.password,
@@ -106,19 +112,18 @@
                   if (resp.status === 200 && resp.headers.hasOwnProperty('token')) {
                     //更新 vuex 的 state的值, 必须通过 mutations 提供的方法才可以
                     // 通过 commit('方法名') 就可以出发 mutations 中的指定方法
-                    if (resp.data.message !== this.ruleForm.identity) {
-                      this.$message.error('所选身份与实际身份不一致，请重新登陆')
-                    }
-                    else {
+                    if ((this.ruleForm.identity === 'reader' &&
+                        (resp.data.message === 'undergraduate' || resp.data.message === 'postgraduate' ||
+                            resp.data.message === 'teacher')) ||
+                        this.ruleForm.identity === resp.data.message) {
                       this.$store.commit({
                         type: 'doLogin',
-                        token: resp.headers.token,
-                        username: this.ruleForm.username,
-                        identity: resp.data.message,
-                        campusID: libraryID,
-                        loginIdentity: this.ruleForm.identity
+                        token: resp.headers.token
                       });
                       this.$router.push({path: '/home'});
+                      this.$message.success('登陆成功')
+                    } else {
+                      this.$message.error('与所选身份不一致，请重新登陆')
                     }
                   }
                   else{

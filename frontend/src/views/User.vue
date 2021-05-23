@@ -14,8 +14,12 @@
           <span slot="title">已借书籍</span>
         </el-menu-item>
         <el-menu-item index="/home/user/userReserved">
-          <i class="el-icon-document"></i>
+          <i class="el-icon-document-checked"></i>
           <span slot="title">预约书籍</span>
+        </el-menu-item>
+        <el-menu-item index="/home/user/userRecord">
+          <i class="el-icon-document-copy"></i>
+          <span slot="title">操作记录</span>
         </el-menu-item>
       </el-menu>
     </el-col>
