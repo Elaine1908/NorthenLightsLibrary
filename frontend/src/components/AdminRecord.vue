@@ -189,11 +189,11 @@
       reminds(){
         this.$axios.post('/superadmin/notify').then(data => {
           for(var i = 0;i<data.data.length;i++) {
-            this.$message(data.data[i]);
+            this.$message.success(data.data[i]);
           }
         }).catch(err => {
-          for(var i = 0;i<err.response.data.message.length;i++){
-            this.$message.error(err.response.data.message[i])
+          for(var i = 0;i<err.response.data.length;i++){
+            this.$message.error(err.response.data[i])
           }
         })
       }
