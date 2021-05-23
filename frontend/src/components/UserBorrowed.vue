@@ -52,6 +52,10 @@
             label="借书时间"
             prop="borrowDate">
     </el-table-column>
+    <el-table-column
+            label="到期时间"
+            prop="deadline">
+    </el-table-column>
   </el-table>
 </template>
 

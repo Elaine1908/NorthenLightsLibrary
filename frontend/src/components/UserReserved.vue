@@ -63,6 +63,10 @@
             label="预约时间"
             prop="reservationDate">
     </el-table-column>
+    <el-table-column
+            label="到期时间"
+            prop="deadline">
+    </el-table-column>
   </el-table>
 </template>
 

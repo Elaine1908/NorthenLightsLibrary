@@ -140,26 +140,19 @@
         reserveRecordList:[],
         borrowRecordList:[],
         returnRecordList:[],
-        fineRecordList:[{
-          money:5000,
-          fineID:7
-        },{
-          money:9099,
-          fineID: 3
-        }]
+        fineRecordList:[]
       }
     },
     created() {
-      for(let i=0;i<this.fineRecordList.length;i++) {
-        this.fineRecordList[i].money = ''+(this.fineRecordList[i].money/100.0).toFixed(2)+'元';
-      }
       this.axios.get('/user/myRecord').then(resp => {
         if (resp.status === 200){
           this.reserveRecordList=resp.data.reserveRecordList;
           this.borrowRecordList=resp.data.borrowRecordList;
           this.returnRecordList=resp.data.returnRecordList;
           this.fineRecordList=resp.data.fineRecordList;
-
+          for(let i=0;i<this.fineRecordList.length;i++) {
+            this.fineRecordList[i].money = ''+(this.fineRecordList[i].money/100.0).toFixed(2)+'元';
+          }
         } else {
           this.$message(resp.data.message);
         }
@@ -169,7 +162,6 @@
     },
     methods:{
       payFine(item){
-        console.log(item);
         this.$axios.post('/user/payfine', {
           fineID: item
         }).then(data => {
