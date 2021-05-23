@@ -13,6 +13,9 @@ import java.util.Date;
 @Setter
 @NoArgsConstructor
 public class FineRecordDTO {
+
+    private long fineID;
+
     private Date time;
 
     private String reason;
@@ -23,11 +26,20 @@ public class FineRecordDTO {
 
     private long money;
 
-    public FineRecordDTO(Date time,String reason,String username,String status,long money){
-        this.money=money;
-        this.reason=reason;
-        this.status=status;
-        this.time=time;
-        this.username=username;
+    public FineRecordDTO(Date time, String reason, String username, String status, long money) {
+        this.money = money;
+        this.reason = reason;
+        this.status = status;
+        this.time = time;
+        this.username = username;
+    }
+
+    public FineRecordDTO(long fineID, Date time, String reason, String username, String status, long money) {
+        this.fineID = fineID;
+        this.time = time;
+        this.reason = reason;
+        this.username = username;
+        this.status = status;
+        this.money = money;
     }
 }
