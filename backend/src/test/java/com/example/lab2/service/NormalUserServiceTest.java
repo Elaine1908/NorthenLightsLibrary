@@ -608,7 +608,11 @@ public class NormalUserServiceTest {
         userRepository.save(user);
 
         for (int i = 0; i < 40; ++i) {
+<<<<<<< Updated upstream
             ReserveRecord reserveRecord = new ReserveRecord(user.getUser_id(), new Date(), "u" + i, "admin", 1);
+=======
+            ReserveRecord reserveRecord = new ReserveRecord(user.getUser_id(), new Date(), "u" + i,"admin",1);
+>>>>>>> Stashed changes
             reserveRecordRepository.save(reserveRecord);
         }
 
