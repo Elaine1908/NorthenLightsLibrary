@@ -180,7 +180,7 @@
             this.$message.success(resp.data.message);
           }
         }).then(err => {
-          this.$message.error(err.response.data.message)
+          this.$message.error(err.data.message)
         })
       },
       backToSearch(){
