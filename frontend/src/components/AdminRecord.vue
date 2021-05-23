@@ -173,6 +173,9 @@
             this.borrowRecordList=resp.data.borrowRecordList;
             this.returnRecordList=resp.data.returnRecordList;
             this.fineRecordList=resp.data.fineRecordList;
+            for(let i=0;i<this.fineRecordList.length;i++) {
+              this.fineRecordList[i].money = ''+(this.fineRecordList[i].money/100.0).toFixed(2)+'元';
+            }
             this.showBack=true;
             this.$message.success(resp.data.message)
           }
