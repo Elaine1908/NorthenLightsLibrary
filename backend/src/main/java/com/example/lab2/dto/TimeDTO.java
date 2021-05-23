@@ -15,9 +15,9 @@ public class TimeDTO {
     private long min;
     private long sec;
 
-    public final static long DAY_SECS = 24 * 60 * 60;
-    public final static long HOUR_SECS = 60 * 60;
-    public final static long MIN_SECS = 60;
+    public final static long DAY_SECS = (long) 24 * 60 * 60;
+    public final static long HOUR_SECS = (long) 60 * 60;
+    public final static long MIN_SECS = (long) 60;
 
     public TimeDTO(long secs) {
 
