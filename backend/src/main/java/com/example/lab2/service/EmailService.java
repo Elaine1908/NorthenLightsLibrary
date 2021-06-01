@@ -5,10 +5,7 @@ import com.example.lab2.dto.due.DueBorrowedBookCopyDTO;
 import com.example.lab2.dto.due.DueDTO;
 import com.example.lab2.dto.due.DueFineDTO;
 import com.example.lab2.dto.due.DueReservedBookCopyDTO;
-import com.example.lab2.entity.Borrow;
-import com.example.lab2.entity.Fine;
-import com.example.lab2.entity.Reservation;
-import com.example.lab2.entity.User;
+import com.example.lab2.entity.*;
 import com.example.lab2.exception.auth.NotifyException;
 import com.example.lab2.exception.notfound.UserNotFoundException;
 import com.example.lab2.utils.EmailUtils;
@@ -141,6 +138,15 @@ public class EmailService {
 
             //取消预约
             reservationRepository.deleteById(dueReservedBookCopyDTO.getReservationID());
+
+            //把书本的状态设置为可用
+            Optional<BookCopy> bookCopyOptional = bookCopyRepository.getBookCopyByUniqueBookMark(
+                    dueReservedBookCopyDTO.getUniqueBookMark()
+            );
+            if (bookCopyOptional.isPresent()) {
+                bookCopyOptional.get().setStatus(BookCopy.AVAILABLE);
+                bookCopyRepository.save(bookCopyOptional.get());
+            }
 
         });
 
