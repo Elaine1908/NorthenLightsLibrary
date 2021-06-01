@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 public abstract class ReturnBookTransaction {
@@ -90,6 +91,35 @@ public abstract class ReturnBookTransaction {
             return overTime(bookCopyOptional.get(), borrowOptional.get(), adminID, adminLibraryID, currentDate);
         }
 
+    }
+
+
+    protected void generateFineAndFineRecord(long fineAmount, User user, BookType bookType, BookCopy bookCopy, Date currentDate) {
+        String reason = String.format("借阅%s%s超期罚款",
+                bookType.getName(), bookCopy.getUniqueBookMark());
+
+        String randomUUID = UUID.randomUUID().toString();
+
+        //创建罚款对象
+        Fine fine = new Fine(fineAmount, user.getUser_id(), reason, currentDate, randomUUID);
+        fineRepository.save(fine);
+
+        //创建罚款记录对象
+        FineRecord fineRecord = new FineRecord(user.getUser_id(), currentDate, fineAmount, FineRecord.UNPAID, reason, randomUUID);
+        fineRecordRepository.save(fineRecord);
+    }
+
+
+    protected void generateReturnBookRecord(long adminID, long adminLibraryID, User user, BookCopy bookCopy, Date currentDate) {
+        //得到管理员
+        Optional<User> adminOptional = userRepository.findById(adminID);
+        if (adminOptional.isEmpty()) {
+            throw new UserNotFoundException("找不到管理员");
+        }
+        //创建还书记录对象
+        ReturnRecord returnRecord = new ReturnRecord(user.getUser_id(), currentDate, bookCopy.getUniqueBookMark(), adminOptional.get().getUsername(), adminLibraryID);
+
+        returnRecordRepository.save(returnRecord);
     }
 
 }

@@ -90,28 +90,21 @@ public class ReturnNormalBookTransaction extends ReturnBookTransaction {
 
         //书本超期，要生成罚款
         long fineAmount = bookTypeOptional.get().getPrice() / 4;
-        String reason = String.format("借阅%s%s超期罚款",
-                bookTypeOptional.get().getName(), bookCopy.getUniqueBookMark());
 
-        String randomUUID = UUID.randomUUID().toString();
+        //生成罚款记录
+        this.generateFineAndFineRecord(fineAmount,
+                userOptional.orElse(null),
+                bookTypeOptional.orElse(null),
+                bookCopy,
+                currentDate);
 
-        //创建罚款对象
-        Fine fine = new Fine(fineAmount, userOptional.get().getUser_id(), reason, currentDate, randomUUID);
-        fineRepository.save(fine);
+        //生成还书记录
+        this.generateReturnBookRecord(adminID,
+                adminLibraryID,
+                userOptional.orElse(null),
+                bookCopy,
+                currentDate);
 
-        //创建罚款记录对象
-        FineRecord fineRecord = new FineRecord(userOptional.get().getUser_id(), currentDate, fineAmount, FineRecord.UNPAID, reason, randomUUID);
-        fineRecordRepository.save(fineRecord);
-
-        //得到管理员
-        Optional<User> adminOptional = userRepository.findById(adminID);
-        if (adminOptional.isEmpty()) {
-            throw new UserNotFoundException("找不到管理员");
-        }
-        //创建还书记录对象
-        ReturnRecord returnRecord = new ReturnRecord(userOptional.get().getUser_id(), currentDate, bookCopy.getUniqueBookMark(), adminOptional.get().getUsername(), adminLibraryID);
-
-        returnRecordRepository.save(returnRecord);
 
         return String.format("还书%s%s成功，由于借阅超期，%s被罚款%.2f元",
                 bookTypeOptional.get().getName(), bookCopy.getUniqueBookMark(), userOptional.get().getUsername(), fineAmount / 100.00);
