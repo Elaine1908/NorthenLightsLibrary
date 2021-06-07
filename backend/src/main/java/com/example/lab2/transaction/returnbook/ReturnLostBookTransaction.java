@@ -68,9 +68,15 @@ public class ReturnLostBookTransaction extends ReturnBookTransaction {
                 bookCopy,
                 currentDate);
 
+        //降低用户的信用40分
+        this.userCreditListener.decreaseUserCredit(
+                userOptional.orElse(null).getUsername(),
+                String.format("损坏图书%s%s，信用降低%d", bookTypeOptional.orElse(null).getName(), bookCopy.getUniqueBookMark(), CREDIT_LOSS_LOST),
+                CREDIT_LOSS_LOST
+        );
 
-        return String.format("还书%s%s成功，由于书本丢失，%s被罚款%.2f元",
-                bookTypeOptional.get().getName(), bookCopy.getUniqueBookMark(), userOptional.get().getUsername(), fineAmount / 100.00);
+        return String.format("还书%s%s成功，由于书本丢失，%s被罚款%.2f元。此外，他的信用还降低了%d",
+                bookTypeOptional.get().getName(), bookCopy.getUniqueBookMark(), userOptional.get().getUsername(), fineAmount / 100.00, CREDIT_LOSS_LOST);
     }
 
 

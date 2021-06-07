@@ -8,6 +8,7 @@ import com.example.lab2.dto.due.DueReservedBookCopyDTO;
 import com.example.lab2.entity.*;
 import com.example.lab2.exception.auth.NotifyException;
 import com.example.lab2.exception.notfound.UserNotFoundException;
+import com.example.lab2.listener.UserCreditListener;
 import com.example.lab2.utils.EmailUtils;
 import com.example.lab2.utils.UserNameAndEmail;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,9 @@ public class EmailService {
 
     @Autowired
     BookTypeRepository bookTypeRepository;
+
+    @Autowired
+    UserCreditListener userCreditListener;
 
     /**
      * 用户注册时，给用户的邮箱发送验证码的业务
@@ -129,6 +133,13 @@ public class EmailService {
             //创建用户名和email的对象
             UserNameAndEmail userNameAndEmail = new UserNameAndEmail(
                     dueReservedBookCopyDTO.getUsername(), dueReservedBookCopyDTO.getEmail());
+
+            //降低信用
+            userCreditListener.decreaseUserCredit(
+                    userNameAndEmail.username,
+                    String.format("预约图书%s%s超期，降低信用10分", dueReservedBookCopyDTO.getName(), dueReservedBookCopyDTO.getUniqueBookMark()),
+                    10
+            );
 
             //把这本预约过期的图书加入到map中
             if (!userToDueDTO.containsKey(userNameAndEmail)) {

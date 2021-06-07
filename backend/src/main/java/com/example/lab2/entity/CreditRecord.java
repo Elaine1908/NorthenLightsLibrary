@@ -27,4 +27,10 @@ public class CreditRecord {
 
     private Date time;
 
+    public CreditRecord(long userID, long amount, String description, Date time) {
+        this.userID = userID;
+        this.amount = amount;
+        this.description = description;
+        this.time = time;
+    }
 }

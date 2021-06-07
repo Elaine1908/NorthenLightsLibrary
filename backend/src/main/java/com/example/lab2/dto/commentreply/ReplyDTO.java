@@ -20,11 +20,14 @@ public class ReplyDTO {
 
     private boolean deletedByAdmin;
 
-    public ReplyDTO(long replyID, String username, String content, Date time, boolean deletedByAdmin) {
+    private String repliedUsername;
+
+    public ReplyDTO(long replyID, String username, String content, Date time, boolean deletedByAdmin, String repliedUsername) {
         this.replyID = replyID;
         this.username = username;
         this.content = content;
         this.time = time;
         this.deletedByAdmin = deletedByAdmin;
+        this.repliedUsername = repliedUsername;
     }
 }

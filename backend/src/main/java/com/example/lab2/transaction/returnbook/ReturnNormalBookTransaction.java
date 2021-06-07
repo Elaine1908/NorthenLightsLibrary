@@ -105,9 +105,15 @@ public class ReturnNormalBookTransaction extends ReturnBookTransaction {
                 bookCopy,
                 currentDate);
 
+        //降低用户的信用
+        this.userCreditListener.decreaseUserCredit(
+                userOptional.orElse(null).getUsername(),
+                String.format("借阅图书%s%s超期，信用降低%d分", bookTypeOptional.orElse(null).getName(), bookCopy.getUniqueBookMark(), CREDIT_LOSS_OVERTIME),
+                CREDIT_LOSS_OVERTIME
+        );
 
-        return String.format("还书%s%s成功，由于借阅超期，%s被罚款%.2f元",
-                bookTypeOptional.get().getName(), bookCopy.getUniqueBookMark(), userOptional.get().getUsername(), fineAmount / 100.00);
+        return String.format("还书%s%s成功，由于借阅超期，%s被罚款%.2f元。此外，他的信用还降低了%d",
+                bookTypeOptional.get().getName(), bookCopy.getUniqueBookMark(), userOptional.get().getUsername(), fineAmount / 100.00, CREDIT_LOSS_OVERTIME);
 
     }
 

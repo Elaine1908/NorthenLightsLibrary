@@ -8,10 +8,12 @@ import com.example.lab2.exception.borrow.NotBorrowedException;
 import com.example.lab2.exception.notfound.BookCopyNotFoundException;
 import com.example.lab2.exception.notfound.LibraryNotFoundException;
 import com.example.lab2.exception.notfound.UserNotFoundException;
+import com.example.lab2.listener.UserCreditListener;
 import com.example.lab2.request.borrow.ReturnSingleBookRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.swing.plaf.PanelUI;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
@@ -42,6 +44,14 @@ public abstract class ReturnBookTransaction {
 
     @Autowired
     protected ReturnRecordRepository returnRecordRepository;
+
+    @Autowired
+    UserCreditListener userCreditListener;
+
+    //逾期还书信用降低20，书本损坏信用降低30，书本丢失信用降低40
+    public final static int CREDIT_LOSS_OVERTIME = 20;
+    public final static int CREDIT_LOSS_DAMAGE = 30;
+    public final static int CREDIT_LOSS_LOST = 40;
 
 
     public abstract String inTime(BookCopy bookCopy, Borrow borrow, Long adminID, Long adminLibraryID, Date currentDate);

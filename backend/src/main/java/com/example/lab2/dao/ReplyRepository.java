@@ -13,8 +13,8 @@ import java.util.List;
 @Repository
 public interface ReplyRepository extends JpaRepository<Reply, Long> {
 
-    @Query("select new com.example.lab2.dto.commentreply.ReplyDTO(rp.replyID,ur.username,rp.content,rp.time,rp.deletedByAdmin)" +
-            "from Reply rp left join User ur on ur.user_id=rp.userID where rp.commentID=:commentID")
+    @Query("select new com.example.lab2.dto.commentreply.ReplyDTO(rp.replyID,ur.username,rp.content,rp.time,rp.deletedByAdmin,repliedUr.username)" +
+            "from Reply rp left join User ur on ur.user_id=rp.userID left join User repliedUr on repliedUr.user_id=rp.repliedUserID where rp.commentID=:commentID")
     public List<ReplyDTO> getRepliesByCommentID(@Param("commentID") long commentID);
 
 }
