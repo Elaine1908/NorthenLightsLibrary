@@ -12,6 +12,11 @@ import java.util.Date;
 @NoArgsConstructor
 @Entity
 public class ReturnRecord {
+
+    private static String OK = "ok";
+    private static String DAMAGED = "damaged";
+    private static String LOST = "lost";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long returnRecordID;
@@ -27,11 +32,13 @@ public class ReturnRecord {
 
     private String admin;
 
-    public ReturnRecord(long userID,Date time,String uniqueBookMark,String admin,long libraryID){
+    private String status;
+
+    public ReturnRecord(long userID, Date time, String uniqueBookMark, String admin, long libraryID) {
         this.admin = admin;
-        this.userID=userID;
-        this.libraryID=libraryID;
-        this.time=time;
-        this.uniqueBookMark=uniqueBookMark;
+        this.userID = userID;
+        this.libraryID = libraryID;
+        this.time = time;
+        this.uniqueBookMark = uniqueBookMark;
     }
 }
