@@ -35,9 +35,9 @@ public class Comment {
 
     private boolean deletedByAdmin;
 
-    private int rate;
+    private long rate;
 
-    public Comment(long userID, String isbn, String content, Date time, boolean deletedBySelf, boolean deletedByAdmin, int rate) {
+    public Comment(long userID, String isbn, String content, Date time, boolean deletedBySelf, boolean deletedByAdmin, long rate) {
         this.userID = userID;
         this.isbn = isbn;
         this.content = content;

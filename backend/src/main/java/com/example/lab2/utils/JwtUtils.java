@@ -80,4 +80,21 @@ public class JwtUtils {
     }
 
 
+    /**
+     * 根据jwttoken，解析用户是否是管理员，还是普通的用户
+     *
+     * @param token 前端传来的token
+     * @return 用户是否是管理员
+     */
+    public static boolean getIsAdmin(String token) {
+        try {
+            Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+            String role = claims.get("role", String.class);
+            return role.equals(User.ADMIN) || role.equals(User.SUPERADMIN);
+        } catch (IllegalArgumentException | SignatureException | ExpiredJwtException e) {
+            return false;
+        }
+    }
+
+
 }
