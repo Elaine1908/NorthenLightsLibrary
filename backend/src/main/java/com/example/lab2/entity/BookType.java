@@ -48,6 +48,9 @@ public class BookType implements Comparable<BookType> {
     @Column
     private long price;
 
+    @Transient
+    private double averageRate;
+
 
     /**
      * 将hashcode设置成isbn的hashcode
@@ -83,5 +86,9 @@ public class BookType implements Comparable<BookType> {
     @Override
     public int compareTo(BookType bookType) {
         return (int) (this.bookID - bookType.bookID);
+    }
+
+    public void injectAverageRate(double averageRate) {
+        this.averageRate = averageRate;
     }
 }

@@ -6,6 +6,7 @@ import com.example.lab2.dao.LibraryRepository;
 import com.example.lab2.dto.bookcopy.BookCopyDTO;
 import com.example.lab2.dto.bookcopy.ShowBookCopyDTO;
 import com.example.lab2.entity.BookType;
+import com.example.lab2.entity.Comment;
 import com.example.lab2.entity.Library;
 import com.example.lab2.exception.notfound.BookCopyNotFoundException;
 import com.example.lab2.exception.notfound.BookTypeNotFoundException;
@@ -29,6 +30,9 @@ public class SearchService {
 
     @Autowired
     private BookTypeRepository bookTypeRepository;
+
+    @Autowired
+    private CommentRepository commentRepository;
 
     /**
      * 根据isbn，读取书的信息和每个副本的信息，每个分管有几本
@@ -103,13 +107,29 @@ public class SearchService {
             set.retainAll(bookNameList);
         }
 
+        //把书的列表注入平均分
+        set.forEach(bookType -> {
+            //从数据库查平均分
+            double averageRate = commentRepository.getAverageRateByISBN(bookType.getIsbn());
+            bookType.injectAverageRate(averageRate);
+        });
+
         //再转回list
-        return set.stream().collect(Collectors.toList());
+        return new ArrayList<>(set);
     }
 
 
     public List<BookType> getAllBookType() {
-        return bookTypeRepository.findAll();
+        //得到所有BookType的列表
+        List<BookType> bookTypeList = bookTypeRepository.findAll();
+
+        //注入平均分
+        bookTypeList.forEach(bookType -> {
+            double averageRate = commentRepository.getAverageRateByISBN(bookType.getIsbn());
+            bookType.injectAverageRate(averageRate);
+        });
+
+        return bookTypeList;
     }
 
     /**
