@@ -1,10 +1,7 @@
 package com.example.lab2.service;
 
 import com.example.lab2.dao.*;
-import com.example.lab2.dao.record.BorrowRecordRepository;
-import com.example.lab2.dao.record.FineRecordRepository;
-import com.example.lab2.dao.record.ReserveRecordRepository;
-import com.example.lab2.dao.record.ReturnRecordRepository;
+import com.example.lab2.dao.record.*;
 import com.example.lab2.dto.bookcopy.BorrowedBookCopyDTO;
 import com.example.lab2.dto.bookcopy.ReservedBookCopyDTO;
 import com.example.lab2.dto.record.*;
@@ -42,6 +39,9 @@ public class NormalUserService {
 
     @Autowired
     FineRecordRepository fineRecordRepository;
+
+    @Autowired
+    CreditRecordRepository creditRecordRepository;
 
     @Autowired
     private AutowireCapableBeanFactory autowireCapableBeanFactory;
@@ -237,4 +237,16 @@ public class NormalUserService {
         //返回结果
         return resList;
     }
+
+    /**
+     * 根据用户名，获得所有的信用记录的过程
+     * @param username 用户名
+     * @return 信用记录的列表
+     */
+    public List<CreditRecordDTO> getCreditRecordListByUsername(String username) {
+        List<CreditRecordDTO> res = creditRecordRepository.getCreditRecordByUsername(username);
+        return res;
+    }
+
+
 }

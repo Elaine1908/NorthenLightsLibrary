@@ -1,9 +1,6 @@
 package com.example.lab2.controller;
 
-import com.example.lab2.dto.record.BorrowRecordDTO;
-import com.example.lab2.dto.record.FineRecordDTO;
-import com.example.lab2.dto.record.ReserveRecordDTO;
-import com.example.lab2.dto.record.ReturnRecordDTO;
+import com.example.lab2.dto.record.*;
 import com.example.lab2.entity.Fine;
 import com.example.lab2.request.fine.PayFineRequest;
 import com.example.lab2.response.GeneralResponse;
@@ -60,10 +57,11 @@ public class NormalUserController {
 
     /**
      * 用户查看自己所有的历史记录
+     *
      * @author zyw
      */
     @GetMapping("/myRecord")
-    public ResponseEntity<HashMap<String,Object>> getMyRecord(HttpServletRequest httpServletRequest){
+    public ResponseEntity<HashMap<String, Object>> getMyRecord(HttpServletRequest httpServletRequest) {
         //在header中获得token，再从token中解析出用户名
         String token = httpServletRequest.getHeader("token");
         String username = JwtUtils.getUserName(token);
@@ -74,15 +72,16 @@ public class NormalUserController {
 
         //加入result
         HashMap<String, Object> result = new HashMap<>();
-        result.put("reserveRecordList",reserveRecordDTOS);
-        result.put("borrowRecordList",borrowRecordDTOS);
-        result.put("returnRecordList",returnRecordDTOS);
-        result.put("fineRecordList",fineRecordDTOS);
+        result.put("reserveRecordList", reserveRecordDTOS);
+        result.put("borrowRecordList", borrowRecordDTOS);
+        result.put("returnRecordList", returnRecordDTOS);
+        result.put("fineRecordList", fineRecordDTOS);
 
 
         return ResponseEntity.ok(result);
 
     }
+
     /**
      * 用户交罚款的接口
      *
@@ -98,6 +97,33 @@ public class NormalUserController {
         GeneralResponse generalResponse = fineService.payfine(username, payFineRequest.getFineID());
 
         return ResponseEntity.ok(generalResponse);
+
+    }
+
+    /**
+     * 前端调用这个接口，获得用户所有的和信誉有关的记录
+     *
+     * @param httpServletRequest
+     * @return
+     */
+    @GetMapping("/myCreditRecord")
+    public ResponseEntity<HashMap<String, Object>> myCreditRecord(HttpServletRequest httpServletRequest) {
+
+        //根据token得到用户名
+        String token = httpServletRequest.getHeader("token");
+        String username = JwtUtils.getUserName(token);
+
+        //进入业务层
+        List<CreditRecordDTO> creditRecordDTOList = normalUserService.getCreditRecordListByUsername(username);
+
+        //存储结果的哈希表
+        HashMap<String, Object> res = new HashMap<>();
+
+        //存储结果
+        res.put("myCreditRecordList", creditRecordDTOList);
+
+        //返回给前端
+        return ResponseEntity.ok(res);
 
     }
 

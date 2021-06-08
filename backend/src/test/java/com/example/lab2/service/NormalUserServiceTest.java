@@ -2,12 +2,10 @@ package com.example.lab2.service;
 
 import com.example.lab2.dao.*;
 import com.example.lab2.dao.record.BorrowRecordRepository;
+import com.example.lab2.dao.record.CreditRecordRepository;
 import com.example.lab2.dao.record.ReserveRecordRepository;
 import com.example.lab2.dao.record.ReturnRecordRepository;
-import com.example.lab2.dto.record.RecordAboutBookCopyDTO;
-import com.example.lab2.dto.record.BorrowRecordDTO;
-import com.example.lab2.dto.record.ReserveRecordDTO;
-import com.example.lab2.dto.record.ReturnRecordDTO;
+import com.example.lab2.dto.record.*;
 import com.example.lab2.entity.*;
 import com.example.lab2.exception.borrow.NotBorrowedException;
 import com.example.lab2.exception.notfound.BookCopyNotFoundException;
@@ -68,6 +66,9 @@ public class NormalUserServiceTest {
 
     @Autowired
     ReturnRecordRepository returnRecordRepository;
+
+    @Autowired
+    CreditRecordRepository creditRecordRepository;
 
     @Test
     @Transactional
@@ -501,7 +502,7 @@ public class NormalUserServiceTest {
 
     @Transactional
     @Test
-    public void testReturnOnlyOneBook_Damaged() throws Exception{
+    public void testReturnOnlyOneBook_Damaged() throws Exception {
         BookCopy bookCopy = new BookCopy(
                 BookCopy.BORROWED,
                 "isbn",
@@ -673,7 +674,7 @@ public class NormalUserServiceTest {
 
         for (int i = 0; i < 40; ++i) {
 
-            ReserveRecord reserveRecord = new ReserveRecord(user.getUser_id(), new Date(), "u" + i,"admin",1);
+            ReserveRecord reserveRecord = new ReserveRecord(user.getUser_id(), new Date(), "u" + i, "admin", 1);
 
             reserveRecordRepository.save(reserveRecord);
         }
@@ -790,6 +791,36 @@ public class NormalUserServiceTest {
         assertEquals(hashMap.get(ReserveRecordDTO.class).intValue(), reserveRecordAmount);
         assertEquals(hashMap.get(ReturnRecordDTO.class).intValue(), returnRecordAmount);
 
+
+    }
+
+    @Test
+    @Transactional
+    public void testGetCreditRecordListByUsername() {
+
+        User user = new User(
+                "newUser",
+                "password",
+                "zhj@email.com",
+                User.UNDERGRADUATE,
+                User.MAX_CREDIT
+        );
+        userRepository.save(user);
+
+        for (int i = 0; i < 10; i++) {
+            CreditRecord cr = new CreditRecord(user.getUser_id(), 10, "test", new Date());
+            creditRecordRepository.save(cr);
+        }
+
+        List<CreditRecordDTO> creditRecordDTOList = normalUserService.getCreditRecordListByUsername("newUser");
+
+        assertEquals(creditRecordDTOList.size(), 10);
+
+        creditRecordDTOList.forEach(creditRecordDTO -> {
+            assertEquals(creditRecordDTO.getDescription(), "test");
+            assertEquals(creditRecordDTO.getAmount(), 10);
+
+        });
 
     }
 
