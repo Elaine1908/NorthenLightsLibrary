@@ -9,6 +9,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
@@ -32,5 +33,9 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
         double sum = commentDTOList.stream().mapToDouble(commentDTO -> (double) commentDTO.getRate()).sum();
         return sum / commentDTOList.size();
     }
+
+    @Query("select c from Comment c where c.userID=:userID")
+    public Optional<Comment> getCommentByUserID(@Param("userID") long userID);
+
 
 }

@@ -6,9 +6,15 @@ import com.example.lab2.dto.bookcopy.BorrowedBookCopyDTO;
 import com.example.lab2.dto.bookcopy.ReservedBookCopyDTO;
 import com.example.lab2.dto.record.*;
 import com.example.lab2.entity.*;
+import com.example.lab2.exception.comment.CommentAlreadyExistException;
+import com.example.lab2.exception.comment.NoReturnRecordException;
+import com.example.lab2.exception.comment.RateOutOfRangeException;
+import com.example.lab2.exception.comment.ReturnRecordNotOkException;
 import com.example.lab2.exception.notfound.BookCopyNotFoundException;
+import com.example.lab2.exception.notfound.BookTypeNotFoundException;
 import com.example.lab2.exception.notfound.UserNotFoundException;
 import com.example.lab2.request.borrow.ReturnSingleBookRequest;
+import com.example.lab2.response.GeneralResponse;
 import com.example.lab2.response.UserInfoResponse;
 import com.example.lab2.transaction.returnbook.ReturnBookTransaction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +32,10 @@ public class NormalUserService {
     private UserRepository userRepository;
     @Autowired
     private BookCopyRepository bookCopyRepository;
+    @Autowired
+    BookTypeRepository bookTypeRepository;
+    @Autowired
+    CommentRepository commentRepository;
     @Autowired
     LibraryRepository libraryRepository;
     @Autowired
@@ -248,5 +258,69 @@ public class NormalUserService {
         return res;
     }
 
+    /**
+     * 用户发起评论
+     * @param username
+     * @param isbn
+     * @param content
+     * @param rate
+     * @author yiwen
+     */
+    public GeneralResponse postComment(String username,String isbn,String content,long rate){
+        //检查用户存不存在，并得到用户的useid
+        Optional<User> userOptional = userRepository.findByName(username);
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("找不到这个用户");
+        }
+
+        //检查isbn对应的booktype存不存在
+        Optional<BookType> bookTypeOptional = bookTypeRepository.getBookTypeByISBN(isbn);
+        if (bookTypeOptional.isEmpty()) {
+            throw new BookTypeNotFoundException("找不到这个图书");
+        }
+
+        //检查rate大小是否合理
+        if(rate > 10 || rate < 0){
+            throw new RateOutOfRangeException("评分只能在0-10之间");
+        }
+
+        //检查评论是否存在
+        Optional<Comment> commentOptional = commentRepository.getCommentByUserID(userOptional.get().getUser_id());
+        if(commentOptional.isPresent()){
+            throw new CommentAlreadyExistException("你已经评论过此书，不能重复评论");
+        }
+
+        //检查读者是否有借阅过这本书且还书状态正常
+        List<ReturnRecord> returnRecord = returnRecordRepository.getReturnRecordByUserIDAndISBN(userOptional.get().getUser_id(),isbn);
+        if(checkReturnBook(returnRecord) == 0){
+            throw new NoReturnRecordException("你还没有借阅过此书，无法评论");
+        }
+        if(checkReturnBook(returnRecord) == 1){
+            throw new ReturnRecordNotOkException("你归还书本时状态非正常，无法评论");
+        }
+
+        //运行到这里说明符合评论条件，添加评论
+        Date date = new Date();
+        Comment comment = new Comment(userOptional.get().getUser_id(),isbn,content,date,false,false,rate);
+        commentRepository.save(comment);
+        return new GeneralResponse("评论成功");
+    }
+
+    /**
+     * 检查用户是否借阅过评论的书本；归还状态是否完好
+     * @param list
+     * @return 0：没有借阅记录 1：借阅但至少有一本副本归还状态非正常 2：借阅且所有副本归还状态正常
+     */
+    public int checkReturnBook(List<ReturnRecord> list){
+        if(list.size() == 0){
+            return 0;
+        }
+        for(ReturnRecord r:list){
+            if(!r.getStatus().equals("ok")){
+                return 1;
+            }
+        }
+        return 2;
+    }
 
 }
