@@ -47,7 +47,7 @@ public class ReturnNormalBookTransaction extends ReturnBookTransaction {
         }
 
         //创建还书记录对象
-        ReturnRecord returnRecord = new ReturnRecord(borrow.getUserID(), currentDate, bookCopy.getUniqueBookMark(), adminOptional.get().getUsername(), adminLibraryID);
+        ReturnRecord returnRecord = new ReturnRecord(borrow.getUserID(), currentDate, bookCopy.getUniqueBookMark(), adminOptional.get().getUsername(), adminLibraryID,ReturnRecord.OK);
 
         returnRecordRepository.save(returnRecord);
 
@@ -115,6 +115,19 @@ public class ReturnNormalBookTransaction extends ReturnBookTransaction {
         return String.format("还书%s%s成功，由于借阅超期，%s被罚款%.2f元。此外，他的信用还降低了%d",
                 bookTypeOptional.get().getName(), bookCopy.getUniqueBookMark(), userOptional.get().getUsername(), fineAmount / 100.00, CREDIT_LOSS_OVERTIME);
 
+    }
+
+    @Override
+    public void generateReturnBookRecord(long adminID, long adminLibraryID, User user, BookCopy bookCopy, Date currentDate) {
+        //得到管理员
+        Optional<User> adminOptional = userRepository.findById(adminID);
+        if (adminOptional.isEmpty()) {
+            throw new UserNotFoundException("找不到管理员");
+        }
+        //创建还书记录对象
+        ReturnRecord returnRecord = new ReturnRecord(user.getUser_id(), currentDate, bookCopy.getUniqueBookMark(), adminOptional.get().getUsername(), adminLibraryID,ReturnRecord.OK);
+
+        returnRecordRepository.save(returnRecord);
     }
 
 }

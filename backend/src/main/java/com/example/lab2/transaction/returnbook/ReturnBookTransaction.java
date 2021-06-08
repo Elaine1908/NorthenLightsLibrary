@@ -120,16 +120,19 @@ public abstract class ReturnBookTransaction {
     }
 
 
-    protected void generateReturnBookRecord(long adminID, long adminLibraryID, User user, BookCopy bookCopy, Date currentDate) {
-        //得到管理员
-        Optional<User> adminOptional = userRepository.findById(adminID);
-        if (adminOptional.isEmpty()) {
-            throw new UserNotFoundException("找不到管理员");
-        }
-        //创建还书记录对象
-        ReturnRecord returnRecord = new ReturnRecord(user.getUser_id(), currentDate, bookCopy.getUniqueBookMark(), adminOptional.get().getUsername(), adminLibraryID);
+//    protected void generateReturnBookRecord(long adminID, long adminLibraryID, User user, BookCopy bookCopy, Date currentDate) {
+//        //得到管理员
+//        Optional<User> adminOptional = userRepository.findById(adminID);
+//        if (adminOptional.isEmpty()) {
+//            throw new UserNotFoundException("找不到管理员");
+//        }
+//        //创建还书记录对象
+//        ReturnRecord returnRecord = new ReturnRecord(user.getUser_id(), currentDate, bookCopy.getUniqueBookMark(), adminOptional.get().getUsername(), adminLibraryID);
+//
+//        returnRecordRepository.save(returnRecord);
+//    }
 
-        returnRecordRepository.save(returnRecord);
-    }
+    //added
+    public abstract void generateReturnBookRecord(long adminID, long adminLibraryID, User user, BookCopy bookCopy, Date currentDate);
 
 }

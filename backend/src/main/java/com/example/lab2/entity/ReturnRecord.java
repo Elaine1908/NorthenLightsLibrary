@@ -13,9 +13,9 @@ import java.util.Date;
 @Entity
 public class ReturnRecord {
 
-    private static String OK = "ok";
-    private static String DAMAGED = "damaged";
-    private static String LOST = "lost";
+    public static String OK = "ok";
+    public static String DAMAGED = "damaged";
+    public static String LOST = "lost";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,11 +34,12 @@ public class ReturnRecord {
 
     private String status;
 
-    public ReturnRecord(long userID, Date time, String uniqueBookMark, String admin, long libraryID) {
+    public ReturnRecord(long userID, Date time, String uniqueBookMark, String admin, long libraryID,String status) {
         this.admin = admin;
         this.userID = userID;
         this.libraryID = libraryID;
         this.time = time;
         this.uniqueBookMark = uniqueBookMark;
+        this.status = status;
     }
 }

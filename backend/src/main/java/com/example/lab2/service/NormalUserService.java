@@ -309,18 +309,18 @@ public class NormalUserService {
     /**
      * 检查用户是否借阅过评论的书本；归还状态是否完好
      * @param list
-     * @return 0：没有借阅记录 1：借阅但至少有一本副本归还状态非正常 2：借阅且所有副本归还状态正常
+     * @return 0：没有借阅记录 1：借阅且所有副本归还状态非正常 2：借阅且至少有一本副本归还状态正常
      */
     public int checkReturnBook(List<ReturnRecord> list){
         if(list.size() == 0){
             return 0;
         }
         for(ReturnRecord r:list){
-            if(!r.getStatus().equals("ok")){
-                return 1;
+            if(r.getStatus().equals("ok")){
+                return 2;
             }
         }
-        return 2;
+        return 1;
     }
 
 }

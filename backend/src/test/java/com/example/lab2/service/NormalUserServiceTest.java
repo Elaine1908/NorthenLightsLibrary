@@ -8,8 +8,14 @@ import com.example.lab2.dao.record.ReturnRecordRepository;
 import com.example.lab2.dto.record.*;
 import com.example.lab2.entity.*;
 import com.example.lab2.exception.borrow.NotBorrowedException;
+import com.example.lab2.exception.comment.CommentAlreadyExistException;
+import com.example.lab2.exception.comment.NoReturnRecordException;
+import com.example.lab2.exception.comment.RateOutOfRangeException;
+import com.example.lab2.exception.comment.ReturnRecordNotOkException;
 import com.example.lab2.exception.notfound.BookCopyNotFoundException;
+import com.example.lab2.exception.notfound.BookTypeNotFoundException;
 import com.example.lab2.exception.notfound.LibraryNotFoundException;
+import com.example.lab2.exception.notfound.UserNotFoundException;
 import com.example.lab2.request.borrow.ReturnSingleBookRequest;
 import com.example.lab2.request.upload.UploadNewBookRequest;
 import com.example.lab2.response.UserInfoResponse;
@@ -24,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 
+import java.awt.print.Book;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.SecureRandom;
@@ -48,6 +55,12 @@ public class NormalUserServiceTest {
 
     @Autowired
     BookCopyRepository bookCopyRepository;
+
+    @Autowired
+    BookTypeRepository bookTypeRepository;
+
+    @Autowired
+    CommentRepository commentRepository;
 
     @Resource(name = "normalUserService")
     NormalUserService normalUserService;
@@ -719,7 +732,7 @@ public class NormalUserServiceTest {
         userRepository.save(user);
 
         for (int i = 0; i < 40; ++i) {
-            ReturnRecord returnRecord = new ReturnRecord(user.getUser_id(), new Date(), "u" + i, "admin", 1);
+            ReturnRecord returnRecord = new ReturnRecord(user.getUser_id(), new Date(), "u" + i, "admin", 1,ReturnRecord.OK);
             returnRecordRepository.save(returnRecord);
         }
 
@@ -775,7 +788,7 @@ public class NormalUserServiceTest {
                     new Date(),
                     "uniqueBookMark",
                     "admin",
-                    1);
+                    1,ReturnRecord.OK);
             returnRecordRepository.save(returnRecord);
         }
 
@@ -824,5 +837,145 @@ public class NormalUserServiceTest {
 
     }
 
+    @Test
+    @Transactional
+    public void testComment_UserNotFound(){
+        assertThrows(UserNotFoundException.class, () -> {
+            normalUserService.postComment("non_existent_user","111","like it",10);
+        });
+    }
+
+    @Test
+    @Transactional
+    public void testComment_BookTypeNotFound(){
+        User user = new User(
+                "newUser",
+                "password",
+                "zyw@email.com",
+                User.STUDENT,
+                User.MAX_CREDIT
+        );
+        userRepository.save(user);
+
+        assertThrows(BookTypeNotFoundException.class, () -> {
+            normalUserService.postComment("newUser","non_existent_isbn","like it",10);
+        });
+
+    }
+
+    @Test
+    @Transactional
+    public void testComment_RateOutOfRange(){
+        User user = new User(
+                "newUser",
+                "password",
+                "zyw@email.com",
+                User.STUDENT,
+                User.MAX_CREDIT
+        );
+        userRepository.save(user);
+
+        BookType b = new BookType();
+        b.setIsbn("isbn");
+        b.setName("name");
+        b.setAuthor("author");
+        b.setDescription("description");
+        b.setPrice(100);
+        bookTypeRepository.save(b);
+
+        assertThrows(RateOutOfRangeException.class, () -> {
+            normalUserService.postComment("newUser","isbn","like it",100);
+        });
+
+    }
+
+    @Test
+    @Transactional
+    public void testComment_AlreadyCommented(){
+        User user = new User(
+                "newUser",
+                "password",
+                "zyw@email.com",
+                User.STUDENT,
+                User.MAX_CREDIT
+        );
+        userRepository.save(user);
+
+        BookType b = new BookType();
+        b.setIsbn("isbn");
+        b.setName("name");
+        b.setAuthor("author");
+        b.setDescription("description");
+        b.setPrice(100);
+        bookTypeRepository.save(b);
+
+        User userFromDB = userRepository.getUserByUsername("newUser");
+
+        Comment comment = new Comment(userFromDB.getUser_id(),"isbn","like",new Date(),false,false,8);
+        commentRepository.save(comment);
+
+        assertThrows(CommentAlreadyExistException.class, () -> {
+            normalUserService.postComment("newUser","isbn","like it",100);
+        });
+
+    }
+
+    @Test
+    @Transactional
+    public void testComment_NoReturnRecord(){
+        User user = new User(
+                "newUser",
+                "password",
+                "zyw@email.com",
+                User.STUDENT,
+                User.MAX_CREDIT
+        );
+        userRepository.save(user);
+
+        BookType b = new BookType();
+        b.setIsbn("isbn");
+        b.setName("name");
+        b.setAuthor("author");
+        b.setDescription("description");
+        b.setPrice(100);
+        bookTypeRepository.save(b);
+
+        User userFromDB = userRepository.getUserByUsername("newUser");
+
+        assertThrows(NoReturnRecordException.class, () -> {
+            normalUserService.postComment("newUser","isbn","like it",10);
+        });
+
+    }
+
+    @Test
+    @Transactional
+    public void testComment_BadReturnRecord(){
+        User user = new User(
+                "newUser",
+                "password",
+                "zyw@email.com",
+                User.STUDENT,
+                User.MAX_CREDIT
+        );
+        userRepository.save(user);
+
+        BookType b = new BookType();
+        b.setIsbn("isbn");
+        b.setName("name");
+        b.setAuthor("author");
+        b.setDescription("description");
+        b.setPrice(100);
+        bookTypeRepository.save(b);
+
+        User userFromDB = userRepository.getUserByUsername("newUser");
+        ReturnRecord returnRecord = new ReturnRecord(userFromDB.getUser_id(), new Date(), "isbn-001", "admin", 1,ReturnRecord.DAMAGED);
+        returnRecordRepository.save(returnRecord);
+
+        assertThrows(ReturnRecordNotOkException.class, () -> {
+            normalUserService.postComment("newUser","isbn","like it",10);
+        });
+
+    }
 
 }
