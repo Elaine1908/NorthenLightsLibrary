@@ -8,7 +8,10 @@ import com.example.lab2.exception.auth.SetConfigurationException;
 import com.example.lab2.request.auth.AddAdminRequest;
 import com.example.lab2.request.auth.DeleteAdminRequest;
 import com.example.lab2.request.auth.SetUserConfigurationRequest;
+import com.example.lab2.request.credit.ResetCreditRequest;
+import com.example.lab2.response.GeneralResponse;
 import com.example.lab2.service.EmailService;
+import com.example.lab2.service.SuperAdminService;
 import com.example.lab2.service.UserConfigurationService;
 import com.example.lab2.service.UserDetailsServiceImpl;
 import org.springframework.boot.configurationprocessor.json.JSONException;
@@ -37,6 +40,9 @@ public class SuperAdminController {
 
     @Resource(name = "emailService")
     EmailService emailService;
+
+    @Resource(name = "superAdminService")
+    SuperAdminService superAdminService;
 
     /**
      * 添加管理员的接口
@@ -148,6 +154,38 @@ public class SuperAdminController {
     public ResponseEntity<?> notifyReserveFineBorrow() throws Exception {
         List<String> messages = emailService.sendNotify();
         return ResponseEntity.ok(messages);
+    }
+
+
+    /**
+     * 管理员重设用户信用的接口
+     *
+     * @return
+     * @author zhj
+     */
+    @PostMapping("/resetCredit")
+    public ResponseEntity<GeneralResponse> resetUserCredit(
+            @RequestBody @Valid ResetCreditRequest resetCreditRequest,
+            BindingResult bindingResult
+    ) {
+
+        //如果从前端接口传来的信息存在不合法参数
+        if (bindingResult.hasFieldErrors()) {
+            throw new SetConfigurationException(
+                    Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage()
+            );
+        }
+
+        //得到用户名和要设置成多少
+        String username = resetCreditRequest.getUsername();
+        int toWhat = resetCreditRequest.getTo();
+
+        //进入业务层
+        String msg = superAdminService.resetCredit(username, toWhat);
+
+        //返回结果给前端
+        return ResponseEntity.ok(new GeneralResponse(msg));
+
     }
 }
 
