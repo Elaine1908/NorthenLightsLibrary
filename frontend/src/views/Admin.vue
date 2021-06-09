@@ -29,6 +29,10 @@
           <i class="el-icon-search"></i>
           <span slot="title">操作查询</span>
         </el-menu-item>
+        <el-menu-item index="/home/admin/adminCredit" v-if="isSuperAdmin">
+          <i class="el-icon-refresh-right"></i>
+          <span slot="title">重置信用</span>
+        </el-menu-item>
         <el-menu-item index="/home/admin/timeSet" v-if="isSuperAdmin">
           <i class="el-icon-time"></i>
           <span slot="title">设置时长</span>

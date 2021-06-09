@@ -127,6 +127,11 @@ const routes = [
             component: () => import('@/components/AddCopy')
           },
           {
+            path: 'adminCredit',
+            name: 'AdminCredit',
+            component: () => import('@/components/AdminCredit')
+          },
+          {
             path: 'adminRecord',
             name: 'AdminRecord',
             component: () => import('@/components/AdminRecord')
