@@ -43,11 +43,19 @@ const routes = [
         path:'showDetails',
         name:'ShowDetails',
         component: () => import('@/components/ShowDetails'),
-      },
-      {
-        path:'showCopy',
-        name:'ShowCopy',
-        component: () => import('@/components/ShowCopy'),
+        redirect: {name: 'ShowComment'},
+        children:[
+          {
+            path:'showComment',
+            name:'ShowComment',
+            component: () => import('@/components/ShowComment'),
+          },
+          {
+            path:'showCopy',
+            name:'ShowCopy',
+            component: () => import('@/components/ShowCopy'),
+          },
+        ]
       },
       {
         path: 'copyRecord',

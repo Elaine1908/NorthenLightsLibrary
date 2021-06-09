@@ -2,25 +2,37 @@
   <div>
     <div class="bookInfosBox">
       <div class="bookImage">
-        <img src="http://source.unsplash.com/random" alt="图解机器学习算法">
+        <img :src="imagePath">
       </div>
       <div class="bookInfos">
         <div class="infoItem">
-          <h1>图解机器学习算法</h1>
+          <h1>{{name}}</h1>
         </div>
         <div class="infoItem">
-          <span>作者:</span>
-          <span>ISBN:</span>
+          <span>作者:{{author}}</span>
+          <span>ISBN:{{isbn}}</span>
+          <div style="clear:both;float: left;margin-bottom: 25px">
+            <el-rate
+                    v-model="averageRate"
+                    disabled
+                    show-score
+                    text-color="#ff9900">
+            </el-rate>
+          </div>
+        </div>
+
+        <div class="description">
+          <p>{{description}}</p>
         </div>
       </div>
-      <el-button type="primary" style="float: left;margin-left: 50px">预约</el-button>
     </div>
 
     <div class="bookContentBox">
-      <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
-        <el-menu-item index="1">图书介绍</el-menu-item>
-        <el-menu-item index="2">评论</el-menu-item>
+      <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect" :router="true">
+        <el-menu-item index="/home/showDetails/showComment">评论</el-menu-item>
+        <el-menu-item index="/home/showDetails/showCopy">副本情况</el-menu-item>
       </el-menu>
+      <router-view/>
     </div>
   </div>
 </template>
@@ -30,16 +42,44 @@
     name: "ShowDetails",
     data() {
       return {
-        activeIndex: '1'
+        name:"",
+        author:"",
+        isbn:"",
+        averageRate:null,
+        description:"",
+        imagePath:"http://source.unsplash.com/random",
+        activeIndex: '/home/showDetails/showComment',
       };
     },
+    created() {
+      this.axios.get('/useradmin/getBookTypeAndCopy',{
+        params: {
+          isbn: this.$route.query.isbn
+        }
+      }).then(resp => {
+        if (resp.status === 200){
+          this.name = resp.data.name;
+          this.author = resp.data.author;
+          this.isbn = resp.data.isbn;
+          this.averageRate = resp.data.averageRate;
+          this.description=resp.data.description
+        }
+      }).catch(err => {
+        this.$message.error(err.response.data.message)
+      })
+    },
+    methods: {
+      handleSelect(key, keyPath) {
+        console.log(key, keyPath);
+      }
+    }
   }
 </script>
 
 <style scoped>
 
 .bookInfosBox{
-  height: 380px;
+  height: 385px;
 }
 .bookImage{
   width:22%;
@@ -55,6 +95,12 @@
   margin-left: 20px;
   width: 100%;
   height: auto;
+}
+.description{
+  float: left;
+  width: 100%;
+  margin-left: 20px;
+  text-align: left
 }
 h1{
   float: left;
