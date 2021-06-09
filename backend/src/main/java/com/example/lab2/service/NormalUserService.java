@@ -6,12 +6,10 @@ import com.example.lab2.dto.bookcopy.BorrowedBookCopyDTO;
 import com.example.lab2.dto.bookcopy.ReservedBookCopyDTO;
 import com.example.lab2.dto.record.*;
 import com.example.lab2.entity.*;
-import com.example.lab2.exception.comment.CommentAlreadyExistException;
-import com.example.lab2.exception.comment.NoReturnRecordException;
-import com.example.lab2.exception.comment.RateOutOfRangeException;
-import com.example.lab2.exception.comment.ReturnRecordNotOkException;
+import com.example.lab2.exception.comment.*;
 import com.example.lab2.exception.notfound.BookCopyNotFoundException;
 import com.example.lab2.exception.notfound.BookTypeNotFoundException;
+import com.example.lab2.exception.notfound.CommentNotFoundException;
 import com.example.lab2.exception.notfound.UserNotFoundException;
 import com.example.lab2.request.borrow.ReturnSingleBookRequest;
 import com.example.lab2.response.GeneralResponse;
@@ -36,6 +34,8 @@ public class NormalUserService {
     BookTypeRepository bookTypeRepository;
     @Autowired
     CommentRepository commentRepository;
+    @Autowired
+    ReplyRepository replyRepository;
     @Autowired
     LibraryRepository libraryRepository;
     @Autowired
@@ -323,4 +323,55 @@ public class NormalUserService {
         return 1;
     }
 
+    /**
+     * 用户发起回复
+     * @param username
+     * @param commentID
+     * @param replyID
+     * @param content
+     * @author yiwen
+     */
+    public GeneralResponse postReply(String username,Long commentID,Long replyID,String content){
+        //检查用户存不存在，并得到用户的userID
+        Optional<User> userOptional = userRepository.findByName(username);
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("找不到这个用户");
+        }
+
+        //如果又有commentID又有replyID，抛出异常
+        if(commentID != null && replyID != null){
+            throw new TwoIDAtTheSameTimeException("传输参数异常，replyID和commentID两者应当只有一个");
+        }
+
+        //commentID非空的情况：回复评论
+        if(commentID != null ){
+            //看看评论是否存在
+            Optional<Comment> commentOptional = commentRepository.findById(commentID);
+            if(commentOptional.isEmpty()){
+                throw new CommentNotFoundException("这条评论不存在");
+            }else {
+                //获取被回复的用户的id
+                long replied_user_id = commentOptional.get().getUserID();
+                Date date = new Date();
+                Reply reply = new Reply(userOptional.get().getUser_id(),commentID,content,date,false,false,replied_user_id);
+                replyRepository.save(reply);
+            }
+
+        }
+        //replyID非空的情况：回复回复
+        else {
+            //看看回复是否存在
+            Optional<Reply> replyOptional = replyRepository.findById(replyID);
+            if(replyOptional.isEmpty()){
+                throw new CommentNotFoundException("这条回复不存在");
+            }else{
+                //获取被回复的用户的id
+                long replied_user_id = replyOptional.get().getUserID();
+                Date date = new Date();
+                Reply reply = new Reply(userOptional.get().getUser_id(),replyOptional.get().getCommentID(),content,date,false,false,replied_user_id);
+                replyRepository.save(reply);
+            }
+        }
+        return new GeneralResponse("回复成功");
+    }
 }

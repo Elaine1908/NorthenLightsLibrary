@@ -3,6 +3,7 @@ package com.example.lab2.controller;
 import com.example.lab2.dto.record.*;
 import com.example.lab2.entity.Fine;
 import com.example.lab2.request.comment.CommentRequest;
+import com.example.lab2.request.comment.ReplyRequest;
 import com.example.lab2.request.fine.PayFineRequest;
 import com.example.lab2.response.GeneralResponse;
 
@@ -141,6 +142,17 @@ public class NormalUserController {
         return ResponseEntity.ok(generalResponse);
     }
 
-
+    /**
+     * 用户发起回复
+     *
+     * @author zyw
+     */
+    @PostMapping("/postReply")
+    public ResponseEntity<?> postReply(@RequestBody ReplyRequest replyRequest,HttpServletRequest httpServletRequest){
+        String token = httpServletRequest.getHeader("token");
+        String username = JwtUtils.getUserName(token);
+        GeneralResponse generalResponse = normalUserService.postReply(username,replyRequest.getCommentID(),replyRequest.getReplyID(),replyRequest.getContent());
+        return ResponseEntity.ok(generalResponse);
+    }
 
 }

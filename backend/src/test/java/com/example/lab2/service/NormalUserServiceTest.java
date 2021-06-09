@@ -5,17 +5,12 @@ import com.example.lab2.dao.record.BorrowRecordRepository;
 import com.example.lab2.dao.record.CreditRecordRepository;
 import com.example.lab2.dao.record.ReserveRecordRepository;
 import com.example.lab2.dao.record.ReturnRecordRepository;
+import com.example.lab2.dto.commentreply.ReplyDTO;
 import com.example.lab2.dto.record.*;
 import com.example.lab2.entity.*;
 import com.example.lab2.exception.borrow.NotBorrowedException;
-import com.example.lab2.exception.comment.CommentAlreadyExistException;
-import com.example.lab2.exception.comment.NoReturnRecordException;
-import com.example.lab2.exception.comment.RateOutOfRangeException;
-import com.example.lab2.exception.comment.ReturnRecordNotOkException;
-import com.example.lab2.exception.notfound.BookCopyNotFoundException;
-import com.example.lab2.exception.notfound.BookTypeNotFoundException;
-import com.example.lab2.exception.notfound.LibraryNotFoundException;
-import com.example.lab2.exception.notfound.UserNotFoundException;
+import com.example.lab2.exception.comment.*;
+import com.example.lab2.exception.notfound.*;
 import com.example.lab2.request.borrow.ReturnSingleBookRequest;
 import com.example.lab2.request.upload.UploadNewBookRequest;
 import com.example.lab2.response.UserInfoResponse;
@@ -29,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.AssertTrue;
 
 import java.awt.print.Book;
 import java.io.FileInputStream;
@@ -61,6 +57,9 @@ public class NormalUserServiceTest {
 
     @Autowired
     CommentRepository commentRepository;
+
+    @Autowired
+    ReplyRepository replyRepository;
 
     @Resource(name = "normalUserService")
     NormalUserService normalUserService;
@@ -915,7 +914,7 @@ public class NormalUserServiceTest {
         commentRepository.save(comment);
 
         assertThrows(CommentAlreadyExistException.class, () -> {
-            normalUserService.postComment("newUser","isbn","like it",100);
+            normalUserService.postComment("newUser","isbn","like it",10);
         });
 
     }
@@ -976,6 +975,149 @@ public class NormalUserServiceTest {
             normalUserService.postComment("newUser","isbn","like it",10);
         });
 
+    }
+
+    @Test
+    @Transactional
+    public void testComment_Success(){
+        User user = new User(
+                "newUser",
+                "password",
+                "zyw@email.com",
+                User.STUDENT,
+                User.MAX_CREDIT
+        );
+        userRepository.save(user);
+        User userFromDB = userRepository.getUserByUsername("newUser");
+
+        BookType b = new BookType();
+        b.setIsbn("isbn");
+        b.setName("name");
+        b.setAuthor("author");
+        b.setDescription("description");
+        b.setPrice(100);
+        bookTypeRepository.save(b);
+
+        ReturnRecord returnRecord = new ReturnRecord(userFromDB.getUser_id(),new Date(),"isbn-001","admin",1,ReturnRecord.OK);
+        returnRecordRepository.save(returnRecord);
+
+        Comment comment = new Comment(userFromDB.getUser_id(),"isbn","good",new Date(),false,false,8);
+        commentRepository.save(comment);
+        Optional<Comment> commentFromDB = commentRepository.getCommentByUserID(userFromDB.getUser_id());
+        assertTrue(commentFromDB.isPresent());
+        assertEquals(commentFromDB.get().getUserID(),userFromDB.getUser_id());
+        assertEquals(commentFromDB.get().getIsbn(),"isbn");
+        assertEquals(commentFromDB.get().getContent(),"good");
+    }
+
+    @Test
+    @Transactional
+    public void testReply_UserNotFound(){
+        assertThrows(UserNotFoundException.class, () -> {
+            normalUserService.postReply("non_existent_user",(long)1,(long)1,"like it");
+        });
+    }
+
+    @Test
+    @Transactional
+    public void testReply_TwoIdAtTheSameTime(){
+        User user = new User(
+                "newUser",
+                "password",
+                "zyw@email.com",
+                User.STUDENT,
+                User.MAX_CREDIT
+        );
+        userRepository.save(user);
+
+        assertThrows(TwoIDAtTheSameTimeException.class, () -> {
+            normalUserService.postReply("newUser",(long)1,(long)1,"like it");
+        });
+
+    }
+
+    @Test
+    @Transactional
+    public void testReply_NonExistentComment(){
+        User user = new User(
+                "newUser",
+                "password",
+                "zyw@email.com",
+                User.STUDENT,
+                User.MAX_CREDIT
+        );
+        userRepository.save(user);
+
+        assertThrows(CommentNotFoundException.class, () -> {
+            normalUserService.postReply("newUser",(long)8888,null,"like it");
+        });
+
+    }
+
+    @Test
+    @Transactional
+    public void testReply_NonExistentReply(){
+        User user = new User(
+                "newUser",
+                "password",
+                "zyw@email.com",
+                User.STUDENT,
+                User.MAX_CREDIT
+        );
+        userRepository.save(user);
+
+        assertThrows(CommentNotFoundException.class, () -> {
+            normalUserService.postReply("newUser",null,(long)8888,"like it");
+        });
+
+    }
+
+    @Test
+    @Transactional
+    public void testReply_Success_Comment(){
+        User user = new User(
+                "newUser",
+                "password",
+                "zyw@email.com",
+                User.STUDENT,
+                User.MAX_CREDIT
+        );
+        userRepository.save(user);
+        User userFromDB = userRepository.getUserByUsername("newUser");
+
+        User user2 = new User(
+                "newUser2",
+                "password2",
+                "zyw2@email.com",
+                User.STUDENT,
+                User.MAX_CREDIT
+        );
+        userRepository.save(user2);
+        User userFromDB2 = userRepository.getUserByUsername("newUser2");
+
+        BookType b = new BookType();
+        b.setIsbn("isbn");
+        b.setName("name");
+        b.setAuthor("author");
+        b.setDescription("description");
+        b.setPrice(100);
+        bookTypeRepository.save(b);
+
+        ReturnRecord returnRecord = new ReturnRecord(userFromDB.getUser_id(),new Date(),"isbn-001","admin",1,ReturnRecord.OK);
+        returnRecordRepository.save(returnRecord);
+
+        Comment comment = new Comment(userFromDB.getUser_id(),"isbn","good",new Date(),false,false,8);
+        commentRepository.save(comment);
+        Optional<Comment> commentFromDB = commentRepository.getCommentByUserID(userFromDB.getUser_id());
+        assertTrue(commentFromDB.isPresent());
+
+        Reply reply = new Reply(userFromDB2.getUser_id(),commentFromDB.get().getCommendID(),"content",new Date(),false,false,commentFromDB.get().getUserID());
+        replyRepository.save(reply);
+
+        List<ReplyDTO> replies = replyRepository.getRepliesByCommentID(commentFromDB.get().getCommendID());
+        assertFalse(replies.isEmpty());
+        assertEquals(replies.get(0).getRepliedUsername(),"newUser");
+        assertEquals(replies.get(0).getUsername(),"newUser2");
     }
 
 }
