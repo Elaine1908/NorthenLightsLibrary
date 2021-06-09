@@ -55,7 +55,9 @@
     name: "ShowCopy",
     data() {
       return {
-        tableData: [],
+        tableData: [{
+          name:'wwww'
+        }],
         roleShow: localStorage.getItem('role')
       }
     },
@@ -90,15 +92,15 @@
         this.$router.push({path: '/home/copyRecord', query: {isbn: uniqueBookMark}});
       }
     },
-    mounted() {
-      if (!localStorage.getItem('login')) {
-        this.$message.error('请先登录')
-        this.$router.push('/login')
-      } else if (parseInt(localStorage.getItem('exp')) < ((new Date().getTime())/1000)) {
-        this.$message.error('登录过期，请先登录')
-        this.$router.push('/login')
-      }
-    }
+    // mounted() {
+    //   if (!localStorage.getItem('login')) {
+    //     this.$message.error('请先登录')
+    //     this.$router.push('/login')
+    //   } else if (parseInt(localStorage.getItem('exp')) < ((new Date().getTime())/1000)) {
+    //     this.$message.error('登录过期，请先登录')
+    //     this.$router.push('/login')
+    //   }
+    // }
   }
 </script>
 
