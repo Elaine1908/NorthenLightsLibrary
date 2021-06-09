@@ -63,15 +63,7 @@
           author: '',
           isbn:''
         },
-        bookList:[{
-          name:'SHUSHU/TONG',
-          averageRate:3.8,
-          imagePathToFrontEnd:'http://source.unsplash.com/random/400x600'
-        },{
-          name:'marchen',
-          averageRate:3.35,
-          imagePathToFrontEnd:'http://source.unsplash.com/random/400x600'
-        }],
+        bookList:[],
         showBack:false,
         currentDate: new Date(),
         roleShow:localStorage.getItem('role')

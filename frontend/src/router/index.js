@@ -87,6 +87,11 @@ const routes = [
             path: 'userRecord',
             name: 'UserRecord',
             component: () => import('@/components/UserRecord')
+          },
+          {
+            path: 'userCredit',
+            name: 'UserCredit',
+            component: () => import('@/components/UserCredit')
           }
         ]
       },

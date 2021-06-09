@@ -141,11 +141,7 @@
         reserveRecordList:[],
         borrowRecordList:[],
         returnRecordList:[],
-        fineRecordList:[{
-          status:'已支付'
-        },{
-          status: '未支付'
-        }]
+        fineRecordList:[]
       }
     },
     created() {

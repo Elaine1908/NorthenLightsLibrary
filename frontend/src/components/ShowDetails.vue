@@ -28,9 +28,10 @@
     </div>
 
     <div class="bookContentBox">
-      <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect" :router="true">
+      <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect" router>
         <el-menu-item index="/home/showDetails/showComment">评论</el-menu-item>
         <el-menu-item index="/home/showDetails/showCopy">副本情况</el-menu-item>
+<!--        <el-menu-item index="/home/showDetails/showCopy" route="{path:/home/showDetails/showCopy,query:{isbn:this.$route.query.isbn}}">副本情况</el-menu-item>-->
       </el-menu>
       <router-view/>
     </div>
@@ -62,7 +63,8 @@
           this.author = resp.data.author;
           this.isbn = resp.data.isbn;
           this.averageRate = resp.data.averageRate;
-          this.description=resp.data.description
+          this.description=resp.data.description;
+          this.imagePath=resp.data.imagePath;
         }
       }).catch(err => {
         this.$message.error(err.response.data.message)
@@ -70,7 +72,9 @@
     },
     methods: {
       handleSelect(key, keyPath) {
-        console.log(key, keyPath);
+      },
+      toCopy(isbn){
+        this.$router.push({path: '/home/showDetails/showCopy', query: {isbn: isbn}});
       }
     }
   }

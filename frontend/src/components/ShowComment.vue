@@ -1,5 +1,5 @@
 <template>
-<h1>这是评论</h1>
+<h1>这是评论的ISBN:{{this.$route.query.isbn}}</h1>
 </template>
 
 <script>
