@@ -19,6 +19,6 @@ public interface ReturnRecordRepository extends JpaRepository<ReturnRecord, Long
     @Query("select new com.example.lab2.dto.record.ReturnRecordDTO(r.time,r.uniqueBookMark,u.username,r.admin,l.libraryName) from ReturnRecord r left join User u on u.user_id=r.userID left join Library l on l.libraryID=r.libraryID where r.uniqueBookMark=:uniqueBookMark")
     public List<ReturnRecordDTO> getBookCopyReturnRecordByUniqueBookMark(@Param("uniqueBookMark") String uniqueBookMark);
 
-    @Query("select r from ReturnRecord r where r.userID=:userID and r.uniqueBookMark LIKE CONCAT(?2,'%')")
-    public List<ReturnRecord> getReturnRecordByUserIDAndISBN(@Param("userID") long userID,@Param("isbn")String isbn);
+    @Query("select r from ReturnRecord r where r.userID=:userID and r.uniqueBookMark like :isbn%")
+    public List<ReturnRecord> getReturnRecordByUserIDAndISBN(@Param("userID") long userID, @Param("isbn") String isbn);
 }
