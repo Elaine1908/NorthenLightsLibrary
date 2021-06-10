@@ -176,6 +176,6 @@ public class SearchService {
         if (!bookCopy.isPresent()) {
             throw new BookCopyNotFoundException("该图书的副本没有找到！");
         }
-        return bookCopy.get();
+        return bookCopy.orElse(null);
     }
 }

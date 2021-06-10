@@ -155,8 +155,8 @@ public class EmailService {
                     dueReservedBookCopyDTO.getUniqueBookMark()
             );
             if (bookCopyOptional.isPresent()) {
-                bookCopyOptional.get().setStatus(BookCopy.AVAILABLE);
-                bookCopyRepository.save(bookCopyOptional.get());
+                bookCopyOptional.orElse(null).setStatus(BookCopy.AVAILABLE);
+                bookCopyRepository.save(bookCopyOptional.orElse(null));
             }
 
         });

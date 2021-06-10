@@ -47,7 +47,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
 
         //从optional对象中获得真正的user
-        User user = userOptional.get();
+        User user = userOptional.orElse(null);
 
         //检查原来的密码是否输入正确
         if (!user.getPassword().equals(originalPassword)) {
@@ -157,16 +157,16 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new UserNotFoundException("管理员不存在！");
         }
         //用户是超级管理员
-        if (user.get().getRole().equals("superadmin")) {
+        if (user.orElse(null).getRole().equals("superadmin")) {
             throw new UserNotFoundException("此用户是超级管理员，不能删除！");
         }
         //用户不是admin
-        if (!user.get().getRole().equals("admin")) {
+        if (!user.orElse(null).getRole().equals("admin")) {
             throw new UserNotFoundException("此用户不是管理员！");
         }
 
         //删除管理员
-        userRepository.delete(user.get());
+        userRepository.delete(user.orElse(null));
         return new GeneralResponse("删除管理员 " + deleteAdminRequest.getUsername() + " 成功");
 
     }

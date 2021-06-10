@@ -184,7 +184,7 @@ public class BorrowService {
 
             //看看这本书是否在架上
             if (!bookCopyOptional.orElse(null).getStatus().equals(BookCopy.AVAILABLE)) {
-                throw new BookCopyNotAvailableException(uniqueBookMark + "的状态是" + bookCopyOptional.get().getStatus());
+                throw new BookCopyNotAvailableException(uniqueBookMark + "的状态是" + bookCopyOptional.orElse(null).getStatus());
             }
 
             //如果能运行到这里，说明一切条件都满足了！
@@ -207,7 +207,7 @@ public class BorrowService {
 
 
             //更改原本bookcopy的status属性
-            BookCopy bookCopy = bookCopyOptional.get();
+            BookCopy bookCopy = bookCopyOptional.orElse(null);
             bookCopy.setStatus(BookCopy.BORROWED);
             bookCopy.setLastRentDate(currentDate);
             bookCopy.setAdminID(adminID);
@@ -253,7 +253,7 @@ public class BorrowService {
 
             try {
                 //尝试把这本预约的书借给用户
-                this.lendOnlyOneReservedBookToUser(uniqueBookMark, adminLibraryID, libraries, userOptional.get(), admin);
+                this.lendOnlyOneReservedBookToUser(uniqueBookMark, adminLibraryID, libraries, userOptional.orElse(null), admin);
 
                 //如果没有抛出异常，说明成功
                 messageBuilder.append(String.format("取预约的书%s成功;", uniqueBookMark));
@@ -297,7 +297,7 @@ public class BorrowService {
 
         //看看预约是否超期
         Date currentDate = new Date();
-        Date reservationDeadline = reservationOptional.get().getDeadline();
+        Date reservationDeadline = reservationOptional.orElse(null).getDeadline();
         if (reservationDeadline != null && reservationDeadline.getTime() < currentDate.getTime()) {
             throw new ReservationDueException(String.format("此预约已与%s到期，不能取书", reservationDeadline.toString()));
         }
@@ -310,16 +310,16 @@ public class BorrowService {
 
 
         //看看这本书是不是这个人预约的
-        if (!reservationOptional.get().getUserID().equals(user.getUser_id())) {
+        if (!reservationOptional.orElse(null).getUserID().equals(user.getUser_id())) {
             throw new ReservedByOtherException(uniqueBookMark + "不是" + user.getUsername() + "预约的");
         }
 
 
         //看看这本书是不是在当前管理员所在的分馆
-        if (!bookCopyOptional.get().getLibraryID().equals(adminLibraryID)) {
+        if (!bookCopyOptional.orElse(null).getLibraryID().equals(adminLibraryID)) {
             //如果不是，提醒用户去对应的分管借书
             libraries.forEach(library -> {
-                if (library.getLibraryID() == bookCopyOptional.get().getLibraryID()) {
+                if (library.getLibraryID() == bookCopyOptional.orElse(null).getLibraryID()) {
                     throw new BookCopyNotHereException(uniqueBookMark + "不在该管。请去" + library.getLibraryName() + "借书");
                 }
             });
@@ -329,9 +329,9 @@ public class BorrowService {
         }
 
         //看看这本书是否在架上
-        if (!bookCopyOptional.get().getStatus().equals(BookCopy.AVAILABLE)) {
-            if (!bookCopyOptional.get().getStatus().equals(BookCopy.RESERVED)) {
-                throw new BookCopyNotAvailableException(uniqueBookMark + "的状态是" + bookCopyOptional.get().getStatus());
+        if (!bookCopyOptional.orElse(null).getStatus().equals(BookCopy.AVAILABLE)) {
+            if (!bookCopyOptional.orElse(null).getStatus().equals(BookCopy.RESERVED)) {
+                throw new BookCopyNotAvailableException(uniqueBookMark + "的状态是" + bookCopyOptional.orElse(null).getStatus());
             }
         }
 
@@ -358,10 +358,10 @@ public class BorrowService {
         if (!adminOptional.isPresent()) {
             throw new UserNotFoundException("找不到管理员" + admin);
         }
-        Long adminID = adminOptional.get().getUser_id();
+        Long adminID = adminOptional.orElse(null).getUser_id();
 
         //更改原本bookcopy的status属性
-        BookCopy bookCopy = bookCopyOptional.get();
+        BookCopy bookCopy = bookCopyOptional.orElse(null);
         bookCopy.setStatus(BookCopy.BORROWED);
         bookCopy.setLastRentDate(currentDate);
         bookCopy.setAdminID(adminID);

@@ -108,8 +108,8 @@ public class FineService {
             String uuid = fine.getUuid();
             Optional<FineRecord> fineRecordOptional = fineRecordRepository.getFineRecordByUuid(uuid);
             if (fineRecordOptional.isPresent()) {
-                fineRecordOptional.get().setStatus(FineRecord.PAID);
-                fineRecordRepository.save(fineRecordOptional.get());
+                fineRecordOptional.orElse(null).setStatus(FineRecord.PAID);
+                fineRecordRepository.save(fineRecordOptional.orElse(null));
             }
 
             return response;
