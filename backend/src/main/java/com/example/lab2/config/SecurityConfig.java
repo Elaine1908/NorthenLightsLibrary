@@ -4,6 +4,7 @@ import com.example.lab2.dao.UserRepository;
 import com.example.lab2.filter.JwtAuthenticationFilter;
 import com.example.lab2.filter.JwtLoginFilter;
 import com.example.lab2.filter.MakeInStreamRereadableFilter;
+import com.example.lab2.interceptor.CommentReplyInterceptor;
 import com.example.lab2.interceptor.UserCreditInterceptor;
 import com.example.lab2.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,6 +125,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         HandlerInterceptor borrowInterceptor = new UserCreditInterceptor(
                 BORROW_MIN_CREDIT, userRepository, UserCreditInterceptor.WHERE_IS_USERNAME.HTTP_SERVLET_REQUEST);
 
+        HandlerInterceptor commentReplyInterceptor = new CommentReplyInterceptor();
+
         //设置预约的信用拦截器
         registry.addInterceptor(reserveInterceptor).addPathPatterns(
                 "/user/reserveBook"
@@ -133,6 +136,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         registry.addInterceptor(borrowInterceptor).addPathPatterns(
                 "/admin/lendBookToUser", "/admin/lendReservedBookToUser"
         );
+
+        //设置回复和评论的拦截器
+        registry.addInterceptor(commentReplyInterceptor).addPathPatterns(
+                "/user/postComment", "/user/postReply"
+        );
+
+
 
     }
 
