@@ -250,6 +250,7 @@ public class NormalUserService {
 
     /**
      * 根据用户名，获得所有的信用记录的过程
+     *
      * @param username 用户名
      * @return 信用记录的列表
      */
@@ -260,13 +261,14 @@ public class NormalUserService {
 
     /**
      * 用户发起评论
+     *
      * @param username
      * @param isbn
      * @param content
      * @param rate
      * @author yiwen
      */
-    public GeneralResponse postComment(String username,String isbn,String content,long rate){
+    public GeneralResponse postComment(String username, String isbn, String content, long rate) {
         //检查用户存不存在，并得到用户的useid
         Optional<User> userOptional = userRepository.findByName(username);
         if (userOptional.isEmpty()) {
@@ -280,43 +282,44 @@ public class NormalUserService {
         }
 
         //检查rate大小是否合理
-        if(rate > 10 || rate < 0){
+        if (rate > 10 || rate < 0) {
             throw new RateOutOfRangeException("评分只能在0-10之间");
         }
 
         //检查评论是否存在
         Optional<Comment> commentOptional = commentRepository.getCommentByUserID(userOptional.orElse(null).getUser_id());
-        if(commentOptional.isPresent()){
+        if (commentOptional.isPresent()) {
             throw new CommentAlreadyExistException("你已经评论过此书，不能重复评论");
         }
 
         //检查读者是否有借阅过这本书且还书状态正常
-        List<ReturnRecord> returnRecord = returnRecordRepository.getReturnRecordByUserIDAndISBN(userOptional.get().getUser_id(),isbn);
-        if(checkReturnBook(returnRecord) == 0){
+        List<ReturnRecord> returnRecord = returnRecordRepository.getReturnRecordByUserIDAndISBN(userOptional.orElse(null).getUser_id(), isbn);
+        if (checkReturnBook(returnRecord) == 0) {
             throw new NoReturnRecordException("你还没有借阅过此书，无法评论");
         }
-        if(checkReturnBook(returnRecord) == 1){
+        if (checkReturnBook(returnRecord) == 1) {
             throw new ReturnRecordNotOkException("你归还书本时状态非正常，无法评论");
         }
 
         //运行到这里说明符合评论条件，添加评论
         Date date = new Date();
-        Comment comment = new Comment(userOptional.get().getUser_id(),isbn,content,date,false,false,rate);
+        Comment comment = new Comment(userOptional.get().getUser_id(), isbn, content, date, false, false, rate);
         commentRepository.save(comment);
         return new GeneralResponse("评论成功");
     }
 
     /**
      * 检查用户是否借阅过评论的书本；归还状态是否完好
+     *
      * @param list
      * @return 0：没有借阅记录 1：借阅且所有副本归还状态非正常 2：借阅且至少有一本副本归还状态正常
      */
-    private int checkReturnBook(List<ReturnRecord> list){
-        if(list.size() == 0){
+    private int checkReturnBook(List<ReturnRecord> list) {
+        if (list.size() == 0) {
             return 0;
         }
-        for(ReturnRecord r:list){
-            if(r.getStatus().equals("ok")){
+        for (ReturnRecord r : list) {
+            if (r.getStatus().equals("ok")) {
                 return 2;
             }
         }
@@ -325,13 +328,14 @@ public class NormalUserService {
 
     /**
      * 用户发起回复
+     *
      * @param username
      * @param commentID
      * @param replyID
      * @param content
      * @author yiwen
      */
-    public GeneralResponse postReply(String username,Long commentID,Long replyID,String content){
+    public GeneralResponse postReply(String username, Long commentID, Long replyID, String content) {
         //检查用户存不存在，并得到用户的userID
         Optional<User> userOptional = userRepository.findByName(username);
         if (userOptional.isEmpty()) {
@@ -339,21 +343,21 @@ public class NormalUserService {
         }
 
         //如果又有commentID又有replyID，抛出异常
-        if(commentID != null && replyID != null){
+        if (commentID != null && replyID != null) {
             throw new TwoIDAtTheSameTimeException("传输参数异常，replyID和commentID两者应当只有一个");
         }
 
         //commentID非空的情况：回复评论
-        if(commentID != null ){
+        if (commentID != null) {
             //看看评论是否存在
             Optional<Comment> commentOptional = commentRepository.findById(commentID);
-            if(commentOptional.isEmpty()){
+            if (commentOptional.isEmpty()) {
                 throw new CommentNotFoundException("这条评论不存在");
-            }else {
+            } else {
                 //获取被回复的用户的id
                 long replied_user_id = commentOptional.orElse(null).getUserID();
                 Date date = new Date();
-                Reply reply = new Reply(userOptional.orElse(null).getUser_id(),commentID,content,date,false,false,replied_user_id);
+                Reply reply = new Reply(userOptional.orElse(null).getUser_id(), commentID, content, date, false, false, replied_user_id);
                 replyRepository.save(reply);
             }
 
@@ -362,13 +366,13 @@ public class NormalUserService {
         else {
             //看看回复是否存在
             Optional<Reply> replyOptional = replyRepository.findById(replyID);
-            if(replyOptional.isEmpty()){
+            if (replyOptional.isEmpty()) {
                 throw new CommentNotFoundException("这条回复不存在");
-            }else{
+            } else {
                 //获取被回复的用户的id
                 long replied_user_id = replyOptional.orElse(null).getUserID();
                 Date date = new Date();
-                Reply reply = new Reply(userOptional.orElse(null).getUser_id(),replyOptional.get().getCommentID(),content,date,false,false,replied_user_id);
+                Reply reply = new Reply(userOptional.orElse(null).getUser_id(), replyOptional.orElse(null).getCommentID(), content, date, false, false, replied_user_id);
                 replyRepository.save(reply);
             }
         }
@@ -377,10 +381,11 @@ public class NormalUserService {
 
     /**
      * 用户删除自己的评论
+     *
      * @param commentID
      * @author yiwen
      */
-    public GeneralResponse deleteComment(Long commentID,String username){
+    public GeneralResponse deleteComment(Long commentID, String username) {
         //检查用户存不存在，并得到用户的userID
         Optional<User> userOptional = userRepository.findByName(username);
         if (userOptional.isEmpty()) {
@@ -389,15 +394,15 @@ public class NormalUserService {
 
         //看看评论是否存在
         Optional<Comment> commentOptional = commentRepository.findById(commentID);
-        if(commentOptional.isEmpty()){
+        if (commentOptional.isEmpty()) {
             throw new CommentNotFoundException("这条评论不存在");
         }
 
         //看看评论的主人是不是这个用户
-        if(commentOptional.orElse(null).getUserID() != userOptional.orElse(null).getUser_id()){
+        if (commentOptional.orElse(null).getUserID() != userOptional.orElse(null).getUser_id()) {
             throw new CommentMismatchException("这个评论的主人不是你");
-        }else {
-            Comment comment = commentOptional.get();
+        } else {
+            Comment comment = commentOptional.orElse(null);
             comment.setDeletedBySelf(true);//用户删除评论
             commentRepository.save(comment);
 
@@ -407,10 +412,11 @@ public class NormalUserService {
 
     /**
      * 用户删除自己的回复
+     *
      * @param commentID
      * @author yiwen
      */
-    public GeneralResponse deleteReply(Long commentID,String username) {
+    public GeneralResponse deleteReply(Long commentID, String username) {
         //检查用户存不存在，并得到用户的userID
         Optional<User> userOptional = userRepository.findByName(username);
         if (userOptional.isEmpty()) {
@@ -418,14 +424,14 @@ public class NormalUserService {
         }
         //看看回复是否存在
         Optional<Reply> replyOptional = replyRepository.findById(commentID);
-        if(replyOptional.isEmpty()){
+        if (replyOptional.isEmpty()) {
             throw new CommentNotFoundException("这条回复不存在");
         }
 
-        if(replyOptional.orElse(null).getUserID() != userOptional.orElse(null).getUser_id()){
+        if (replyOptional.orElse(null).getUserID() != userOptional.orElse(null).getUser_id()) {
             throw new CommentMismatchException("这个回复的主人不是你");
-        }else {
-            Reply reply = replyOptional.get();
+        } else {
+            Reply reply = replyOptional.orElse(null);
             reply.setDeletedBySelf(true);//用户删除回复
             replyRepository.save(reply);
         }

@@ -163,7 +163,7 @@ public class BorrowService {
         if (currentBorrowCount >= userConfigurationOptional.orElse(null).getMaxBookBorrow()) {
             throw new BorrowToManyException(
                     String.format("您系统设置您最大可以借阅%d本书，你已经借阅了%d本书，不能再借阅了"
-                            , userConfigurationOptional.get().getMaxBookBorrow(), currentBorrowCount)
+                            , userConfigurationOptional.orElse(null).getMaxBookBorrow(), currentBorrowCount)
             );
         }
 
@@ -171,7 +171,7 @@ public class BorrowService {
         synchronized (BorrowService.class) {
 
             //看看这本书有没有被预约？
-            Optional<Reservation> reservationOptional = reservationRepository.getReservationByBookCopyID(bookCopyOptional.get().getBookCopyID());
+            Optional<Reservation> reservationOptional = reservationRepository.getReservationByBookCopyID(bookCopyOptional.orElse(null).getBookCopyID());
             if (reservationOptional.isPresent()) {
                 throw new BookCopyReservedException(uniqueBookMark + "已经被别人预约了");
             }
@@ -190,7 +190,7 @@ public class BorrowService {
             //如果能运行到这里，说明一切条件都满足了！
             //新建borrow对象
             Date currentDate = new Date();
-            Date deadline = new Date(currentDate.getTime() + 1000 * userConfigurationOptional.get().getMaxBorrowTime());
+            Date deadline = new Date(currentDate.getTime() + 1000 * userConfigurationOptional.orElse(null).getMaxBorrowTime());
             Borrow newBorrow = new Borrow(
                     user.getUser_id(),
                     uniqueBookMark,
@@ -340,12 +340,12 @@ public class BorrowService {
         if (currentBorrowCount >= userConfigurationOptional.orElse(null).getMaxBookBorrow()) {
             throw new BorrowToManyException(
                     String.format("您系统设置您最大可以借阅%d本书，你已经借阅了%d本书，不能再借阅了"
-                            , userConfigurationOptional.get().getMaxBookBorrow(), currentBorrowCount)
+                            , userConfigurationOptional.orElse(null).getMaxBookBorrow(), currentBorrowCount)
             );
         }
 
         //新建borrow对象
-        Date deadline = new Date(currentDate.getTime() + userConfigurationOptional.get().getMaxBorrowTime() * 1000);
+        Date deadline = new Date(currentDate.getTime() + userConfigurationOptional.orElse(null).getMaxBorrowTime() * 1000);
         Borrow newBorrow = new Borrow(
                 user.getUser_id(),
                 uniqueBookMark,

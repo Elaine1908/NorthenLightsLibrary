@@ -113,7 +113,7 @@ public class ReturnNormalBookTransaction extends ReturnBookTransaction {
         );
 
         return String.format("还书%s%s成功，由于借阅超期，%s被罚款%.2f元。此外，他的信用还降低了%d",
-                bookTypeOptional.orElse(null).getName(), bookCopy.getUniqueBookMark(), userOptional.get().getUsername(), fineAmount / 100.00, CREDIT_LOSS_OVERTIME);
+                bookTypeOptional.orElse(null).getName(), bookCopy.getUniqueBookMark(), userOptional.orElse(null).getUsername(), fineAmount / 100.00, CREDIT_LOSS_OVERTIME);
 
     }
 

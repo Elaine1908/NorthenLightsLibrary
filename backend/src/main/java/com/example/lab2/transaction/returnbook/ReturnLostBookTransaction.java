@@ -76,7 +76,7 @@ public class ReturnLostBookTransaction extends ReturnBookTransaction {
         );
 
         return String.format("还书%s%s成功，由于书本丢失，%s被罚款%.2f元。此外，他的信用还降低了%d",
-                bookTypeOptional.get().getName(), bookCopy.getUniqueBookMark(), userOptional.orElse(null).getUsername(), fineAmount / 100.00, CREDIT_LOSS_LOST);
+                bookTypeOptional.orElse(null).getName(), bookCopy.getUniqueBookMark(), userOptional.orElse(null).getUsername(), fineAmount / 100.00, CREDIT_LOSS_LOST);
     }
 
 
