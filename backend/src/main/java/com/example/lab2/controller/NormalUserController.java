@@ -2,7 +2,9 @@ package com.example.lab2.controller;
 
 import com.example.lab2.dto.record.*;
 import com.example.lab2.entity.Fine;
+import com.example.lab2.entity.Reply;
 import com.example.lab2.request.comment.CommentRequest;
+import com.example.lab2.request.comment.DeleteCommentRequest;
 import com.example.lab2.request.comment.ReplyRequest;
 import com.example.lab2.request.fine.PayFineRequest;
 import com.example.lab2.response.GeneralResponse;
@@ -154,5 +156,33 @@ public class NormalUserController {
         GeneralResponse generalResponse = normalUserService.postReply(username,replyRequest.getCommentID(),replyRequest.getReplyID(),replyRequest.getContent());
         return ResponseEntity.ok(generalResponse);
     }
+
+    /**
+     * 用户删除评论
+     *
+     * @author zyw
+     */
+    @PostMapping("/deleteComment")
+    public ResponseEntity<?> deleteComment(@RequestBody DeleteCommentRequest deleteCommentRequest,HttpServletRequest httpServletRequest){
+        String token = httpServletRequest.getHeader("token");
+        String username = JwtUtils.getUserName(token);
+        GeneralResponse generalResponse = normalUserService.deleteComment(deleteCommentRequest.getCommentID(),username);
+        return ResponseEntity.ok(generalResponse);
+    }
+
+    /**
+     * 用户删除回复
+     *
+     * @author zyw
+     */
+        @PostMapping("/deleteReply")
+        public ResponseEntity<?> deleteReply(@RequestBody DeleteCommentRequest deleteCommentRequest,HttpServletRequest httpServletRequest) {
+            String token = httpServletRequest.getHeader("token");
+            String username = JwtUtils.getUserName(token);
+            GeneralResponse generalResponse = normalUserService.deleteReply(deleteCommentRequest.getCommentID(),username);
+            return ResponseEntity.ok(generalResponse);
+
+        }
+
 
 }

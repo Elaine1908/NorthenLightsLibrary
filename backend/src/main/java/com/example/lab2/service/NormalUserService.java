@@ -374,4 +374,62 @@ public class NormalUserService {
         }
         return new GeneralResponse("回复成功");
     }
+
+    /**
+     * 用户删除自己的评论
+     * @param commentID
+     * @author yiwen
+     */
+    public GeneralResponse deleteComment(Long commentID,String username){
+        //检查用户存不存在，并得到用户的userID
+        Optional<User> userOptional = userRepository.findByName(username);
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("找不到这个用户");
+        }
+
+        //看看评论是否存在
+        Optional<Comment> commentOptional = commentRepository.findById(commentID);
+        if(commentOptional.isEmpty()){
+            throw new CommentNotFoundException("这条评论不存在");
+        }
+
+        //看看评论的主人是不是这个用户
+        if(commentOptional.get().getUserID() != userOptional.get().getUser_id()){
+            throw new CommentMismatchException("这个评论的主人不是你");
+        }else {
+            Comment comment = commentOptional.get();
+            comment.setDeletedBySelf(true);//用户删除评论
+            commentRepository.save(comment);
+
+        }
+        return new GeneralResponse("成功删除评论");
+    }
+
+    /**
+     * 用户删除自己的回复
+     * @param commentID
+     * @author yiwen
+     */
+    public GeneralResponse deleteReply(Long commentID,String username) {
+        //检查用户存不存在，并得到用户的userID
+        Optional<User> userOptional = userRepository.findByName(username);
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("找不到这个用户");
+        }
+        //看看回复是否存在
+        Optional<Reply> replyOptional = replyRepository.findById(commentID);
+        if(replyOptional.isEmpty()){
+            throw new CommentNotFoundException("这条回复不存在");
+        }
+
+        if(replyOptional.get().getUserID() != userOptional.get().getUser_id()){
+            throw new CommentMismatchException("这个回复的主人不是你");
+        }else {
+            Reply reply = replyOptional.get();
+            reply.setDeletedBySelf(true);//用户删除回复
+            replyRepository.save(reply);
+        }
+
+        return new GeneralResponse("成功删除回复");
+    }
 }

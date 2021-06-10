@@ -17,4 +17,11 @@ public interface ReplyRepository extends JpaRepository<Reply, Long> {
             "from Reply rp left join User ur on ur.user_id=rp.userID left join User repliedUr on repliedUr.user_id=rp.repliedUserID where rp.commentID=:commentID")
     public List<ReplyDTO> getRepliesByCommentID(@Param("commentID") long commentID);
 
+    public void deleteAllByCommentID(Long commentID);
+
+    public List<Reply> findAllByCommentID(Long commentID);
+
+    @Query("select r from Reply r where r.commentID=:commentID")
+    public List<Reply> getAllByCommentID(@Param("commentID") Long commentID);
+
 }
