@@ -183,7 +183,7 @@ public class BorrowService {
             }
 
             //看看这本书是否在架上
-            if (!bookCopyOptional.get().getStatus().equals(BookCopy.AVAILABLE)) {
+            if (!bookCopyOptional.orElse(null).getStatus().equals(BookCopy.AVAILABLE)) {
                 throw new BookCopyNotAvailableException(uniqueBookMark + "的状态是" + bookCopyOptional.get().getStatus());
             }
 

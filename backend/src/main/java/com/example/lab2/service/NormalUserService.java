@@ -303,7 +303,7 @@ public class NormalUserService {
 
         //运行到这里说明符合评论条件，添加评论
         Date date = new Date();
-        Comment comment = new Comment(userOptional.get().getUser_id(), isbn, content, date, false, false, rate);
+        Comment comment = new Comment(userOptional.orElse(null).getUser_id(), isbn, content, date, false, false, rate);
         commentRepository.save(comment);
         return new GeneralResponse("评论成功");
     }
