@@ -311,7 +311,7 @@ public class NormalUserService {
      * @param list
      * @return 0：没有借阅记录 1：借阅且所有副本归还状态非正常 2：借阅且至少有一本副本归还状态正常
      */
-    public int checkReturnBook(List<ReturnRecord> list){
+    private int checkReturnBook(List<ReturnRecord> list){
         if(list.size() == 0){
             return 0;
         }

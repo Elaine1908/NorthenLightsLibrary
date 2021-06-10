@@ -3,10 +3,13 @@ package com.example.lab2.config;
 import com.example.lab2.dao.UserRepository;
 import com.example.lab2.filter.JwtAuthenticationFilter;
 import com.example.lab2.filter.JwtLoginFilter;
+import com.example.lab2.filter.MakeInStreamRereadableFilter;
 import com.example.lab2.interceptor.UserCreditInterceptor;
 import com.example.lab2.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -27,6 +30,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Component
 @EnableWebSecurity
+@Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
 
     //用户信用低于50就禁止预约
@@ -102,7 +106,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().exceptionHandling().authenticationEntryPoint(authenticationEntryPoint()).accessDeniedHandler(accessDeniedHandler);
 
-
     }
 
     /**
@@ -133,5 +136,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
     @Bean
     public static NoOpPasswordEncoder passwordEncoder() {
         return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance();
+    }
+
+    @Bean
+    public MakeInStreamRereadableFilter makeInStreamRereadableFilter() {
+        return new MakeInStreamRereadableFilter();
+    }
+
+    @Bean
+    public FilterRegistrationBean<MakeInStreamRereadableFilter> makeInStreamRereadableFilterFilterRegistrationBean() {
+        FilterRegistrationBean<MakeInStreamRereadableFilter> filterRegistrationBean = new FilterRegistrationBean<>();
+        filterRegistrationBean.setFilter(makeInStreamRereadableFilter());
+        filterRegistrationBean.addUrlPatterns("/*");
+        filterRegistrationBean.setOrder(1);
+        return filterRegistrationBean;
     }
 }
