@@ -140,7 +140,7 @@ public class BorrowService {
         }
 
         //看看这本书是不是在当前管理员所在的分管？
-        if (!bookCopyOptional.get().getLibraryID().equals(adminLibraryID)) {
+        if (!bookCopyOptional.orElse(null).getLibraryID().equals(adminLibraryID)) {
             //如果不是，提醒用户去对应的分管借书
             libraries.forEach(library -> {
                 if (library.getLibraryID() == bookCopyOptional.get().getLibraryID()) {
@@ -160,7 +160,7 @@ public class BorrowService {
 
         //检查用户是否借阅了太多书,如果是的话给出提示
         long currentBorrowCount = borrowRepository.getBorrowCountByUsername(user.getUsername());
-        if (currentBorrowCount >= userConfigurationOptional.get().getMaxBookBorrow()) {
+        if (currentBorrowCount >= userConfigurationOptional.orElse(null).getMaxBookBorrow()) {
             throw new BorrowToManyException(
                     String.format("您系统设置您最大可以借阅%d本书，你已经借阅了%d本书，不能再借阅了"
                             , userConfigurationOptional.get().getMaxBookBorrow(), currentBorrowCount)
@@ -203,7 +203,7 @@ public class BorrowService {
             if (adminOptional.isEmpty()) {
                 throw new UserNotFoundException("找不到管理员" + admin);
             }
-            Long adminID = adminOptional.get().getUser_id();
+            Long adminID = adminOptional.orElse(null).getUser_id();
 
 
             //更改原本bookcopy的status属性
@@ -337,7 +337,7 @@ public class BorrowService {
 
         //看看用户是不是借阅了太多书
         long currentBorrowCount = borrowRepository.getBorrowCountByUsername(user.getUsername());
-        if (currentBorrowCount >= userConfigurationOptional.get().getMaxBookBorrow()) {
+        if (currentBorrowCount >= userConfigurationOptional.orElse(null).getMaxBookBorrow()) {
             throw new BorrowToManyException(
                     String.format("您系统设置您最大可以借阅%d本书，你已经借阅了%d本书，不能再借阅了"
                             , userConfigurationOptional.get().getMaxBookBorrow(), currentBorrowCount)

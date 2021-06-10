@@ -1,7 +1,6 @@
 package com.example.lab2.filter;
 
-import com.example.lab2.wheel.InStreamRereadableHttpServletRequestWrapper;
-import org.springframework.stereotype.Component;
+import com.example.lab2.http.InStreamRereadableHttpServletRequestWrapper;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;

@@ -50,7 +50,7 @@ public class ReturnDamagedBookTransaction extends ReturnBookTransaction {
 
         //书本超期，要生成罚款.这里是损坏，则罚款原价的二分之一
         //书本超期，要生成罚款
-        long fineAmount = bookTypeOptional.get().getPrice() / 2;
+        long fineAmount = bookTypeOptional.orElse(null).getPrice() / 2;
 
         //生成罚款记录
         this.generateFineAndFineRecord(fineAmount,
@@ -74,7 +74,7 @@ public class ReturnDamagedBookTransaction extends ReturnBookTransaction {
         );
 
         return String.format("还书%s%s成功，由于书本损坏，%s被罚款%.2f元。此外，他的信用还降低了%d分",
-                bookTypeOptional.get().getName(), bookCopy.getUniqueBookMark(), userOptional.get().getUsername(), fineAmount / 100.00, CREDIT_LOSS_DAMAGE);
+                bookTypeOptional.get().getName(), bookCopy.getUniqueBookMark(), userOptional.orElse(null).getUsername(), fineAmount / 100.00, CREDIT_LOSS_DAMAGE);
     }
 
     /**
@@ -101,7 +101,7 @@ public class ReturnDamagedBookTransaction extends ReturnBookTransaction {
             throw new UserNotFoundException("找不到管理员");
         }
         //创建还书记录对象
-        ReturnRecord returnRecord = new ReturnRecord(user.getUser_id(), currentDate, bookCopy.getUniqueBookMark(), adminOptional.get().getUsername(), adminLibraryID,ReturnRecord.DAMAGED);
+        ReturnRecord returnRecord = new ReturnRecord(user.getUser_id(), currentDate, bookCopy.getUniqueBookMark(), adminOptional.orElse(null).getUsername(), adminLibraryID,ReturnRecord.DAMAGED);
 
         returnRecordRepository.save(returnRecord);
     }

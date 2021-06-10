@@ -106,6 +106,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().exceptionHandling().authenticationEntryPoint(authenticationEntryPoint()).accessDeniedHandler(accessDeniedHandler);
 
+        //设置关闭服务的url只有在内网才能访问
+        http.authorizeRequests()
+                .antMatchers("/actuator/shutdown").hasIpAddress("127.0.0.1");
     }
 
     /**

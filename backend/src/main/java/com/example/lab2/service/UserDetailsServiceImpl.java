@@ -116,7 +116,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 
         //将更新好的用户权限数组赋给用户对象
-        user.get().setAuthorities(authorities);
+        user.orElse(null).setAuthorities(authorities);
 
         return user.get();
 

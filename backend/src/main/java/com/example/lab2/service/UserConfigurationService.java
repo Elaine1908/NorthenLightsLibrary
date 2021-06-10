@@ -54,7 +54,7 @@ public class UserConfigurationService {
         long maxBorrowTime = Long.parseLong(setUserConfigurationRequest.getMax_borrow_time());
         long maxReserveTime = Long.parseLong(setUserConfigurationRequest.getMax_reserve_time());
 
-        UserConfiguration configuration = userConfigurationOptional.get();
+        UserConfiguration configuration = userConfigurationOptional.orElse(null);
         configuration.setMaxBookBorrow(maxBook);
         configuration.setMaxReserveTime(maxReserveTime);
         configuration.setMaxBorrowTime(maxBorrowTime);

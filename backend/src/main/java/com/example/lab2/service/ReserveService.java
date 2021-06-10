@@ -96,7 +96,7 @@ public class ReserveService {
             bc.setLastReservationDate(currentDate);
             bookkCopyRepository.save(bc);
 
-            Date deadLine = new Date(currentDate.getTime() + 1000 * userConfiguration.get().getMaxReserveTime());
+            Date deadLine = new Date(currentDate.getTime() + 1000 * userConfiguration.orElse(null).getMaxReserveTime());
 
             //在预约表里插入一个新的预约
             Reservation newReservation = new Reservation(

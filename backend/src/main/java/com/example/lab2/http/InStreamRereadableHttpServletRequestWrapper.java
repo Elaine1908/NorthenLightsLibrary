@@ -1,4 +1,4 @@
-package com.example.lab2.wheel;
+package com.example.lab2.http;
 
 import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;

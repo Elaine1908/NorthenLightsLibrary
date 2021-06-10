@@ -48,7 +48,7 @@ public class FineService {
         if (userOptional.isEmpty()) {
             throw new UserNotFoundException("找不到用户");
         }
-        long userID = userOptional.get().getUser_id();
+        long userID = userOptional.orElse(null).getUser_id();
 
         //根据userID查罚款
         List<Fine> fineList = fineRepository.getFineByUserID(userID);
@@ -78,9 +78,9 @@ public class FineService {
 
         //尝试朝TA的服务器发起请求
         PayFineResponseToTAServer payFineResponseToTAServer = payFineToTAServer(
-                userOptional.get().getUsername(),
-                fineOptional.get().getMoney(),
-                fineOptional.get());
+                userOptional.orElse(null).getUsername(),
+                fineOptional.orElse(null).getMoney(),
+                fineOptional.orElse(null));
 
         return new GeneralResponse(payFineResponseToTAServer.getMsg());
 

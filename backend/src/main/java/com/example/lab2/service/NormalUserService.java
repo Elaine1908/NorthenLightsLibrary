@@ -285,7 +285,7 @@ public class NormalUserService {
         }
 
         //检查评论是否存在
-        Optional<Comment> commentOptional = commentRepository.getCommentByUserID(userOptional.get().getUser_id());
+        Optional<Comment> commentOptional = commentRepository.getCommentByUserID(userOptional.orElse(null).getUser_id());
         if(commentOptional.isPresent()){
             throw new CommentAlreadyExistException("你已经评论过此书，不能重复评论");
         }
@@ -351,9 +351,9 @@ public class NormalUserService {
                 throw new CommentNotFoundException("这条评论不存在");
             }else {
                 //获取被回复的用户的id
-                long replied_user_id = commentOptional.get().getUserID();
+                long replied_user_id = commentOptional.orElse(null).getUserID();
                 Date date = new Date();
-                Reply reply = new Reply(userOptional.get().getUser_id(),commentID,content,date,false,false,replied_user_id);
+                Reply reply = new Reply(userOptional.orElse(null).getUser_id(),commentID,content,date,false,false,replied_user_id);
                 replyRepository.save(reply);
             }
 
@@ -366,9 +366,9 @@ public class NormalUserService {
                 throw new CommentNotFoundException("这条回复不存在");
             }else{
                 //获取被回复的用户的id
-                long replied_user_id = replyOptional.get().getUserID();
+                long replied_user_id = replyOptional.orElse(null).getUserID();
                 Date date = new Date();
-                Reply reply = new Reply(userOptional.get().getUser_id(),replyOptional.get().getCommentID(),content,date,false,false,replied_user_id);
+                Reply reply = new Reply(userOptional.orElse(null).getUser_id(),replyOptional.get().getCommentID(),content,date,false,false,replied_user_id);
                 replyRepository.save(reply);
             }
         }
@@ -394,7 +394,7 @@ public class NormalUserService {
         }
 
         //看看评论的主人是不是这个用户
-        if(commentOptional.get().getUserID() != userOptional.get().getUser_id()){
+        if(commentOptional.orElse(null).getUserID() != userOptional.orElse(null).getUser_id()){
             throw new CommentMismatchException("这个评论的主人不是你");
         }else {
             Comment comment = commentOptional.get();
@@ -422,7 +422,7 @@ public class NormalUserService {
             throw new CommentNotFoundException("这条回复不存在");
         }
 
-        if(replyOptional.get().getUserID() != userOptional.get().getUser_id()){
+        if(replyOptional.orElse(null).getUserID() != userOptional.orElse(null).getUser_id()){
             throw new CommentMismatchException("这个回复的主人不是你");
         }else {
             Reply reply = replyOptional.get();

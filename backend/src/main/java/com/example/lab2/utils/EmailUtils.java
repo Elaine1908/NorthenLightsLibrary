@@ -45,8 +45,8 @@ public class EmailUtils {
         props.setProperty("mail.transport.protocol", "SMTP"); // 设置邮箱发送的协议
         props.put("mail.smtp.socketFactory.port", "465");
         props.put("mail.smtp.starttls.enable", "true"); // 启用TLS加密
+        props.put("mail.smtp.ssl.checkserveridentity", true);
         props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-        props.put("mail.smtp.ssl.checkserveridentity", "true");
 // 获取Session实例:
         Session session = Session.getInstance(props, new Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
