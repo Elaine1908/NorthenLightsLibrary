@@ -9,13 +9,12 @@ import com.example.lab2.exception.UploadException;
 import com.example.lab2.request.borrow.BorrowBookRequest;
 import com.example.lab2.request.borrow.BorrowReservedBookRequest;
 import com.example.lab2.request.borrow.ReturnBookRequest;
+import com.example.lab2.request.sensitive.AddToSensitiveRequest;
+import com.example.lab2.request.sensitive.RemoveFromSensitiveRequest;
 import com.example.lab2.request.upload.AddBookCopyRequest;
 import com.example.lab2.response.GeneralResponse;
 import com.example.lab2.request.upload.UploadNewBookRequest;
-import com.example.lab2.service.BorrowService;
-import com.example.lab2.service.NormalUserService;
-import com.example.lab2.service.SearchService;
-import com.example.lab2.service.UploadService;
+import com.example.lab2.service.*;
 import com.example.lab2.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
@@ -27,6 +26,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -51,6 +51,9 @@ public class AdminController {
 
     @Autowired
     BookTypeRepository bookTypeRepository;
+
+    @Resource(name = "adminService")
+    AdminService adminService;
 
     /**
      * 管理员上传一种新书。要求isbn必须是唯一的
@@ -159,8 +162,8 @@ public class AdminController {
      */
     @PostMapping("/lendReservedBookToUser")
     public ResponseEntity<GeneralResponse> lendReservedBookToUser(@Valid @RequestBody BorrowReservedBookRequest borrowReservedBookRequest,
-                                                    BindingResult bindingResult,
-                                                    HttpServletRequest httpServletRequest) {
+                                                                  BindingResult bindingResult,
+                                                                  HttpServletRequest httpServletRequest) {
 
         if (bindingResult.hasFieldErrors()) {
             throw new IllegalArgumentException(Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage());
@@ -185,7 +188,7 @@ public class AdminController {
 
     @PostMapping("/receiveBookFromUser")
     public ResponseEntity<List<String>> receiveBookFromUser(@Valid @RequestBody ReturnBookRequest returnBookRequest, BindingResult bindingResult,
-                                                               HttpServletRequest httpServletRequest) {
+                                                            HttpServletRequest httpServletRequest) {
 
         if (bindingResult.hasFieldErrors()) {
             throw new IllegalArgumentException(Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage());
@@ -204,7 +207,7 @@ public class AdminController {
     }
 
     @GetMapping("/record")
-    public ResponseEntity<HashMap<String,Object>> searchRecordByUsername(@RequestParam("username") String username){
+    public ResponseEntity<HashMap<String, Object>> searchRecordByUsername(@RequestParam("username") String username) {
         List<ReserveRecordDTO> reserveRecordDTOS = normalUserService.getReserveRecord(username);
         List<BorrowRecordDTO> borrowRecordDTOS = normalUserService.getBorrowRecord(username);
         List<ReturnRecordDTO> returnRecordDTOS = normalUserService.getReturnRecord(username);
@@ -212,21 +215,69 @@ public class AdminController {
 
         //加入result
         HashMap<String, Object> result = new HashMap<>();
-        result.put("reserveRecordList",reserveRecordDTOS);
-        result.put("borrowRecordList",borrowRecordDTOS);
-        result.put("returnRecordList",returnRecordDTOS);
-        result.put("fineRecordList",fineRecordDTOS);
+        result.put("reserveRecordList", reserveRecordDTOS);
+        result.put("borrowRecordList", borrowRecordDTOS);
+        result.put("returnRecordList", returnRecordDTOS);
+        result.put("fineRecordList", fineRecordDTOS);
         return ResponseEntity.ok(result);
 
     }
 
     @GetMapping("/recordOfBook")
-    public ResponseEntity<HashMap<String,Object>> getRecordByUniqueBookMark(@Param("isbn") String isbn){
+    public ResponseEntity<HashMap<String, Object>> getRecordByUniqueBookMark(@Param("isbn") String isbn) {
 
         List<RecordAboutBookCopyDTO> recordAboutBookCopyDTOS = normalUserService.getBookCopyRecord(isbn);
         //加入result
         HashMap<String, Object> result = new HashMap<>();
         result.put("recordList", recordAboutBookCopyDTOS);
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/sensitiveWordList")
+    public ResponseEntity<HashMap<String, Object>> getSensitiveWordList() {
+        //去业务层找到敏感词列表
+        List<String> sensitiveWordList = adminService.findAllSensitiveWord();
+
+        //生成传输给前端的对象
+        HashMap<String, Object> res = new HashMap<>();
+        res.put("sensitiveWordList", sensitiveWordList);
+
+        //返回给前端
+        return ResponseEntity.ok(res);
+    }
+
+
+    /**
+     * 前端向敏感词检查器中添加敏感词的接口
+     *
+     * @param addToSensitiveRequest
+     * @return
+     */
+    @PostMapping("/addToSensitive")
+    public ResponseEntity<GeneralResponse> addToSensitive(@RequestBody AddToSensitiveRequest addToSensitiveRequest) {
+
+        List<String> addToSensitiveList = addToSensitiveRequest.getAddToSensitiveList();
+
+        String msg = adminService.addToSensitive(addToSensitiveList);
+
+        return ResponseEntity.ok(new GeneralResponse(msg));
+
+    }
+
+    /**
+     * 前端从敏感词检查器中删除敏感词的接口
+     *
+     * @param removeFromSensitiveRequest
+     * @return
+     */
+    @PostMapping("/removeFromSensitive")
+    public ResponseEntity<GeneralResponse> removeFromSensitive(
+            @RequestBody RemoveFromSensitiveRequest removeFromSensitiveRequest) {
+
+        List<String> removeFromSensitiveList = removeFromSensitiveRequest.getRemoveFromSensitiveList();
+
+        String msg = adminService.removeFromSensitive(removeFromSensitiveList);
+
+        return ResponseEntity.ok(new GeneralResponse(msg));
     }
 }

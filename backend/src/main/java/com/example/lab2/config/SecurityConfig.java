@@ -48,6 +48,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
     @Autowired
     private UserRepository userRepository;
 
+
+    @Autowired
+    private HandlerInterceptor commentReplyInterceptor;
+
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
         return new MyAccessDenied();
@@ -125,7 +129,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         HandlerInterceptor borrowInterceptor = new UserCreditInterceptor(
                 BORROW_MIN_CREDIT, userRepository, UserCreditInterceptor.WHERE_IS_USERNAME.HTTP_SERVLET_REQUEST);
 
-        HandlerInterceptor commentReplyInterceptor = new CommentReplyInterceptor();
 
         //设置预约的信用拦截器
         registry.addInterceptor(reserveInterceptor).addPathPatterns(
@@ -141,7 +144,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         registry.addInterceptor(commentReplyInterceptor).addPathPatterns(
                 "/user/postComment", "/user/postReply"
         );
-
 
 
     }

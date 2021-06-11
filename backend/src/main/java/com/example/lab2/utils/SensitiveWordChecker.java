@@ -1,6 +1,7 @@
 package com.example.lab2.utils;
 
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.ahocorasick.trie.Emit;
 import org.ahocorasick.trie.Trie;
@@ -22,6 +23,7 @@ import java.util.*;
 @Slf4j
 public class SensitiveWordChecker {
 
+    @Getter
     Set<String> sensitiveWords;
 
     @Value("${sensitive.word.list.path}")
@@ -30,6 +32,8 @@ public class SensitiveWordChecker {
 
     //AC自动机
     private Trie ahoCorasickTrie;
+
+
 
 
     /**
