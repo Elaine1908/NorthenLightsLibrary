@@ -77,26 +77,27 @@ public class CommentService {
 
     /**
      * 管理员删除评论
+     *
      * @param commentID
      * @param username
      * @author yiwen
      */
-    public GeneralResponse deleteComment(Long commentID,String username){
+    public GeneralResponse deleteComment(Long commentID, String username) {
         //检查用户存不存在，并得到用户的userID
         Optional<User> userOptional = userRepository.findByName(username);
         if (userOptional.isEmpty()) {
             throw new UserNotFoundException("管理员不存在");
         }
 
-        if(!userOptional.get().getRole().equals(User.ADMIN) && !userOptional.get().getRole().equals(User.SUPERADMIN) ){
+        if (!userOptional.orElse(null).getRole().equals(User.ADMIN) && !userOptional.get().getRole().equals(User.SUPERADMIN)) {
             throw new RoleNotAllowedException("你不是管理员");
         }
         //看看评论是否存在
         Optional<Comment> commentOptional = commentRepository.findById(commentID);
-        if(commentOptional.isEmpty()){
+        if (commentOptional.isEmpty()) {
             throw new CommentNotFoundException("这条评论不存在");
-        }else {
-            Comment comment = commentOptional.get();
+        } else {
+            Comment comment = commentOptional.orElse(null);
             comment.setDeletedByAdmin(true);//删除评论
             commentRepository.save(comment);
         }
@@ -107,27 +108,28 @@ public class CommentService {
 
     /**
      * 管理员删除回复
+     *
      * @param replyID
      * @param username
      * @author yiwen
      */
-    public GeneralResponse deleteReply(Long replyID,String username){
+    public GeneralResponse deleteReply(Long replyID, String username) {
         //检查用户存不存在，并得到用户的userID
         Optional<User> userOptional = userRepository.findByName(username);
         if (userOptional.isEmpty()) {
             throw new UserNotFoundException("管理员不存在");
         }
 
-        if(!userOptional.get().getRole().equals(User.ADMIN) && !userOptional.get().getRole().equals(User.SUPERADMIN) ){
+        if (!userOptional.orElse(null).getRole().equals(User.ADMIN) && !userOptional.get().getRole().equals(User.SUPERADMIN)) {
             throw new RoleNotAllowedException("你不是管理员");
         }
 
         //看看回复是否存在
         Optional<Reply> replyOptional = replyRepository.findById(replyID);
-        if(replyOptional.isEmpty()){
+        if (replyOptional.isEmpty()) {
             throw new CommentNotFoundException("这条回复不存在");
-        }else {
-            Reply reply = replyOptional.get();
+        } else {
+            Reply reply = replyOptional.orElse(null);
             reply.setDeletedByAdmin(true);//删除回复
             replyRepository.save(reply);
         }
