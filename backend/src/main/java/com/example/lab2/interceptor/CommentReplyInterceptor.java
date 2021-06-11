@@ -1,7 +1,6 @@
 package com.example.lab2.interceptor;
 
 import com.alibaba.fastjson.JSONObject;
-import com.example.lab2.entity.Comment;
 import com.example.lab2.response.GeneralResponse;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
