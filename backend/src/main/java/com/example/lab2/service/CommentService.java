@@ -89,7 +89,7 @@ public class CommentService {
             throw new UserNotFoundException("管理员不存在");
         }
 
-        if (!userOptional.orElse(null).getRole().equals(User.ADMIN) && !userOptional.get().getRole().equals(User.SUPERADMIN)) {
+        if (!userOptional.orElse(null).getRole().equals(User.ADMIN) && !userOptional.orElse(null).getRole().equals(User.SUPERADMIN)) {
             throw new RoleNotAllowedException("你不是管理员");
         }
         //看看评论是否存在
@@ -120,7 +120,7 @@ public class CommentService {
             throw new UserNotFoundException("管理员不存在");
         }
 
-        if (!userOptional.orElse(null).getRole().equals(User.ADMIN) && !userOptional.get().getRole().equals(User.SUPERADMIN)) {
+        if (!userOptional.orElse(null).getRole().equals(User.ADMIN) && !userOptional.orElse(null).getRole().equals(User.SUPERADMIN)) {
             throw new RoleNotAllowedException("你不是管理员");
         }
 
