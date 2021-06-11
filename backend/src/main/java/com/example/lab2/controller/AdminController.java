@@ -9,6 +9,8 @@ import com.example.lab2.exception.UploadException;
 import com.example.lab2.request.borrow.BorrowBookRequest;
 import com.example.lab2.request.borrow.BorrowReservedBookRequest;
 import com.example.lab2.request.borrow.ReturnBookRequest;
+import com.example.lab2.request.comment.DeleteCommentRequest;
+import com.example.lab2.request.comment.DeleteReplyRequest;
 import com.example.lab2.request.sensitive.AddToSensitiveRequest;
 import com.example.lab2.request.sensitive.RemoveFromSensitiveRequest;
 import com.example.lab2.request.upload.AddBookCopyRequest;
@@ -45,6 +47,9 @@ public class AdminController {
 
     @Resource(name = "normalUserService")
     NormalUserService normalUserService;
+
+    @Resource(name = "commentService")
+    CommentService commentService;
 
     @Autowired
     LibraryRepository libraryRepository;
@@ -233,6 +238,7 @@ public class AdminController {
         return ResponseEntity.ok(result);
     }
 
+
     @GetMapping("/sensitiveWordList")
     public ResponseEntity<HashMap<String, Object>> getSensitiveWordList() {
         //去业务层找到敏感词列表
@@ -279,5 +285,23 @@ public class AdminController {
         String msg = adminService.removeFromSensitive(removeFromSensitiveList);
 
         return ResponseEntity.ok(new GeneralResponse(msg));
+    }
+
+    @PostMapping("/deleteComment")
+    public ResponseEntity<?> deleteComment(@RequestBody DeleteCommentRequest deleteCommentRequest, HttpServletRequest httpServletRequest) {
+        String token = httpServletRequest.getHeader("token");
+        String username = JwtUtils.getUserName(token);
+        GeneralResponse generalResponse = commentService.deleteComment(deleteCommentRequest.getCommentID(), username);
+        return ResponseEntity.ok(generalResponse);
+
+    }
+
+    @PostMapping("/deleteReply")
+    public ResponseEntity<?> deleteReply(@RequestBody DeleteReplyRequest deleteReplyRequest, HttpServletRequest httpServletRequest) {
+        String token = httpServletRequest.getHeader("token");
+        String username = JwtUtils.getUserName(token);
+        GeneralResponse generalResponse = commentService.deleteReply(deleteReplyRequest.getCommentID(), username);
+        return ResponseEntity.ok(generalResponse);
+
     }
 }

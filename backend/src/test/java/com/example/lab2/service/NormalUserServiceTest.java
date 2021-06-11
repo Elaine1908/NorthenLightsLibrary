@@ -1120,4 +1120,123 @@ public class NormalUserServiceTest {
         assertEquals(replies.get(0).getUsername(),"newUser2");
     }
 
+    @Test
+    @Transactional
+    public void testDeleteComment_UserNotFound(){
+        assertThrows(UserNotFoundException.class, () -> {
+            normalUserService.deleteComment((long)1,"non_existent_user");
+        });
+    }
+
+    @Test
+    @Transactional
+    public void testDeleteComment_CommentNotFound(){
+        User user = new User(
+                "newUser",
+                "password",
+                "zyw@email.com",
+                User.STUDENT,
+                User.MAX_CREDIT
+        );
+        userRepository.save(user);
+        assertThrows(CommentNotFoundException.class, () -> {
+            normalUserService.deleteComment((long)8888,"newUser");
+        });
+    }
+
+    @Test
+    @Transactional
+    public void testDeleteComment_CommentMismatch() {
+        User user = new User(
+                "newUser",
+                "password",
+                "zyw@email.com",
+                User.STUDENT,
+                User.MAX_CREDIT
+        );
+        userRepository.save(user);
+        User userFromDB = userRepository.getUserByUsername("newUser");
+
+        Comment comment = new Comment(userFromDB.getUser_id()+1,"isbn","good",new Date(),false,false,8);
+        commentRepository.save(comment);
+        Optional<Comment> commentFromDB = commentRepository.getCommentByUserID(userFromDB.getUser_id()+1);
+        assertTrue(commentFromDB.isPresent());
+
+        assertThrows(CommentMismatchException.class, () -> {
+            normalUserService.deleteComment(commentFromDB.get().getCommendID(),"newUser");
+        });
+
+    }
+
+    @Test
+    @Transactional
+    public void testDeleteComment_Success() {
+        User user = new User(
+                "newUser",
+                "password",
+                "zyw@email.com",
+                User.STUDENT,
+                User.MAX_CREDIT
+        );
+        userRepository.save(user);
+        User userFromDB = userRepository.getUserByUsername("newUser");
+
+        Comment comment = new Comment(userFromDB.getUser_id(),"isbn","good",new Date(),false,false,8);
+        commentRepository.save(comment);
+        Optional<Comment> commentFromDB = commentRepository.getCommentByUserID(userFromDB.getUser_id());
+        assertTrue(commentFromDB.isPresent());
+
+        normalUserService.deleteComment(commentFromDB.get().getCommendID(),"newUser");
+
+        Optional<Comment> commentFromDB2 = commentRepository.getCommentByUserID(userFromDB.getUser_id());
+        assertFalse(commentFromDB2.isPresent());
+
+
+    }
+
+    @Test
+    @Transactional
+    public void testDeleteReply_ReplyNotFound(){
+        User user = new User(
+                "newUser",
+                "password",
+                "zyw@email.com",
+                User.STUDENT,
+                User.MAX_CREDIT
+        );
+        userRepository.save(user);
+
+        assertThrows(CommentNotFoundException.class, () -> {
+            normalUserService.deleteReply((long)8888,"newUser");
+        });
+    }
+
+    @Test
+    @Transactional
+    public void testDeleteReply_Success(){
+        User user = new User(
+                "newUser",
+                "password",
+                "zyw@email.com",
+                User.STUDENT,
+                User.MAX_CREDIT
+        );
+        userRepository.save(user);
+        User userFromDB = userRepository.getUserByUsername("newUser");
+
+        Comment comment = new Comment(userFromDB.getUser_id(),"isbn","good",new Date(),false,false,8);
+        commentRepository.save(comment);
+        Optional<Comment> commentFromDB = commentRepository.getCommentByUserID(userFromDB.getUser_id());
+        assertTrue(commentFromDB.isPresent());
+        Reply reply = new Reply(userFromDB.getUser_id(),commentFromDB.get().getCommendID(),"ok",new Date(),false,false,userFromDB.getUser_id());
+        replyRepository.save(reply);
+        List<Reply> replyFromDB = replyRepository.findAllByCommentID(commentFromDB.get().getCommendID());
+        assertEquals(replyFromDB.size(),1);
+        normalUserService.deleteReply(replyFromDB.get(0).getReplyID(),"newUser");
+
+        List<Reply> replyFromDB2 = replyRepository.findAllByCommentID(commentFromDB.get().getCommendID());
+        assertEquals(replyFromDB2.size(),0);
+
+    }
+
 }
