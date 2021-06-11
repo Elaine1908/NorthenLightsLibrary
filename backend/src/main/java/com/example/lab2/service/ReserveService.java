@@ -7,6 +7,7 @@ import com.example.lab2.dto.bookcopy.ReservedBookCopyDTO;
 import com.example.lab2.entity.*;
 import com.example.lab2.exception.auth.RoleNotAllowedException;
 import com.example.lab2.exception.bookcopy.BookCopyNotAvailableException;
+import com.example.lab2.exception.borrow.BorrowToManyException;
 import com.example.lab2.exception.notfound.BookCopyNotFoundException;
 import com.example.lab2.exception.notfound.UserNotFoundException;
 import com.example.lab2.exception.reserve.AdminReserveBookException;
@@ -29,6 +30,9 @@ public class ReserveService {
 
     @Autowired
     ReservationRepository reservationRepository;
+
+    @Autowired
+    BorrowRepository borrowRepository;
 
     @Autowired
     BookCopyRepository bookkCopyRepository;
@@ -70,10 +74,25 @@ public class ReserveService {
             throw new BookCopyNotFoundException("该副本不存在！");
         }
 
+
+        User user = userReserving.orElse(null);
+
+        Optional<UserConfiguration> userConfigurationOptional =
+                userConfigurationRepository.findUserConfigurationByRole(user.getRole());
+        if (userConfigurationOptional.isEmpty()) {
+            throw new RoleNotAllowedException("用户角色错误");
+        }
+
+
         //看看用户已经预约了多少本图书
-        long cnt = reservationRepository.getReservationCountByUserID(userReserving.orElse(null).getUser_id());
-        if (cnt >= 10) {
-            throw new ReserveTooManyException("系统规定一个用户最多能预约10本图书，你已经预约了" + cnt + "本");
+        //检查用户是否借阅了太多书,如果是的话给出提示
+        long currentBorrowCount = borrowRepository.getBorrowCountByUsername(user.getUsername());
+        long currentReservationCount = reservationRepository.getReservationCountByUsername(user.getUsername());
+        if (currentBorrowCount + currentReservationCount >= userConfigurationOptional.orElse(null).getMaxBookBorrow()) {
+            throw new BorrowToManyException(
+                    String.format("您系统设置您最大可以借阅%d本书，你已经借阅了%d本书，不能再借阅了"
+                            , userConfigurationOptional.orElse(null).getMaxBookBorrow(), currentBorrowCount)
+            );
         }
 
         //加锁，防止出现两个人抢着预约到了同一本书的情况
@@ -105,7 +124,7 @@ public class ReserveService {
             reservationRepository.save(newReservation);
 
             //在预约记录表中插入新的预约记录
-            ReserveRecord reserveRecord = new ReserveRecord(userReserving.orElse(null).getUser_id(),currentDate,bc.getUniqueBookMark(),"admin",1);
+            ReserveRecord reserveRecord = new ReserveRecord(userReserving.orElse(null).getUser_id(), currentDate, bc.getUniqueBookMark(), "admin", 1);
             //其实在预约记录中不需要记录admin和libraryID，但是这里为了后续数据库查找的方便默认将所有的admin和libraryID统一设置成了admin和0
             reserveRecordRepository.save(reserveRecord);
 

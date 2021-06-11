@@ -17,4 +17,5 @@ public interface BorrowRepository extends JpaRepository<Borrow, Long> {
     @Query("select new java.lang.Long(count(br.borrowID)) from Borrow br left join User u on br.userID=u.user_id where u.username=:username")
     public Long getBorrowCountByUsername(@Param("username") String username);
 
+
 }

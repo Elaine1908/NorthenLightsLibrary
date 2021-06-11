@@ -160,7 +160,9 @@ public class BorrowService {
 
         //检查用户是否借阅了太多书,如果是的话给出提示
         long currentBorrowCount = borrowRepository.getBorrowCountByUsername(user.getUsername());
-        if (currentBorrowCount >= userConfigurationOptional.orElse(null).getMaxBookBorrow()) {
+        long currentReservationCount = reservationRepository.getReservationCountByUsername(user.getUsername());
+
+        if (currentBorrowCount + currentReservationCount >= userConfigurationOptional.orElse(null).getMaxBookBorrow()) {
             throw new BorrowToManyException(
                     String.format("您系统设置您最大可以借阅%d本书，你已经借阅了%d本书，不能再借阅了"
                             , userConfigurationOptional.orElse(null).getMaxBookBorrow(), currentBorrowCount)
@@ -337,7 +339,9 @@ public class BorrowService {
 
         //看看用户是不是借阅了太多书
         long currentBorrowCount = borrowRepository.getBorrowCountByUsername(user.getUsername());
-        if (currentBorrowCount >= userConfigurationOptional.orElse(null).getMaxBookBorrow()) {
+        long currentReserveCount = reservationRepository.getReservationCountByUsername(user.getUsername());
+
+        if (currentReserveCount + currentBorrowCount >= userConfigurationOptional.orElse(null).getMaxBookBorrow()) {
             throw new BorrowToManyException(
                     String.format("您系统设置您最大可以借阅%d本书，你已经借阅了%d本书，不能再借阅了"
                             , userConfigurationOptional.orElse(null).getMaxBookBorrow(), currentBorrowCount)

@@ -22,4 +22,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     public void deleteReservationByBookCopyID(Long bookCopyID);
 
+    @Query("select new java.lang.Long(count(r.reservationID)) from Reservation r left join User u on r.userID=u.user_id where u.username=:username")
+    public Long getReservationCountByUsername(@Param("username") String username);
+
 }
