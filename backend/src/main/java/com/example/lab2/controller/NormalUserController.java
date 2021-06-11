@@ -5,6 +5,7 @@ import com.example.lab2.entity.Fine;
 import com.example.lab2.entity.Reply;
 import com.example.lab2.request.comment.CommentRequest;
 import com.example.lab2.request.comment.DeleteCommentRequest;
+import com.example.lab2.request.comment.DeleteReplyRequest;
 import com.example.lab2.request.comment.ReplyRequest;
 import com.example.lab2.request.fine.PayFineRequest;
 import com.example.lab2.response.GeneralResponse;
@@ -176,10 +177,10 @@ public class NormalUserController {
      * @author zyw
      */
         @PostMapping("/deleteReply")
-        public ResponseEntity<?> deleteReply(@RequestBody DeleteCommentRequest deleteCommentRequest,HttpServletRequest httpServletRequest) {
+        public ResponseEntity<?> deleteReply(@RequestBody DeleteReplyRequest deleteReplyRequest, HttpServletRequest httpServletRequest) {
             String token = httpServletRequest.getHeader("token");
             String username = JwtUtils.getUserName(token);
-            GeneralResponse generalResponse = normalUserService.deleteReply(deleteCommentRequest.getCommentID(),username);
+            GeneralResponse generalResponse = normalUserService.deleteReply(deleteReplyRequest.getCommentID(),username);
             return ResponseEntity.ok(generalResponse);
 
         }

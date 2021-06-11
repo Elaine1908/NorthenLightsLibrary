@@ -9,13 +9,12 @@ import com.example.lab2.exception.UploadException;
 import com.example.lab2.request.borrow.BorrowBookRequest;
 import com.example.lab2.request.borrow.BorrowReservedBookRequest;
 import com.example.lab2.request.borrow.ReturnBookRequest;
+import com.example.lab2.request.comment.DeleteCommentRequest;
+import com.example.lab2.request.comment.DeleteReplyRequest;
 import com.example.lab2.request.upload.AddBookCopyRequest;
 import com.example.lab2.response.GeneralResponse;
 import com.example.lab2.request.upload.UploadNewBookRequest;
-import com.example.lab2.service.BorrowService;
-import com.example.lab2.service.NormalUserService;
-import com.example.lab2.service.SearchService;
-import com.example.lab2.service.UploadService;
+import com.example.lab2.service.*;
 import com.example.lab2.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
@@ -45,6 +44,9 @@ public class AdminController {
 
     @Resource(name = "normalUserService")
     NormalUserService normalUserService;
+
+    @Resource(name = "commentService")
+    CommentService commentService;
 
     @Autowired
     LibraryRepository libraryRepository;
@@ -228,5 +230,23 @@ public class AdminController {
         HashMap<String, Object> result = new HashMap<>();
         result.put("recordList", recordAboutBookCopyDTOS);
         return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/deleteComment")
+    public ResponseEntity<?> deleteComment(@RequestBody DeleteCommentRequest deleteCommentRequest, HttpServletRequest httpServletRequest){
+        String token = httpServletRequest.getHeader("token");
+        String username = JwtUtils.getUserName(token);
+        GeneralResponse generalResponse = commentService.deleteComment(deleteCommentRequest.getCommentID(),username);
+        return ResponseEntity.ok(generalResponse);
+
+    }
+
+    @PostMapping("/deleteReply")
+    public ResponseEntity<?> deleteReply(@RequestBody DeleteReplyRequest deleteReplyRequest, HttpServletRequest httpServletRequest){
+        String token = httpServletRequest.getHeader("token");
+        String username = JwtUtils.getUserName(token);
+        GeneralResponse generalResponse = commentService.deleteReply(deleteReplyRequest.getCommentID(),username);
+        return ResponseEntity.ok(generalResponse);
+
     }
 }
