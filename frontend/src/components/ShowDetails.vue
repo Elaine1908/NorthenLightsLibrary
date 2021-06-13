@@ -28,10 +28,9 @@
     </div>
 
     <div class="bookContentBox">
-      <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect" router>
-        <el-menu-item index="/home/showDetails/showComment">评论</el-menu-item>
-        <el-menu-item index="/home/showDetails/showCopy">副本情况</el-menu-item>
-<!--        <el-menu-item index="/home/showDetails/showCopy" route="{path:/home/showDetails/showCopy,query:{isbn:this.$route.query.isbn}}">副本情况</el-menu-item>-->
+      <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
+        <el-menu-item index="1" @click="toComment">评论</el-menu-item>
+        <el-menu-item index="2" @click="toCopy">副本情况</el-menu-item>
       </el-menu>
       <router-view/>
     </div>
@@ -49,10 +48,19 @@
         averageRate:null,
         description:"",
         imagePath:"http://source.unsplash.com/random",
-        activeIndex: '/home/showDetails/showComment',
+        activeIndex: '',
       };
     },
     created() {
+      //console.log(this.$route.fullPath)
+      if (/^\/home\/showDetails\/showCopy\?isbn=(.)+/.test(this.$route.fullPath)) {
+        this.activeIndex = '2'
+      } else if (/^\/home\/showDetails\/showComment\?isbn=(.)+/.test(this.$route.fullPath)) {
+        this.activeIndex = '1'
+      } else {
+        this.$router.push({path: '/home/show'})
+        this.$message.error('没有获取到该书本的ISBN！')
+      }
       this.axios.get('/useradmin/getBookTypeAndCopy',{
         params: {
           isbn: this.$route.query.isbn
@@ -67,15 +75,30 @@
           this.imagePath=resp.data.imagePath;
         }
       }).catch(err => {
-        this.$message.error(err.response.data.message)
+        if (err.response.data.message !== undefined) {
+          this.$message.error(err.response.data.message)
+        } else {
+          this.$message.error('没有获取到对应的图书信息')
+          //this.$router.push({path: '/home/show'})
+        }
       })
     },
     methods: {
       handleSelect(key, keyPath) {
+        console.log(key, keyPath)
       },
-      toCopy(isbn){
+      toCopy(){
+        let isbn = this.$route.query.isbn
         this.$router.push({path: '/home/showDetails/showCopy', query: {isbn: isbn}});
+      },
+      toComment() {
+        let isbn = this.$route.query.isbn
+        this.$router.push({path: '/home/showDetails/showComment', query: {isbn: isbn}});
       }
+    },
+    mounted: () => {
+      //console.log('mounted函数：' + this.$route.fullPath)
+
     }
   }
 </script>

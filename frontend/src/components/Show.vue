@@ -63,7 +63,10 @@
           author: '',
           isbn:''
         },
-        bookList:[],
+        bookList:[{
+          name: 'hhh',
+          isbn: '111-222-444'
+        }],
         showBack:false,
         currentDate: new Date(),
         roleShow:localStorage.getItem('role')
