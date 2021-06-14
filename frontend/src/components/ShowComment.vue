@@ -9,9 +9,7 @@
         <a-comment :author="itemC.username" :avatar="itemC.avatar" v-if="(isAdmin || !itemC.deletedByAdmin)">
           <template slot="actions">
             <span @click="replyComment(itemC)">回复</span>
-            <span @click="toggleReply(itemC)" v-if="itemC.replyList.length">{{ itemC.showReply ? '收起回复' : '展开回复' }}</span>
             <span @click="deleteComment(indexC)" v-if="!itemC.deletedByAdmin && (itemC.username === username || isAdmin)">删除评论</span>
-            <span @click="restoreComment(itemC)" v-else>恢复评论</span>
           </template>
           <div slot="content" v-if="(!isAdmin || (isAdmin && !itemC.deletedByAdmin))">
             <p>
@@ -36,16 +34,15 @@
               class="comment-list"
               item-layout="horizontal"
               :data-source="itemC.replyList"
-              v-if="itemC.showReply && itemC.replyList.length"
+              v-if="itemC.replyList.length"
           >
             <a-list-item slot="renderItem" slot-scope="itemR, indexR">
               <a-comment :author="itemR.username + ' 回复 ' + itemR.repliedUsername" :avatar="itemR.avatar" v-if="(isAdmin || !itemC.deletedByAdmin)">
                 <template slot="actions">
                   <span @click="replyReply(itemC, itemR)">回复</span>
                   <span @click="deleteReply(indexC, indexR)" v-if="!itemR.deletedByAdmin && (itemC.username === username || isAdmin)">删除回复</span>
-                  <span @click="restoreReply(itemR)" v-else>恢复回复</span>
                 </template>
-                <p slot="content" v-if="(!isAdmin || (isAdmin && !itemC.deletedByAdmin))">
+                <p slot="content" v-if="(!isAdmin || (isAdmin && !itemR.deletedByAdmin))">
                   {{ itemR.content }}
                 </p>
                 <div slot="content" v-else>
@@ -71,7 +68,7 @@
                 <a-textarea :rows="4" :value="value" @change="handleChangeReply" />
               </a-form-item>
               <a-form-item>
-                <a-button html-type="submit" :loading="submitting" type="primary" @click="handleSubmitReply(itemC)">
+                <a-button html-type="submit" type="primary" @click="handleSubmitReply(itemC)">
                   回复评论
                 </a-button>
               </a-form-item>
@@ -88,7 +85,7 @@
                 <a-textarea :rows="4" :value="value" @change="handleChangeReplyReply" />
               </a-form-item>
               <a-form-item>
-                <a-button html-type="submit" :loading="submitting" type="primary" @click="handleSubmitReplyReply(itemC)">
+                <a-button html-type="submit" type="primary" @click="handleSubmitReplyReply(itemC)">
                   回复回复
                 </a-button>
               </a-form-item>
@@ -125,7 +122,7 @@
 </template>
 
 <script>
-import moment from 'moment';
+//import moment from 'moment';
 export default {
   name: "showComment",
   data() {
@@ -137,6 +134,7 @@ export default {
       replyToCommentValue: '',
       replyToReplyValue: '',
       replyToReplyUsername: '',
+      replyToReplyID: '',
       username: localStorage.getItem('username'),
       comments: {
         commentList:[
@@ -146,12 +144,11 @@ export default {
           rate: 2.5,
           replyToReply: false,
           reply: false,
-          showReply: false,
           username: 'Han Solo1',
           avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
           content:
               'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
-          time: moment().subtract(1, 'days'),
+          time: '1-11',
           replyList: [{
             replyID: 0,
             deletedByAdmin: false,
@@ -160,7 +157,7 @@ export default {
             avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
             content:
                 '111We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
-          time: moment().subtract(1, 'days')
+          time: '1-11'
           }]
         },
         {
@@ -169,12 +166,11 @@ export default {
           rate: 2.8,
           replyToReply: false,
           reply: false,
-          showReply: false,
           username: 'Han Solo2',
           avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
           content:
               'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
-          time: moment().subtract(2, 'days'),
+          time: '1-11',
           replyList: [{
             replyID: 1,
             deletedByAdmin: false,
@@ -183,7 +179,7 @@ export default {
             avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
             content:
                 '222We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
-            time: moment().subtract(1, 'days')
+            time: '1-11'
           }]
         },
         {
@@ -192,12 +188,11 @@ export default {
           rate: 4.5,
           replyToReply: false,
           reply: false,
-          showReply: false,
           username: 'Han Solo3',
           avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
           content:
               'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
-          time: moment().subtract(2, 'days'),
+          time: '1-11',
           replyList: [{
             replyID: 2,
             deletedByAdmin: false,
@@ -206,15 +201,14 @@ export default {
             avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
             content:
                 '333We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
-            time: moment().subtract(1, 'days')
+            time: '1-11'
           }]
         },
       ]},
-      moment,
     };
   },
-  created: () => {
-    this.axios.get('/useradmin/commentAndReply',{
+  created() {
+    this.$axios('/useradmin/commentAndReply',{
       params: {
         isbn: this.$route.query.isbn
       }
@@ -224,7 +218,6 @@ export default {
         for (let i = 0; i < this.comments.commentList.length; i++) {
           this.comments.commentList[i].replyToReply = false
           this.comments.commentList[i].reply = false
-          this.comments.commentList[i].showReply = false
           this.comments.commentList[i].avatar = 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'
           this.comments.commentList[i].rate /= 2
           for (let j = 0; j < this.comments.commentList[i].replyList.length; j++) {
@@ -253,19 +246,20 @@ export default {
         content: this.value
       }).then(resp => {
         this.$message.success('评论成功')
-        this.comments.commentList.push({
+        /*this.comments.commentList.push({
           commentID: resp.data.message,
           deletedByAdmin: false,
           rate: rate,
           replyToReply: false,
           reply: false,
-          showReply: false,
           username: localStorage.getItem('username'),
           avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
           content: this.value,
-          time: moment().subtract(2, 'days'),
+          time: '1-11',
           replyList: []
-        })
+        })*/
+        this.$router.go(0)
+        this.value = '';
       }).catch(err => {
         if (err.response.data.message) {
           this.$message.error(err.response.data.message)
@@ -275,7 +269,7 @@ export default {
         }
       })
 
-      this.value = '';
+
     },
     handleChange(e) {
       this.value = e.target.value;
@@ -288,9 +282,7 @@ export default {
       itemC.replyToReply = !itemC.replyToReply
       itemC.reply = itemC.replyToReply ? false : itemC.reply
       this.replyToReplyUsername = itemR.username
-    },
-    toggleReply(item) {
-      item.showReply = !item.showReply
+      this.replyToReplyID = itemR.replyID
     },
     deleteComment(indexC) {
       if (this.isAdmin) {
@@ -364,15 +356,17 @@ export default {
         content: this.replyToCommentValue
       }).then(resp => {
         this.$message.success('回复成功')
-        itemC.replyList.push({
+        /*itemC.replyList.push({
           replyID: resp.data.message,
           deletedByAdmin: false,
           repliedUsername: itemC.username,
           username: localStorage.getItem('username'),
           avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
           content: this.replyToCommentValue,
-          time: moment()
-        })
+          time: '1-11'
+        })*/
+        this.$router.go(0)
+        this.replyToCommentValue = ''
       }).catch(err => {
         if (err.response.data.message) {
           this.$message.error(err.response.data.message)
@@ -381,8 +375,6 @@ export default {
           this.$message.error('没有成功删除这条回复！')
         }
       })
-
-      this.replyToCommentValue = ''
 
     },
     handleChangeReply(e) {
@@ -396,23 +388,33 @@ export default {
         return;
       }
 
-      itemC.replyList.push({
+      /*itemC.replyList.push({
         deletedByAdmin: false,
         repliedUsername: this.replyToReplyUsername,
         username: localStorage.getItem('username'),
         avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
         content: this.replyToReplyValue,
-        time: moment().subtract(1, 'days')
-      })
+        time: '1-11'
+      })*/
 
-      this.replyToReplyUsername = ''
+
+      this.$axios.post('/user/postReply', {
+        replyID: this.replyToReplyID,
+        content: this.replyToReplyValue
+      }).then(resp => {
+        this.$message.success(resp.data.message)
+        this.$router.go(0)
+        this.replyToReplyUsername = ''
+        this.replyToReplyID = ''
+      }).catch(err => {
+        if (err.response.data.message) {
+          this.$message.error(err.response.data.message)
+        }
+        else {
+          this.$message.error('没有成功删除这条回复！')
+        }
+      })
     },
-    restoreComment(itemC) {
-      itemC.deletedByAdmin = false;
-    },
-    restoreReply(itemR) {
-      itemR.deletedByAdmin = false
-    }
   },
 };
 </script>
