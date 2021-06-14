@@ -45,10 +45,8 @@
         this.$refs.form.validate(valid => {
           if (valid) {
             this.axios.post('/superadmin/resetCredit', {
-              params: {
                 username: this.creditData.username,
                 to: this.creditData.to
-              }
             }).then(resp => {
               if (resp.status === 200) {
                 this.$message.success("重置成功");
