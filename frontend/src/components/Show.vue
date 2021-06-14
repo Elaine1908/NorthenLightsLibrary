@@ -34,7 +34,7 @@
                     <div class="bottom clearfix">
                       <el-rate
                               style="text-align: center;"
-                              v-model="o.averageRate"
+                              :v-model="o.averageRate/2"
                               disabled
                               show-score
                               text-color="#ff9900">

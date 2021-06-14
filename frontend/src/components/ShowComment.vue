@@ -14,7 +14,7 @@
           <div slot="content" v-if="(!isAdmin || (isAdmin && !itemC.deletedByAdmin))">
             <p>
               <a-rate :default-value="itemC.rate" allow-half disabled></a-rate>
-              <span style="margin-left: 10px;">{{ itemC.rate }}</span>
+              <span style="margin-left: 10px;">{{ itemC.rate * 2 }}</span>
             </p>
             <p>
               {{ itemC.content }}
@@ -24,7 +24,7 @@
             <p style="{color: black; font-weight: bolder;}">-------该评论已被删除-------</p>
             <p>
               <a-rate :default-value="itemC.rate" allow-half disabled></a-rate>
-              <span style="margin-left: 10px;">{{ itemC.rate }}</span>
+              <span style="margin-left: 10px;">{{ itemC.rate * 2 }}</span>
             </p>
             <p>
               {{ itemC.content }}
@@ -40,7 +40,7 @@
               <a-comment :author="itemR.username + ' 回复 ' + itemR.repliedUsername" :avatar="itemR.avatar" v-if="(isAdmin || !itemC.deletedByAdmin)">
                 <template slot="actions">
                   <span @click="replyReply(itemC, itemR)">回复</span>
-                  <span @click="deleteReply(indexC, indexR)" v-if="!itemR.deletedByAdmin && (itemC.username === username || isAdmin)">删除回复</span>
+                  <span @click="deleteReply(indexC, indexR)" v-if="!itemR.deletedByAdmin && (itemR.username === username || isAdmin)">删除回复</span>
                 </template>
                 <p slot="content" v-if="(!isAdmin || (isAdmin && !itemR.deletedByAdmin))">
                   {{ itemR.content }}
@@ -57,7 +57,7 @@
               </a-comment>
             </a-list-item>
           </a-list>
-          <a-comment v-if="itemC.reply" :author="username">
+          <a-comment v-if="itemC.reply === true" :author="username">
             <a-avatar
                 slot="avatar"
                 src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
@@ -74,7 +74,7 @@
               </a-form-item>
             </div>
           </a-comment>
-          <a-comment v-if="itemC.replyToReply" :author="username + ' 回复 ' + replyToReplyUsername">
+          <a-comment v-if="itemC.replyToReply === true" :author="username + ' 回复 ' + replyToReplyUsername">
             <a-avatar
                 slot="avatar"
                 src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
@@ -141,7 +141,7 @@ export default {
         {
           commentID: 0,
           deletedByAdmin: true,
-          rate: 2.5,
+          rate: 9,
           replyToReply: false,
           reply: false,
           username: 'Han Solo1',
@@ -216,14 +216,18 @@ export default {
       if (resp.status === 200){
         this.comments.commentList = resp.data.commentList;
         for (let i = 0; i < this.comments.commentList.length; i++) {
-          this.comments.commentList[i].replyToReply = false
-          this.comments.commentList[i].reply = false
-          this.comments.commentList[i].avatar = 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'
           this.comments.commentList[i].rate /= 2
+
           for (let j = 0; j < this.comments.commentList[i].replyList.length; j++) {
             this.comments.commentList[i].replyList[j].avatar = 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png'
           }
         }
+        this.comments.commentList.map(item => {
+          this.$set(item, "replyToReply", false)
+          this.$set(item, "reply", false)
+          this.$set(item, "avatar", "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png")
+          return item
+        })
       }
     }).catch(err => {
       if (err.response.data.message) {
@@ -275,12 +279,17 @@ export default {
       this.value = e.target.value;
     },
     replyComment(itemC) {
+      console.log('itemC.reply')
+      console.log(itemC.reply)
       itemC.reply = !itemC.reply
-      itemC.replyToReply = itemC.reply ? false : itemC.replyToReply
+      // itemC.replyToReply = itemC.reply ? false : itemC.replyToReply
+      console.log(itemC.reply)
+      console.log(itemC.replyToReply)
+      console.log(itemC.rate / 2)
     },
     replyReply(itemC, itemR) {
       itemC.replyToReply = !itemC.replyToReply
-      itemC.reply = itemC.replyToReply ? false : itemC.reply
+      // itemC.reply = itemC.replyToReply ? false : itemC.reply
       this.replyToReplyUsername = itemR.username
       this.replyToReplyID = itemR.replyID
     },

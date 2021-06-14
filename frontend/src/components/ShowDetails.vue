@@ -52,6 +52,10 @@
       };
     },
     created() {
+      if (!localStorage.getItem('login')) {
+        this.$message.error('请先登录')
+        this.$router.push({path: '/login'})
+      }
       if (/^\/home\/showDetails\/showCopy\?isbn=(.)+/.test(this.$route.fullPath)) {
         this.activeIndex = '2'
       } else if (/^\/home\/showDetails\/showComment\?isbn=(.)+/.test(this.$route.fullPath)) {
