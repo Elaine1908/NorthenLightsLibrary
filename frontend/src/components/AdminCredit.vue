@@ -52,7 +52,7 @@
                 this.$message.success("重置成功");
               }
             }).catch(err => {
-              this.$message.error("该用户不存在")
+              this.$message.error("重置失败")
             })
           } else {
             this.$message.error('请填写完整所有内容');
