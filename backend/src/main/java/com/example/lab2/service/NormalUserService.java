@@ -287,7 +287,8 @@ public class NormalUserService {
         }
 
         //检查评论是否存在
-        Optional<Comment> commentOptional = commentRepository.getCommentByUserID(userOptional.orElse(null).getUser_id());
+        Optional<Comment> commentOptional =
+                commentRepository.getCommentsByUserIDAndIsbn(userOptional.orElse(null).getUser_id(), isbn);
         if (commentOptional.isPresent()) {
             throw new CommentAlreadyExistException("你已经评论过此书，不能重复评论");
         }
@@ -319,8 +320,11 @@ public class NormalUserService {
             return 0;
         }
         for (ReturnRecord r : list) {
-            if (r.getStatus().equals("ok")) {
-                return 2;
+            try {
+                if (r.getStatus().equals("ok")) {
+                    return 2;
+                }
+            } catch (Exception ignored) {
             }
         }
         return 1;

@@ -39,5 +39,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("select c from Comment c where c.userID=:userID")
     public Optional<Comment> getCommentByUserID(@Param("userID") long userID);
 
+    public Optional<Comment> getCommentsByUserIDAndIsbn(long userID, String isbn);
+
 
 }
