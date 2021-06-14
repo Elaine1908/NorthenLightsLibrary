@@ -2,7 +2,7 @@
   <div>
     <div class="bookInfosBox">
       <div class="bookImage">
-        <img :src="imagePath">
+        <img :src="imagePathToFrontEnd">
       </div>
       <div class="bookInfos">
         <div class="infoItem">
@@ -47,12 +47,11 @@
         isbn:"",
         averageRate:null,
         description:"",
-        imagePath:"http://source.unsplash.com/random",
-        activeIndex: '',
+        imagePathToFrontEnd:"",
+        activeIndex: ''
       };
     },
     created() {
-      //console.log(this.$route.fullPath)
       if (/^\/home\/showDetails\/showCopy\?isbn=(.)+/.test(this.$route.fullPath)) {
         this.activeIndex = '2'
       } else if (/^\/home\/showDetails\/showComment\?isbn=(.)+/.test(this.$route.fullPath)) {
@@ -72,7 +71,7 @@
           this.isbn = resp.data.isbn;
           this.averageRate = resp.data.averageRate;
           this.description=resp.data.description;
-          this.imagePath=resp.data.imagePath;
+          this.imagePathToFrontEnd=resp.data.imagePathToFrontEnd;
         }
       }).catch(err => {
         if (err.response.data.message !== undefined) {
