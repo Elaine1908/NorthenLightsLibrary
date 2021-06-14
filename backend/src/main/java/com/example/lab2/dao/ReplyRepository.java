@@ -14,14 +14,16 @@ import java.util.List;
 public interface ReplyRepository extends JpaRepository<Reply, Long> {
 
     @Query("select new com.example.lab2.dto.commentreply.ReplyDTO(rp.replyID,ur.username,rp.content,rp.time,rp.deletedByAdmin,repliedUr.username)" +
-            "from Reply rp left join User ur on ur.user_id=rp.userID left join User repliedUr on repliedUr.user_id=rp.repliedUserID where rp.commentID=:commentID")
+            "from Reply rp left join User ur on ur.user_id=rp.userID left join User repliedUr on repliedUr.user_id=rp.repliedUserID where rp.commentID=:commentID and rp.deletedBySelf=false ")
     public List<ReplyDTO> getRepliesByCommentID(@Param("commentID") long commentID);
 
+    @Query("select r from Reply r where r.commentID=:commentID and r.deletedBySelf=false ")
     public void deleteAllByCommentID(Long commentID);
 
+    @Query("select r from Reply r where r.commentID=:commentID and r.deletedBySelf=false ")
     public List<Reply> findAllByCommentID(Long commentID);
 
-    @Query("select r from Reply r where r.commentID=:commentID")
+    @Query("select r from Reply r where r.commentID=:commentID and r.deletedBySelf=false ")
     public List<Reply> getAllByCommentID(@Param("commentID") Long commentID);
 
 }
