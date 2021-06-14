@@ -33,7 +33,7 @@
     created() {//初始化操作
       this.axios.get('/user/myCreditRecord').then(resp => {
         if (resp.status === 200) {
-          this.creditRecord=resp.data;
+          this.creditRecord=resp.data.myCreditRecordList;
         } else {
           this.$message(resp.data.message);
         }
