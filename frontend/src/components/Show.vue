@@ -30,9 +30,10 @@
                   <img :src="o.imagePathToFrontEnd" class="image">
                   <div style="padding: 14px;">
                     <h2 style="margin-bottom: 5px;line-height: 20px;font-size: 20px">{{o.name}}</h2>
-                    <h3 style="margin-bottom: 5px;line-height: 16px;font-size: 15px">作者:{{o.author}}</h3>
+                    <h3 style="margin-bottom: 5px;line-height: 16px;font-size: 15px;text-align: center">作者:{{o.author}}</h3>
                     <div class="bottom clearfix">
                       <el-rate
+                              style="text-align: center;"
                               v-model="o.averageRate"
                               disabled
                               show-score

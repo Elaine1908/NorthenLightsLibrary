@@ -29,6 +29,10 @@
           <i class="el-icon-search"></i>
           <span slot="title">操作查询</span>
         </el-menu-item>
+        <el-menu-item index="/home/admin/adminSensitive">
+          <i class="el-icon-edit-outline"></i>
+          <span slot="title">敏感词汇</span>
+        </el-menu-item>
         <el-menu-item index="/home/admin/adminCredit" v-if="isSuperAdmin">
           <i class="el-icon-refresh-right"></i>
           <span slot="title">重置信用</span>
