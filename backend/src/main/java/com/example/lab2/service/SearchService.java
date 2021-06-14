@@ -34,6 +34,7 @@ public class SearchService {
     @Autowired
     private CommentRepository commentRepository;
 
+
     /**
      * 根据isbn，读取书的信息和每个副本的信息，每个分管有几本
      *
@@ -50,9 +51,13 @@ public class SearchService {
             throw new BookTypeNotFoundException("在本馆中找不到这种书，请重试");
         }
 
+        //获得平均得分并注入
+        double averageRate = commentRepository.getAverageRateByISBN(isbn);
+        bookType.orElse(null).injectAverageRate(averageRate);
+
         //先根据booktype创建response对象
         GetBookTypeAndCopyResponse getBookTypeAndCopyResponse =
-                new GetBookTypeAndCopyResponse(bookType.get());
+                new GetBookTypeAndCopyResponse(bookType.orElse(null));
 
         //获得所有的bookcopy
         List<BookCopyDTO> bookCopies = bookCopyRepository.getBookCopiesByISBN(isbn);

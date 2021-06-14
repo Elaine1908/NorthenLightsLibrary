@@ -30,6 +30,8 @@ public class GetBookTypeAndCopyResponse {
 
     private List<BookCopyDTO> bookCopies;
 
+    private double averageRate;
+
 
     /**
      * 根据booktype创建response
@@ -43,6 +45,7 @@ public class GetBookTypeAndCopyResponse {
         this.isbn = bookType.getIsbn();
         this.name = bookType.getName();
         this.publicationDate = bookType.getPublicationDate();
+        this.averageRate = bookType.getAverageRate();
 
     }
 
