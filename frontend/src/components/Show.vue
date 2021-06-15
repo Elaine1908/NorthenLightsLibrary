@@ -39,8 +39,7 @@
                               text-color="#ff9900">
                       </el-rate>
                     </div>
-                    <el-button type="text" class="button" @click="showDetails(o.isbn)" v-if="roleShow === 'undergraduate' || roleShow === 'postgraduate' || roleShow === 'teacher'">预约</el-button>
-                    <el-button type="text" class="button" @click="showDetails(o.isbn)" v-else>查看详情</el-button>
+                    <el-button type="text" class="button" @click="showDetails(o.isbn)">查看详情</el-button>
                   </div>
                 </el-card>
               </div>

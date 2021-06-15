@@ -156,6 +156,7 @@
     created() {
       this.$axios('/admin/sensitiveWordList')
       .then(resp => {
+        this.wordList = [[]]
         let list = resp.data.sensitiveWordList
         let index = 0;
         let acc = 0;
