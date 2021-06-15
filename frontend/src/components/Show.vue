@@ -26,18 +26,20 @@
             </div>
             <div class="masonry">
               <div class="item" v-for="(o, index) in bookList">
-                <el-card :body-style="{ padding: '0px' }" style="margin-bottom: 50px">
+                <el-card :body-style="{ padding: '0px' }" style="margin-bottom: 60px">
                   <img :src="o.imagePathToFrontEnd" class="image">
                   <div style="padding: 14px;">
-                    <h2 style="margin-bottom: 5px;line-height: 20px;font-size: 20px">{{o.name}}</h2>
-                    <h3 style="margin-bottom: 5px;line-height: 16px;font-size: 15px">作者:{{o.author}}</h3>
-                    <h3 style="margin-bottom: 5px;line-height: 15px;font-size: 15px">ISBN:{{o.isbn}}</h3>
-                    <p style="margin-bottom: 20px;line-height: 20px;font-size: 15px">{{o.description}}</p>
-                    <el-button type="text" class="button" @click="showCopy(o.isbn)" v-if="roleShow === 'undergraduate' || roleShow === 'postgraduate' || roleShow === 'teacher'">预约</el-button>
-                    <el-button type="text" class="button" @click="showCopy(o.isbn)" v-if="roleShow === 'admin' || roleShow === 'superadmin'">查看详情</el-button>
+                    <h2 style="margin-bottom: 5px;line-height: 20px;font-size: 20px;text-align: center">{{o.name}}</h2>
+                    <h3 style="margin-bottom: 5px;line-height: 16px;font-size: 15px;text-align: center">作者:{{o.author}}</h3>
                     <div class="bottom clearfix">
-                      <time class="time">{{ currentDate }}</time>
+                      <el-rate
+                              style="text-align: center"
+                              v-model="o.averageRate"
+                              disabled
+                              text-color="#ff9900">
+                      </el-rate>
                     </div>
+                    <el-button type="text" class="button" @click="showDetails(o.isbn)">查看详情</el-button>
                   </div>
                 </el-card>
               </div>
@@ -88,17 +90,16 @@
           this.$message.error(err.response.data.message)
         })
       },
-      showCopy(isbn){
-        if(!localStorage.getItem('login')) {
-          this.$message.error("请先登录");
-        }else{
-          this.$router.push({path: '/home/showCopy', query: {isbn: isbn}});
-        }
+      showDetails(isbn){
+        this.$router.push({path: '/home/showDetails', query: {isbn: isbn}});
       },
       showAll(){
         this.axios.get('/useradmin/getAllBookType').then(resp => {
           if (resp.status === 200){
             this.bookList=resp.data.bookTypeList;
+            for (let i = 0; i < this.bookList.length; i++) {
+              this.bookList[i].averageRate /= 2
+            }
             this.showBack=false;
           }
         }).catch(err => {
@@ -111,6 +112,7 @@
 
 <style scoped>
   .search_bar {
+    text-align: center;
     width: 100%;
     height: 40px;
     margin-bottom: 30px;
@@ -139,6 +141,8 @@
   .button {
     padding: 0;
     float: right;
+    margin-top: 10px;
+    margin-bottom: 20px;
   }
 
   .image {

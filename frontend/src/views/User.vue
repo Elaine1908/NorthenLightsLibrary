@@ -21,6 +21,10 @@
           <i class="el-icon-document-copy"></i>
           <span slot="title">操作记录</span>
         </el-menu-item>
+        <el-menu-item index="/home/user/userCredit">
+          <i class="el-icon-postcard"></i>
+          <span slot="title">信用记录</span>
+        </el-menu-item>
       </el-menu>
     </el-col>
     <el-col class="content">

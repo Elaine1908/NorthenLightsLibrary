@@ -40,9 +40,22 @@ const routes = [
         component: () => import('@/components/Show')
       },
       {
-        path:'showCopy',
-        name:'ShowCopy',
-        component: () => import('@/components/ShowCopy'),
+        path:'showDetails',
+        name:'ShowDetails',
+        component: () => import('@/components/ShowDetails'),
+        redirect: {name: 'ShowComment'},
+        children:[
+          {
+            path:'showComment',
+            name:'ShowComment',
+            component: () => import('@/components/ShowComment'),
+          },
+          {
+            path:'showCopy',
+            name:'ShowCopy',
+            component: () => import('@/components/ShowCopy'),
+          },
+        ]
       },
       {
         path: 'copyRecord',
@@ -74,6 +87,11 @@ const routes = [
             path: 'userRecord',
             name: 'UserRecord',
             component: () => import('@/components/UserRecord')
+          },
+          {
+            path: 'userCredit',
+            name: 'UserCredit',
+            component: () => import('@/components/UserCredit')
           }
         ]
       },
@@ -107,6 +125,16 @@ const routes = [
             path: 'addCopy',
             name: 'AddCopy',
             component: () => import('@/components/AddCopy')
+          },
+          {
+            path: 'adminSensitive',
+            name: 'AdminSensitive',
+            component: () => import('@/components/AdminSensitive')
+          },
+          {
+            path: 'adminCredit',
+            name: 'AdminCredit',
+            component: () => import('@/components/AdminCredit')
           },
           {
             path: 'adminRecord',
