@@ -1,12 +1,12 @@
 <template>
   <div>
     <el-form
-            :model="adminForm"
-            :rules="adminForm"
-            ref="adminForm"
-            class="adminForm">
+            :model="form"
+            :rules="form"
+            ref="form"
+            class="form">
       <el-table
-              :data="adminForm.datas"
+              :data="form.datas"
               highlight-current-row
               style="width: 100%">
         <el-table-column
@@ -80,7 +80,7 @@
         }
       }
       return {
-        adminForm: {
+        form: {
           datas: []
         },
 
@@ -105,14 +105,14 @@
       //显示已有管理员列表
       this.axios.get('/superadmin/showAdmin').then(resp => {
         if (resp.status === 200) {
-          this.adminForm.datas = resp.data.admin;
+          this.form.datas = resp.data.admin;
           //处理数据，为已有数据添加action:'view'
-          this.adminForm.datas.map(item => {
+          this.form.datas.map(item => {
             this.$set(item,"action","view")
             return item;
           });
           //在开头增加一条添加数据的行
-          this.adminForm.datas.unshift({
+          this.form.datas.unshift({
             username:undefined,
             email:undefined,
             action: "add"
@@ -172,7 +172,7 @@
 
       //新增-重置操作
       click_reset(item,index) {
-        this.resetField('adminForm',index);
+        this.resetField('form',index);
       },
 
       //删除操作
@@ -187,7 +187,7 @@
               }).then(data => {
                 if(data.status==200) {
                   //模拟删除一条数据
-                  this.adminForm.datas.splice(index,1);
+                  this.form.datas.splice(index,1);
                   this.$message.success('删除成功');
                 }
               }).catch(err => {

@@ -82,7 +82,7 @@
           this.$message.error(err.response.data.message)
         } else {
           this.$message.error('没有获取到对应的图书信息')
-          //this.$router.push({path: '/home/show'})
+          this.$router.push({path: '/home/show'})
         }
       })
     },
