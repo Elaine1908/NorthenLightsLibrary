@@ -77,7 +77,7 @@ public class SensitiveWordChecker {
         this.sensitiveWords.addAll(sensitiveWordCollection);
 
         //重建AC自动机
-        this.ahoCorasickTrie = Trie.builder().addKeywords(sensitiveWordCollection).build();
+        this.ahoCorasickTrie = Trie.builder().addKeywords(sensitiveWords).build();
     }
 
 
@@ -92,7 +92,7 @@ public class SensitiveWordChecker {
         this.sensitiveWords.removeAll(sensitiveWordCollection);
 
         //重建AC自动机
-        this.ahoCorasickTrie = Trie.builder().addKeywords(sensitiveWordCollection).build();
+        this.ahoCorasickTrie = Trie.builder().addKeywords(sensitiveWords).build();
     }
 
     /**
