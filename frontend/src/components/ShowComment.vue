@@ -23,7 +23,7 @@
           <div slot="content" v-else>
             <p style="{color: black; font-weight: bolder;}">-------该评论已被删除-------</p>
             <p>
-              <a-rate :default-value="itemC.rate" allow-half disabled></a-rate>
+              <el-rate v-model="itemC.rate" disabled style="display: inline"></el-rate>
               <span style="margin-left: 10px;">{{ itemC.rate * 2 }}</span>
             </p>
             <p>
@@ -141,7 +141,7 @@ export default {
         {
           commentID: 0,
           deletedByAdmin: true,
-          rate: 9,
+          rate: 4.5,
           replyToReply: false,
           reply: false,
           username: 'Han Solo1',
@@ -269,7 +269,7 @@ export default {
           this.$message.error(err.response.data.message)
         }
         else {
-          this.$message.error('没有成功评论')
+          this.$message.error('评论失败')
         }
       })
 
