@@ -137,74 +137,8 @@ export default {
       replyToReplyID: '',
       username: localStorage.getItem('username'),
       comments: {
-        commentList:[
-        {
-          commentID: 0,
-          deletedByAdmin: true,
-          rate: 4.5,
-          replyToReply: false,
-          reply: false,
-          username: 'Han Solo1',
-          avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-          content:
-              'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
-          time: '1-11',
-          replyList: [{
-            replyID: 0,
-            deletedByAdmin: false,
-            repliedUsername: 'Han Solo1',
-            username: 'Sherlock Watson',
-            avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-            content:
-                '111We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
-          time: '1-11'
-          }]
-        },
-        {
-          commentID: 1,
-          deletedByAdmin: false,
-          rate: 2.8,
-          replyToReply: false,
-          reply: false,
-          username: 'Han Solo2',
-          avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-          content:
-              'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
-          time: '1-11',
-          replyList: [{
-            replyID: 1,
-            deletedByAdmin: false,
-            repliedUsername: 'Han Solo2',
-            username: 'Sam Winchester',
-            avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-            content:
-                '222We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
-            time: '1-11'
-          }]
-        },
-        {
-          commentID: 2,
-          deletedByAdmin: false,
-          rate: 4.5,
-          replyToReply: false,
-          reply: false,
-          username: 'Han Solo3',
-          avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-          content:
-              'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
-          time: '1-11',
-          replyList: [{
-            replyID: 2,
-            deletedByAdmin: false,
-            repliedUsername: 'Han Solo3',
-            username: 'Luke Skywalker',
-            avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-            content:
-                '333We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
-            time: '1-11'
-          }]
-        },
-      ]},
+        commentList:[]
+      },
     };
   },
   created() {

@@ -48,40 +48,7 @@
         }
       }
       return {
-        wordList: [
-            [{
-          word: '傻逼',
-              span: 3
-            }, {
-          word: 'nmsl',
-              span: 3
-            }, {
-          word: '你有病你有病你有',
-              span: 4
-            },{
-              word: '傻逼',
-              span: 3
-            }, {
-              word: 'nmsl',
-              span: 3
-            }, {
-              word: '你有病',
-              span: 3
-            }, {
-              word: '你有病',
-              span: 3
-            }],
-        [{
-          word: '神经病',
-          span: 3
-        },{
-          word: '甘霖娘你有病你有病你有',
-          span: 5
-        }],
-        [{
-          word: '甘霖娘你有病你有病你有你有病',
-          span: 6
-        }]],
+        wordList: [[]],
         wordForm: {
           domains: [{
             value: ''
