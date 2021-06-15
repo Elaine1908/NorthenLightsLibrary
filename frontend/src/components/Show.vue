@@ -33,10 +33,9 @@
                     <h3 style="margin-bottom: 5px;line-height: 16px;font-size: 15px;text-align: center">作者:{{o.author}}</h3>
                     <div class="bottom clearfix">
                       <el-rate
-                              style="text-align: center;"
-                              :v-model="o.averageRate/2"
+                              style="text-align: center"
+                              v-model="o.averageRate"
                               disabled
-                              show-score
                               text-color="#ff9900">
                       </el-rate>
                     </div>
@@ -102,6 +101,9 @@
         this.axios.get('/useradmin/getAllBookType').then(resp => {
           if (resp.status === 200){
             this.bookList=resp.data.bookTypeList;
+            for (let i = 0; i < this.bookList.length; i++) {
+              this.bookList[i].averageRate /= 2
+            }
             this.showBack=false;
           }
         }).catch(err => {

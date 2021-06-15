@@ -5,15 +5,15 @@
         item-layout="horizontal"
         :data-source="comments.commentList"
     >
-      <a-list-item slot="renderItem" slot-scope="itemC, indexC">
+      <a-list-item slot="renderItem" slot-scope="itemC, indexC" style="display: inherit">
         <a-comment :author="itemC.username" :avatar="itemC.avatar" v-if="(isAdmin || !itemC.deletedByAdmin)">
           <template slot="actions">
-            <span @click="replyComment(itemC)">回复</span>
+            <span @click="replyComment(itemC, indexC)" v-if="!isAdmin">回复</span>
             <span @click="deleteComment(indexC)" v-if="!itemC.deletedByAdmin && (itemC.username === username || isAdmin)">删除评论</span>
           </template>
           <div slot="content" v-if="(!isAdmin || (isAdmin && !itemC.deletedByAdmin))">
             <p>
-              <a-rate :default-value="itemC.rate" allow-half disabled></a-rate>
+              <el-rate v-model="itemC.rate" disabled style="display: inline"></el-rate>
               <span style="margin-left: 10px;">{{ itemC.rate * 2 }}</span>
             </p>
             <p>
@@ -37,9 +37,9 @@
               v-if="itemC.replyList.length"
           >
             <a-list-item slot="renderItem" slot-scope="itemR, indexR">
-              <a-comment :author="itemR.username + ' 回复 ' + itemR.repliedUsername" :avatar="itemR.avatar" v-if="(isAdmin || !itemC.deletedByAdmin)">
+              <a-comment :author="itemR.username + ' 回复 ' + itemR.repliedUsername" :avatar="itemR.avatar" v-if="(isAdmin || !itemR.deletedByAdmin)">
                 <template slot="actions">
-                  <span @click="replyReply(itemC, itemR)">回复</span>
+                  <span @click="replyReply(itemC, itemR, indexC)" v-if="!isAdmin">回复</span>
                   <span @click="deleteReply(indexC, indexR)" v-if="!itemR.deletedByAdmin && (itemR.username === username || isAdmin)">删除回复</span>
                 </template>
                 <p slot="content" v-if="(!isAdmin || (isAdmin && !itemR.deletedByAdmin))">
@@ -97,7 +97,7 @@
         </a-comment>
       </a-list-item>
     </a-list>
-    <a-comment :author="username">
+    <a-comment :author="username" v-if="!isAdmin">
       <a-avatar
           slot="avatar"
           src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
@@ -278,20 +278,27 @@ export default {
     handleChange(e) {
       this.value = e.target.value;
     },
-    replyComment(itemC) {
-      console.log('itemC.reply')
-      console.log(itemC.reply)
+    replyComment(itemC, indexC) {
       itemC.reply = !itemC.reply
-      // itemC.replyToReply = itemC.reply ? false : itemC.replyToReply
-      console.log(itemC.reply)
-      console.log(itemC.replyToReply)
-      console.log(itemC.rate / 2)
+      itemC.replyToReply = itemC.reply ? false : itemC.replyToReply
+      for (let i = 0; i < this.comments.commentList.length; i++) {
+        if (i !== indexC) {
+          this.comments.commentList[i].reply = false
+          this.comments.commentList[i].replyToReply = false
+        }
+      }
     },
-    replyReply(itemC, itemR) {
+    replyReply(itemC, itemR, indexC) {
       itemC.replyToReply = !itemC.replyToReply
-      // itemC.reply = itemC.replyToReply ? false : itemC.reply
+      itemC.reply = itemC.replyToReply ? false : itemC.reply
       this.replyToReplyUsername = itemR.username
       this.replyToReplyID = itemR.replyID
+      for (let i = 0; i < this.comments.commentList.length; i++) {
+        if (i !== indexC) {
+          this.comments.commentList[i].reply = false
+          this.comments.commentList[i].replyToReply = false
+        }
+      }
     },
     deleteComment(indexC) {
       if (this.isAdmin) {

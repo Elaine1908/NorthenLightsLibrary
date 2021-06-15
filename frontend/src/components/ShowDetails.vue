@@ -9,14 +9,14 @@
           <h1>{{name}}</h1>
         </div>
         <div class="infoItem">
-          <span>作者:{{author}}</span>
-          <span>ISBN:{{isbn}}</span>
-          <div style="clear:both;float: left;margin-bottom: 25px">
+          <span>作者：{{author}}</span>
+          <span>ISBN：{{isbn}}</span>
+          <span>评分：{{averageRate * 2}}</span>
+          <div style="clear:both;float: left;margin-bottom: 25px;">
             <el-rate
-                    v-model="averageRate"
-                    disabled
-                    show-score
-                    text-color="#ff9900">
+                v-model="averageRate"
+                disabled
+                style="{display: inline;}">
             </el-rate>
           </div>
         </div>
@@ -73,7 +73,7 @@
           this.name = resp.data.name;
           this.author = resp.data.author;
           this.isbn = resp.data.isbn;
-          this.averageRate = resp.data.averageRate;
+          this.averageRate = resp.data.averageRate / 2;
           this.description=resp.data.description;
           this.imagePathToFrontEnd=resp.data.imagePathToFrontEnd;
         }
