@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * 还书，如果此时书本状态为正常的业务
@@ -47,7 +46,7 @@ public class ReturnNormalBookTransaction extends ReturnBookTransaction {
         }
 
         //创建还书记录对象
-        ReturnRecord returnRecord = new ReturnRecord(borrow.getUserID(), currentDate, bookCopy.getUniqueBookMark(), adminOptional.orElse(null).getUsername(), adminLibraryID,ReturnRecord.OK);
+        ReturnRecord returnRecord = new ReturnRecord(borrow.getUserID(), currentDate, bookCopy.getUniqueBookMark(), adminOptional.orElse(null).getUsername(), adminLibraryID, ReturnRecord.OK);
 
         returnRecordRepository.save(returnRecord);
 
@@ -96,7 +95,9 @@ public class ReturnNormalBookTransaction extends ReturnBookTransaction {
                 userOptional.orElse(null),
                 bookTypeOptional.orElse(null),
                 bookCopy,
-                currentDate);
+                currentDate,
+                String.format("借阅%s%s超期罚款", bookTypeOptional.orElse(null).getName(), bookCopy.getUniqueBookMark())
+        );
 
         //生成还书记录
         this.generateReturnBookRecord(adminID,
@@ -125,7 +126,7 @@ public class ReturnNormalBookTransaction extends ReturnBookTransaction {
             throw new UserNotFoundException("找不到管理员");
         }
         //创建还书记录对象
-        ReturnRecord returnRecord = new ReturnRecord(user.getUser_id(), currentDate, bookCopy.getUniqueBookMark(), adminOptional.orElse(null).getUsername(), adminLibraryID,ReturnRecord.OK);
+        ReturnRecord returnRecord = new ReturnRecord(user.getUser_id(), currentDate, bookCopy.getUniqueBookMark(), adminOptional.orElse(null).getUsername(), adminLibraryID, ReturnRecord.OK);
 
         returnRecordRepository.save(returnRecord);
     }
