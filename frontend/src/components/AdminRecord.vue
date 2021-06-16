@@ -9,7 +9,7 @@
           </el-dropdown-menu>
         </el-dropdown>
       </div>
-      <div class="search_bar" style="margin-top: 80px" v-if="!showBack">
+      <div class="search_bar" style="margin-top: 80px;text-align: center" v-if="!showBack">
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
           <el-form-item>
             <el-input style="width: 300px" v-model="formInline.username" placeholder="用户名"></el-input>
