@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * 还书，书状态已经丢失的业务
@@ -59,7 +58,9 @@ public class ReturnLostBookTransaction extends ReturnBookTransaction {
                 userOptional.orElse(null),
                 bookTypeOptional.orElse(null),
                 bookCopy,
-                currentDate);
+                currentDate,
+                String.format("丢失图书%s%s罚款", bookTypeOptional.orElse(null).getName(), bookCopy.getUniqueBookMark())
+        );
 
         //生成还书记录
         this.generateReturnBookRecord(adminID,
@@ -68,10 +69,10 @@ public class ReturnLostBookTransaction extends ReturnBookTransaction {
                 bookCopy,
                 currentDate);
 
-        //降低用户的信用40分
+        //降低用户的信用30分
         this.userCreditListener.decreaseUserCredit(
                 userOptional.orElse(null).getUsername(),
-                String.format("损坏图书%s%s，信用降低%d", bookTypeOptional.orElse(null).getName(), bookCopy.getUniqueBookMark(), CREDIT_LOSS_LOST),
+                String.format("丢失图书%s%s，信用降低%d", bookTypeOptional.orElse(null).getName(), bookCopy.getUniqueBookMark(), CREDIT_LOSS_LOST),
                 CREDIT_LOSS_LOST
         );
 
@@ -103,7 +104,7 @@ public class ReturnLostBookTransaction extends ReturnBookTransaction {
             throw new UserNotFoundException("找不到管理员");
         }
         //创建还书记录对象
-        ReturnRecord returnRecord = new ReturnRecord(user.getUser_id(), currentDate, bookCopy.getUniqueBookMark(), adminOptional.orElse(null).getUsername(), adminLibraryID,ReturnRecord.LOST);
+        ReturnRecord returnRecord = new ReturnRecord(user.getUser_id(), currentDate, bookCopy.getUniqueBookMark(), adminOptional.orElse(null).getUsername(), adminLibraryID, ReturnRecord.LOST);
 
         returnRecordRepository.save(returnRecord);
     }

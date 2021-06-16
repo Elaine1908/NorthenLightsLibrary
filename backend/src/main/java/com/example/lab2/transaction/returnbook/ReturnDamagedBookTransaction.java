@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 import java.util.Date;
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * 还书，还书时书本损坏的业务
@@ -57,7 +56,9 @@ public class ReturnDamagedBookTransaction extends ReturnBookTransaction {
                 userOptional.orElse(null),
                 bookTypeOptional.orElse(null),
                 bookCopy,
-                currentDate);
+                currentDate,
+                String.format("损坏图书%s%s罚款", bookTypeOptional.orElse(null).getName(), bookCopy.getUniqueBookMark())
+        );
 
         //生成还书记录
         this.generateReturnBookRecord(adminID,
@@ -101,7 +102,7 @@ public class ReturnDamagedBookTransaction extends ReturnBookTransaction {
             throw new UserNotFoundException("找不到管理员");
         }
         //创建还书记录对象
-        ReturnRecord returnRecord = new ReturnRecord(user.getUser_id(), currentDate, bookCopy.getUniqueBookMark(), adminOptional.orElse(null).getUsername(), adminLibraryID,ReturnRecord.DAMAGED);
+        ReturnRecord returnRecord = new ReturnRecord(user.getUser_id(), currentDate, bookCopy.getUniqueBookMark(), adminOptional.orElse(null).getUsername(), adminLibraryID, ReturnRecord.DAMAGED);
 
         returnRecordRepository.save(returnRecord);
     }

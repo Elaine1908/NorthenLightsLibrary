@@ -13,7 +13,6 @@ import com.example.lab2.request.borrow.ReturnSingleBookRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.swing.plaf.PanelUI;
 import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
@@ -104,9 +103,8 @@ public abstract class ReturnBookTransaction {
     }
 
 
-    protected void generateFineAndFineRecord(long fineAmount, User user, BookType bookType, BookCopy bookCopy, Date currentDate) {
-        String reason = String.format("借阅%s%s超期罚款",
-                bookType.getName(), bookCopy.getUniqueBookMark());
+    protected void generateFineAndFineRecord(long fineAmount, User user, BookType bookType, BookCopy bookCopy, Date currentDate, String reason) {
+
 
         String randomUUID = UUID.randomUUID().toString();
 
