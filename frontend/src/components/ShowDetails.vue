@@ -107,6 +107,9 @@
 </script>
 
 <style scoped>
+.bookInfosBox{
+  min-height: 385px;
+}
 .bookImage{
   width:22%;
   margin-left: 20px;
