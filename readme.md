@@ -204,16 +204,23 @@ server {
 
 配置完成，并运行完成后的项目如下
 
-![demo](demo.png)
+![demo1](demoPictures/demo1.png)
 
-![demo2](demo2.png)
+![demo2](demoPictures/demo2.png)
+
+![demo3](demoPictures/demo3.png)
+
+![demo4](demoPictures/demo4.png)
+
+![demo5](demoPictures/demo5.png)
 
 
 
 ## 贡献者
 
-本项目后端部分由ZHJ，ZYW合作完成
+本项目后端部分由ZHJ（@[**ZhangHJ-qaq**](https://github.com/ZhangHJ-qaq)），ZYW（@[**Elaine1908**](https://github.com/Elaine1908)）合作完成
 
-本项目前端部分由XXY，ZSY合作完成
+本项目前端部分由XXY（@[**Sherlock-Watson (Sherlock_Watson)**](https://github.com/Sherlock-Watson)），ZSY（@[**ADHDerzzz**](https://github.com/ADHDerzzz)）合作完成
 
-感谢大家的贡献。
+感谢大家对本项目做出的贡献。
+
